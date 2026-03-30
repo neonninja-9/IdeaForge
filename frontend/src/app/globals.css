@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Surface colors — use as bg-surface-* */
+  --color-surface: #ffffff;
+  --color-surface-alt: #f5f5f0;
+  --color-surface-cream: #fafaf7;
+  --color-surface-dark: #0a0a0a;
+  --color-surface-dark-card: #141414;
+
+  /* Foreground — use as text-fg-* */
+  --color-fg: #0a0a0a;
+  --color-fg-strong: #000000;
+  --color-fg-mid: #555555;
+  --color-fg-light: #888888;
+  --color-fg-muted: #aaaaaa;
+  --color-fg-on-dark: #f5f5f0;
+
+  /* Border */
+  --color-edge: #e5e5e0;
+  --color-edge-dark: #2a2a2a;
+
+  /* Accent */
+  --color-vivid: #6c3ce0;
+  --color-vivid-light: #8b5cf6;
+  --color-vivid-hover: #5a2dc5;
+
+  /* Dot grid */
+  --color-dot: #d0d0c8;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-surface);
+  color: var(--color-fg);
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-surface-alt);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-edge);
+  border-radius: 3px;
+}
+
+/* Dot grid background pattern (icomat style) */
+.dot-grid {
+  background-image: radial-gradient(circle, var(--color-dot) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Scroll-triggered reveal animations */
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(60px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes revealScale {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-reveal-up {
+  opacity: 0;
+  animation: revealUp 0.8s ease-out forwards;
+}
+
+.animate-reveal-scale {
+  animation: revealScale 0.7s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
