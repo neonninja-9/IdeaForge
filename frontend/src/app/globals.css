@@ -38,6 +38,16 @@ html {
 body {
   background-color: var(--color-surface);
   color: var(--color-fg);
+  min-width: 320px;
+  overflow-x: hidden;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
 }
 
 ::-webkit-scrollbar {

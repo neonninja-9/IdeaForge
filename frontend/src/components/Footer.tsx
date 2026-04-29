@@ -5,9 +5,9 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="bg-surface-dark text-white pt-20 pb-10 px-6 lg:px-10">
+    <footer className="bg-surface-dark text-white pt-16 sm:pt-20 pb-10 px-5 sm:px-6 lg:px-10">
       <div className="max-w-7xl mx-auto">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+        <div className="grid gap-10 mb-14 sm:grid-cols-2 sm:gap-12 sm:mb-20 lg:grid-cols-4">
           <div>
             <h3 className="text-2xl font-black tracking-tight mb-4">IdeaForge</h3>
             <p className="text-sm text-fg-muted leading-relaxed mb-5">
@@ -42,9 +42,9 @@ export default function Footer() {
           <div>
             <h4 className="text-[11px] font-mono uppercase tracking-[0.25em] text-fg-muted mb-5">Newsletter</h4>
             <p className="text-sm text-fg-muted mb-5 leading-relaxed">Stay ahead of the curve with our weekly editorial on idea architecture.</p>
-            <div className="flex gap-2">
-              <input type="email" placeholder="Email" className="flex-1 px-4 py-2.5 text-sm bg-surface-dark-card border border-edge-dark rounded-lg text-white placeholder:text-fg-muted focus:outline-none focus:border-vivid/50 transition-colors" />
-              <button className="px-4 py-2.5 bg-vivid hover:bg-vivid-hover rounded-lg text-white transition-colors duration-300 cursor-pointer">
+            <div className="flex flex-col gap-2 min-[420px]:flex-row">
+              <input type="email" placeholder="Email" className="min-h-11 flex-1 px-4 py-2.5 text-sm bg-surface-dark-card border border-edge-dark rounded-lg text-white placeholder:text-fg-muted focus:outline-none focus:border-vivid/50 transition-colors" />
+              <button className="min-h-11 px-4 py-2.5 bg-vivid hover:bg-vivid-hover rounded-lg text-white transition-colors duration-300 cursor-pointer flex items-center justify-center" aria-label="Subscribe">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </button>
             </div>
@@ -53,7 +53,7 @@ export default function Footer() {
 
         <div className="border-t border-edge-dark pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-xs text-fg-muted">© 2026 IdeaForge. All rights reserved.</p>
-          <div className="flex gap-6 text-xs text-fg-muted">
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-xs text-fg-muted">
             <a href="#" className="hover:text-white transition-colors duration-300">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors duration-300">Terms of Service</a>
           </div>

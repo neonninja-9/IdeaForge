@@ -59,24 +59,24 @@ export default function CoreCapabilities() {
   }, []);
 
   return (
-    <section ref={ref} id="capabilities" className="py-28 lg:py-36 px-6 lg:px-10 bg-white">
+    <section ref={ref} id="capabilities" className="py-20 sm:py-28 lg:py-36 px-5 sm:px-6 lg:px-10 bg-white">
       <div className="max-w-7xl mx-auto">
-        <div className={`mb-20 transition-all duration-700 ${inView ? "translate-y-0" : "translate-y-6"}`}>
+        <div className={`mb-12 sm:mb-20 transition-all duration-700 ${inView ? "translate-y-0" : "translate-y-6"}`}>
           <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-vivid mb-4">
             Core Capabilities
           </p>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-[-0.02em] leading-[1] text-fg">
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-normal leading-[1.05] text-fg">
             The architecture
             <br />
             of insight.
           </h2>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {features.map((feature, i) => (
             <div
               key={i}
-              className={`group relative bg-surface-alt rounded-2xl p-7 border border-transparent hover:border-edge hover:shadow-xl transition-all duration-500 cursor-default ${
+              className={`group relative bg-surface-alt rounded-2xl p-6 sm:p-7 border border-transparent hover:border-edge hover:shadow-xl transition-all duration-500 cursor-default ${
                 inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
               }`}
               style={{ transitionDelay: inView ? `${200 + i * 120}ms` : "0ms" }}

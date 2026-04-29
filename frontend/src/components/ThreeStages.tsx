@@ -22,26 +22,26 @@ export default function ThreeStages() {
   }, []);
 
   return (
-    <section ref={ref} id="workflow" className="py-28 lg:py-36 px-6 lg:px-10 bg-surface-dark text-white">
+    <section ref={ref} id="workflow" className="py-20 sm:py-28 lg:py-36 px-5 sm:px-6 lg:px-10 bg-surface-dark text-white">
       <div className="max-w-6xl mx-auto">
-        <div className={`text-center mb-24 transition-all duration-700 ${inView ? "translate-y-0" : "translate-y-6"}`}>
+        <div className={`text-center mb-12 sm:mb-24 transition-all duration-700 ${inView ? "translate-y-0" : "translate-y-6"}`}>
           <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-vivid-light mb-4">
             The Workflow
           </p>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-[-0.02em] leading-[1] text-white">
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-normal leading-[1.05] text-white">
             Three stages
             <br />
             to impact.
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-0">
+        <div className="grid gap-2 md:grid-cols-3 md:gap-0">
           {stages.map((stage, i) => (
             <div
               key={i}
-              className={`relative flex flex-col items-center text-center px-8 py-10 transition-all duration-700 ${
+              className={`relative flex flex-col items-center text-center px-5 py-8 sm:px-8 sm:py-10 transition-all duration-700 ${
                 inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-14"
-              } ${i < stages.length - 1 ? "md:border-r md:border-white/10" : ""}`}
+              } ${i < stages.length - 1 ? "border-b border-white/10 md:border-b-0 md:border-r" : ""}`}
               style={{ transitionDelay: inView ? `${200 + i * 200}ms` : "0ms" }}
             >
               <div className="relative mb-8">

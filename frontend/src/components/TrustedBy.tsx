@@ -17,8 +17,8 @@ const logos = [
 
 export default function TrustedBy() {
   return (
-    <section className="py-14 bg-white border-y border-edge overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 lg:px-10">
+    <section className="py-10 sm:py-14 bg-white border-y border-edge overflow-hidden">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10">
         <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-fg-light text-center mb-8">
           Trusted by teams at
         </p>
@@ -29,7 +29,7 @@ export default function TrustedBy() {
           {logos.map((name, i) => (
             <span
               key={i}
-              className="mx-10 text-base font-bold tracking-[0.2em] text-fg-light/50 hover:text-fg transition-colors duration-500 cursor-default select-none"
+              className="mx-5 sm:mx-10 text-sm sm:text-base font-bold tracking-[0.16em] sm:tracking-[0.2em] text-fg-light/50 hover:text-fg transition-colors duration-500 cursor-default select-none"
             >
               {name}
             </span>

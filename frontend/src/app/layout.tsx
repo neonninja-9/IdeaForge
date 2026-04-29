@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import PWARegistration from "@/components/PWARegistration";
 import "./globals.css";
 
 const inter = Inter({
@@ -8,9 +9,37 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "IdeaForge — Where Raw Ideas Become Polished Legends",
+  applicationName: "IdeaForge",
+  title: {
+    default: "IdeaForge - Project Ideas For Builders",
+    template: "%s | IdeaForge",
+  },
   description:
-    "IdeaForge transforms scattered thoughts into structured narratives. A digital foundry for visionaries who refuse to let brilliance fade into the noise.",
+    "Discover, structure, and build real-world project ideas with categories, tags, recommendations, voting, and discussion.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "IdeaForge",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  icons: {
+    icon: [
+      { url: "/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
+  colorScheme: "light",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -21,6 +50,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
+        <PWARegistration />
         {children}
       </body>
     </html>

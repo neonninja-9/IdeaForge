@@ -27,7 +27,7 @@ export default function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 h-18 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10 h-16 sm:h-18 flex items-center justify-between">
         <a href="#" className="text-xl font-black tracking-tight text-fg">
           IdeaForge
         </a>
@@ -51,7 +51,7 @@ export default function Navbar() {
         </div>
 
         <button
-          className="md:hidden text-fg"
+          className="md:hidden min-h-11 min-w-11 rounded-full text-fg flex items-center justify-center hover:bg-surface-alt"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -70,18 +70,18 @@ export default function Navbar() {
           mobileOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <div className="bg-white border-t border-edge px-6 py-5 space-y-4">
+        <div className="bg-white border-t border-edge px-5 py-5 space-y-3 shadow-xl">
           {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
-              className="block text-sm font-medium uppercase tracking-widest text-fg-mid hover:text-fg transition-colors"
+              className="block rounded-lg px-2 py-3 text-sm font-medium uppercase tracking-widest text-fg-mid hover:bg-surface-alt hover:text-fg transition-colors"
               onClick={() => setMobileOpen(false)}
             >
               {link.label}
             </a>
           ))}
-          <button className="w-full mt-3 px-5 py-2.5 text-sm font-semibold rounded-full bg-fg text-fg-on-dark">
+          <button className="w-full mt-3 min-h-11 px-5 py-2.5 text-sm font-semibold rounded-full bg-fg text-fg-on-dark">
             Get Started
           </button>
         </div>
