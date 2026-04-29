@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import PWARegistration from "@/components/PWARegistration";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
 const inter = Inter({
@@ -49,9 +51,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased bg-surface flex flex-col min-h-screen`}>
         <PWARegistration />
-        {children}
+        <Navbar />
+        <div className="flex-1 mt-16 sm:mt-18">
+          {children}
+        </div>
+        <Footer />
       </body>
     </html>
   );

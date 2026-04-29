@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 const navLinks = [
-  { label: "Explore", href: "#capabilities" },
-  { label: "Workflow", href: "#workflow" },
-  { label: "Proof", href: "#proof" },
-  { label: "Journal", href: "#" },
+  { label: "Explore", href: "/explore" },
+  { label: "Submit Idea", href: "/submit" },
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "Categories", href: "/categories" },
 ];
 
 export default function Navbar() {
@@ -28,26 +29,26 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10 h-16 sm:h-18 flex items-center justify-between">
-        <a href="#" className="text-xl font-black tracking-tight text-fg">
+        <Link href="/" className="text-xl font-black tracking-tight text-fg">
           IdeaForge
-        </a>
+        </Link>
 
         <div className="hidden md:flex items-center gap-10">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.label}
               href={link.href}
               className="text-[13px] font-medium uppercase tracking-[0.15em] text-fg-mid hover:text-fg transition-colors duration-300"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
 
         <div className="hidden md:block">
-          <button className="px-6 py-2.5 text-[13px] font-semibold uppercase tracking-[0.1em] rounded-full bg-fg text-fg-on-dark hover:bg-vivid transition-all duration-300 cursor-pointer">
+          <Link href="/login" className="px-6 py-2.5 text-[13px] font-semibold uppercase tracking-[0.1em] rounded-full bg-fg text-fg-on-dark hover:bg-vivid transition-all duration-300 cursor-pointer inline-block">
             Get Started
-          </button>
+          </Link>
         </div>
 
         <button
@@ -72,18 +73,18 @@ export default function Navbar() {
       >
         <div className="bg-white border-t border-edge px-5 py-5 space-y-3 shadow-xl">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.label}
               href={link.href}
               className="block rounded-lg px-2 py-3 text-sm font-medium uppercase tracking-widest text-fg-mid hover:bg-surface-alt hover:text-fg transition-colors"
               onClick={() => setMobileOpen(false)}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
-          <button className="w-full mt-3 min-h-11 px-5 py-2.5 text-sm font-semibold rounded-full bg-fg text-fg-on-dark">
+          <Link href="/login" className="w-full mt-3 min-h-11 px-5 py-2.5 text-sm font-semibold rounded-full bg-fg text-fg-on-dark block text-center">
             Get Started
-          </button>
+          </Link>
         </div>
       </div>
     </nav>
