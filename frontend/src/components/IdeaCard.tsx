@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import type { Category, Idea, IdeaTag, Tag, User } from "@prisma/client";
 
 export type IdeaWithRelations = Idea & {
@@ -16,7 +16,7 @@ export default function IdeaCard({ idea }: { idea: IdeaWithRelations }) {
           <span className="inline-block px-3 py-1 bg-surface-alt text-fg-mid text-xs font-semibold uppercase tracking-wider rounded-full mb-3">
             {idea.category.name}
           </span>
-          <Link href={`/ideas/${idea.id}`}>
+          <Link to={`/ideas/${idea.id}`}>
             <h2 className="text-xl font-bold text-fg hover:text-vivid transition-colors line-clamp-2">
               {idea.title}
             </h2>

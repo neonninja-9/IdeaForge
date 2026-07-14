@@ -1,44 +1,32 @@
-# IdeaForge Frontend Setup
+# React + TypeScript + Vite
 
-This is the Next.js 16.2.1 application for IdeaForge.
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
-> **CRITICAL:** Before making any Next.js API changes, please read the rules in `AGENTS.md` and the installed documentation in `node_modules/next/dist/docs/`. Next 16 introduces breaking changes.
+Currently, two official plugins are available:
 
-## Prerequisites
-- Node.js 20.19+, 22.12+, or 24.0+ (Required for Prisma)
-- PostgreSQL (Local or managed provider like Supabase/Neon)
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Local Development Setup
+## React Compiler
 
-### 1. Install Dependencies
-```bash
-npm install
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the Oxlint configuration
+
+If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc"],
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}
 ```
 
-### 2. Environment Variables
-Copy the `.env.example` file to `.env`:
-```bash
-cp .env.example .env
-```
-Update the `.env` file with your `DATABASE_URL` and `AUTH_SECRET`.
-
-### 3. Database Setup (Prisma)
-Run the following commands to set up the database and seed it with initial data:
-```bash
-npm run db:migrate  # Runs migrations and pushes the schema to the database
-npm run db:generate # Generates the Prisma client
-npm run db:seed     # Populates the database with sample data
-```
-
-### 4. Run the Development Server
-```bash
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## Quality Checks
-To ensure code quality, run the linting and build commands:
-```bash
-npm run lint
-npm run build
-```
+See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import type { Category, Idea } from "@prisma/client";
 
 type SimilarIdea = Idea & {
@@ -8,7 +8,7 @@ type SimilarIdea = Idea & {
 
 export default function SimilarIdeaCard({ idea }: { idea: SimilarIdea }) {
   return (
-    <Link href={`/ideas/${idea.id}`} className="block group">
+    <Link to={`/ideas/${idea.id}`} className="block group">
       <div className="bg-white border border-edge rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-vivid transition-all duration-300">
         <div className="flex justify-between items-start mb-2 gap-4">
           <h3 className="font-bold text-sm text-fg group-hover:text-vivid transition-colors line-clamp-2 leading-snug">

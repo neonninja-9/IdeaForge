@@ -195,16 +195,16 @@ Each idea will include a **discussion section** where users can:
 
 ### Frontend
 
-* React / Next.js
+* React + TypeScript
 * Tailwind CSS
 
 ### Backend
 
-* Node.js / Django / FastAPI
+* Node.js 
 
 ### Database
 
-* PostgreSQL or MongoDB
+* MongoDB
 
 ### AI Module
 
@@ -213,7 +213,7 @@ Each idea will include a **discussion section** where users can:
 
 ### Cloud
 
-* AWS / GCP / Azure
+* AWS 
 
 ---
 

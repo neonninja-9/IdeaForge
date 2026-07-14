@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 const navLinks = [
   { label: "Explore", href: "/explore" },
@@ -29,7 +29,7 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-10 h-16 sm:h-18 flex items-center justify-between">
-        <Link href="/" className="text-xl font-black tracking-tight text-fg">
+        <Link to="/" className="text-xl font-black tracking-tight text-fg">
           IdeaForge
         </Link>
 
@@ -46,7 +46,7 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:block">
-          <Link href="/login" className="px-6 py-2.5 text-[13px] font-semibold uppercase tracking-[0.1em] rounded-full bg-fg text-fg-on-dark hover:bg-vivid transition-all duration-300 cursor-pointer inline-block">
+          <Link to="/login" className="px-6 py-2.5 text-[13px] font-semibold uppercase tracking-[0.1em] rounded-full bg-fg text-fg-on-dark hover:bg-vivid transition-all duration-300 cursor-pointer inline-block">
             Get Started
           </Link>
         </div>
@@ -82,7 +82,7 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <Link href="/login" className="w-full mt-3 min-h-11 px-5 py-2.5 text-sm font-semibold rounded-full bg-fg text-fg-on-dark block text-center">
+          <Link to="/login" className="w-full mt-3 min-h-11 px-5 py-2.5 text-sm font-semibold rounded-full bg-fg text-fg-on-dark block text-center">
             Get Started
           </Link>
         </div>
