@@ -1,6 +1,5 @@
 import express from "express";
 import connectDB from "./db.js";
-import Idea from "./models/idea.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -32,36 +31,6 @@ app.get("/", (req, res) => {
 
 // ─── API v1 Routes ─────────────────────────────────────────────
 app.use("/api/v1", v1Router);
-
-// ─── Legacy Idea Routes (to be migrated to v1) ────────────────
-app.get("/api/ideas", async (req, res) => {
-    try {
-        const ideas = await Idea.find();
-        res.status(200).json({
-            message: "success",
-            data: ideas,
-        });
-    } catch (e) {
-        console.log(e);
-        res.status(500).json({
-            message: "Internal Server error",
-        });
-    }
-});
-app.post("/api/ideas", (req, res) => {
-    res.status(501).json({ message: "Not Implemented yet" });
-});
-app.get("/api/ideas/:id", (req, res) => {
-    res.status(501).json({ message: "Not Implemented yet" });
-});
-
-// ─── Legacy Category & Tag Routes (to be migrated to v1) ──────
-app.get("/api/categories", (req, res) => {
-    res.status(501).json({ message: "Not Implemented yet" });
-});
-app.get("/api/tags", (req, res) => {
-    res.status(501).json({ message: "Not Implemented yet" });
-});
 
 // ─── Global Error Handler ──────────────────────────────────────
 // Must be defined AFTER all routes (Express identifies error handlers

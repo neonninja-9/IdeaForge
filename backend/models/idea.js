@@ -1,33 +1,61 @@
 import mongoose from "mongoose";
 
-// 1. Define the schema structure
 const ideaSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
         trim: true,
-    },
-    discription: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    userid: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
+        maxlength: 100,
     },
     problem: {
         type: String,
-        required: false,
+        required: true,
+        trim: true,
+        maxlength: 2000,
     },
+    solution: {
+        type: String,
+        required: true,
+        trim: true,
+        maxlength: 2000,
+    },
+    impact: {
+        type: String,
+        trim: true,
+        maxlength: 500,
+    },
+    difficulty: {
+        type: String,
+        required: true,
+        enum: ["Beginner", "Intermediate", "Advanced"],
+    },
+    suggestedTechStack: {
+        type: String,
+        trim: true,
+    },
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+        index: true,
+    },
+    category: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
+        required: true,
+        index: true,
+    },
+    tags: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
+    }],
 }, {
-    timestamps: true // Automatically adds createdAt and updatedAt fields
+    timestamps: true,
 });
 
-// 2. Create the model
-// The first argument is the singular name of the collection your model is for (e.g. "User" -> "users" collection).
+// Text index for search
+ideaSchema.index({ title: "text", problem: "text", solution: "text" });
+
 const Idea = mongoose.model("Idea", ideaSchema);
 
-// 3. Export the model
 export default Idea;

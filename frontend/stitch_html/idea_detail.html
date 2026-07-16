@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gasless NFT Minting API - IdeaForge</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: "#6c3ce0",
+                            light: "#8b5cf6",
+                            dark: "#5b2eb5"
+                        },
+                        surface: {
+                            DEFAULT: "#ffffff",
+                            alt: "#fdfdfb", // User specified cream background
+                            dark: "#0a0a0a"
+                        },
+                        foreground: {
+                            DEFAULT: "#0a0a0a",
+                            mid: "#555555",
+                            muted: "#aaaaaa"
+                        },
+                        border: {
+                            DEFAULT: "#e5e5e0"
+                        }
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "2rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter", "sans-serif"],
+                        "display": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Space Grotesk", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.surface.alt');
+            color: theme('colors.foreground.DEFAULT');
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+        }
+    </style>
+</head>
+<body class="font-body antialiased selection:bg-primary selection:text-white pb-24">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-[#e5e5e0] dark:border-[#333333] shadow-sm transition-all duration-300">
+<div class="flex justify-between items-center px-8 h-16 max-w-7xl mx-auto">
+<div class="flex items-center gap-8">
+<a class="text-xl font-black text-[#0a0a0a] dark:text-[#ffffff] tracking-tighter" href="#">IdeaForge</a>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-[#6c3ce0] font-bold border-b-2 border-[#6c3ce0] pb-1 hover:opacity-80 transition-all duration-300" href="#">Explore</a>
+<a class="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 hover:opacity-80 transition-all duration-300" href="#">Submit Idea</a>
+<a class="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 hover:opacity-80 transition-all duration-300" href="#">Dashboard</a>
+<a class="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 hover:opacity-80 transition-all duration-300" href="#">Categories</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-primary text-white px-4 py-2 rounded-full font-label text-sm uppercase tracking-wider hover:bg-primary-light transition-colors">Get Started</button>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-6 lg:px-8 pt-32">
+<!-- Breadcrumb -->
+<nav class="flex items-center gap-2 text-xs font-label text-foreground-muted uppercase tracking-wider mb-8">
+<a class="hover:text-primary transition-colors" href="#">Explore</a>
+<span class="material-symbols-outlined" style="font-size: 16px;">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Web3</a>
+<span class="material-symbols-outlined" style="font-size: 16px;">chevron_right</span>
+<span class="text-foreground-mid">Gasless NFT Minting API</span>
+</nav>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+<!-- Left Column (65%) -->
+<div class="lg:col-span-8 space-y-12">
+<!-- Header Section -->
+<header class="space-y-6">
+<div class="flex items-center gap-4 text-sm">
+<span class="px-3 py-1 bg-primary/10 text-primary font-label uppercase tracking-widest rounded-full text-xs font-bold">WEB3</span>
+<span class="text-foreground-muted">Posted 3 days ago</span>
+</div>
+<h1 class="text-4xl md:text-5xl font-headline font-black tracking-tight leading-tight text-foreground">Gasless NFT Minting API</h1>
+<div class="flex items-center justify-between py-4 border-y border-border/50">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-border">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist 3D avatar of a digital creator with a subtle futuristic cyber-punk edge, wearing a simple black hoodie, set against a bright, warm light-mode cream background. The lighting is soft and studio-quality, conveying a professional yet approachable innovator aesthetic in a Web3 context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqDO2dJ1VXAiAC2K5qzliGFGL_b3BtKJpCvOin1t4OY61GOjIvANFsdgTPAOAZIu8LAqwgcmHdrVR8XcYb0NNgyC11kv60umf1XcTe6ERts2Y8QzgV397WG394uMl50U7UVqWLaIEZlDTBpyQHGUBL80ebNZQRVaQA-AuL4ai4NtD7SdLwgE9WjLR83KDNlPRnp8JcMBZCDjTKF1_gowDbYjeJ6_IcxL4thw6xJhGeS0Sub8DJ1yhGQozutDsvCowi88ftmxnehvY"/>
+</div>
+<div>
+<div class="font-bold text-foreground">block_smith</div>
+<div class="text-xs text-foreground-muted font-label uppercase tracking-wider">Author</div>
+</div>
+</div>
+<button class="px-4 py-1.5 border border-border rounded-full text-sm font-label uppercase tracking-wider hover:border-primary hover:text-primary transition-all duration-300">Follow</button>
+</div>
+</header>
+<!-- Content Body -->
+<article class="space-y-10 text-lg text-foreground-mid leading-relaxed">
+<!-- The Problem -->
+<section class="space-y-4">
+<h2 class="text-xs font-label text-foreground-muted uppercase tracking-widest">The Problem</h2>
+<p class="text-foreground">High gas fees on Ethereum and other L2s create a massive barrier for non-crypto native users to participate in NFT ecosystems. Users are forced to acquire native tokens simply to interact with a smart contract, leading to a fragmented and high-friction onboarding experience.</p>
+</section>
+<!-- Proposed Solution -->
+<section class="space-y-4">
+<h2 class="text-xs font-label text-foreground-muted uppercase tracking-widest">Proposed Solution</h2>
+<p>A backend-as-a-service API that abstracts away wallet connections and gas fees for end users. It uses meta-transactions (EIP-2771) to allow users to claim digital assets using just an email or social login, while the developer sponsors the gas via a funding dashboard.</p>
+<p>This allows brands and creators to distribute digital collectibles without forcing their audience to understand seed phrases or gas pricing mechanics.</p>
+</section>
+</article>
+<!-- Tags & Tech -->
+<div class="space-y-6 pt-6 border-t border-border/50">
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 border border-border rounded-full text-xs font-label text-foreground-mid">#blockchain</span>
+<span class="px-3 py-1 border border-border rounded-full text-xs font-label text-foreground-mid">#api</span>
+<span class="px-3 py-1 border border-border rounded-full text-xs font-label text-foreground-mid">#ux</span>
+</div>
+<div class="space-y-3">
+<div class="text-xs font-label text-foreground-muted uppercase tracking-widest">Proposed Stack</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface rounded-lg border border-border text-sm">
+<span class="material-symbols-outlined text-primary" style="font-size: 18px;">code_blocks</span>
+<span>Node.js</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface rounded-lg border border-border text-sm">
+<span class="material-symbols-outlined text-primary" style="font-size: 18px;">deployed_code</span>
+<span>Solidity</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface rounded-lg border border-border text-sm">
+<span class="material-symbols-outlined text-primary" style="font-size: 18px;">security</span>
+<span>OpenZeppelin</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Bar -->
+<div class="flex items-center gap-4 pt-8">
+<button class="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-primary-light transition-colors shadow-sm hover:shadow-md transform hover:-translate-y-0.5 duration-300">
+<span class="material-symbols-outlined" data-weight="fill">arrow_upward</span>
+<span class="text-lg">112</span>
+</button>
+<button class="p-3 bg-surface border border-border rounded-xl text-foreground-mid hover:text-primary hover:border-primary transition-colors">
+<span class="material-symbols-outlined">bookmark</span>
+</button>
+<button class="p-3 bg-surface border border-border rounded-xl text-foreground-mid hover:text-primary hover:border-primary transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+<!-- Comments Section -->
+<section class="pt-12 space-y-8">
+<h3 class="text-xl font-headline font-bold">8 Comments</h3>
+<!-- Input -->
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-dark border border-border shrink-0"></div>
+<div class="flex-grow space-y-3">
+<textarea class="w-full bg-surface border border-border rounded-xl p-4 focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none resize-none h-24 text-sm text-foreground transition-all duration-300" placeholder="Add to the discussion..."></textarea>
+<div class="flex justify-end">
+<button class="px-5 py-2 bg-foreground text-white rounded-full text-sm font-label uppercase tracking-wide hover:bg-primary transition-colors">Post Comment</button>
+</div>
+</div>
+</div>
+<!-- Comments List -->
+<div class="space-y-6">
+<!-- Comment 1 -->
+<div class="flex gap-4 group">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-border shrink-0">
+<img class="w-full h-full object-cover" data-alt="A soft, minimalist profile image of a young developer in a light-filled studio. Bright cream background, high-key lighting, modern clean aesthetic. Minimalist details, subtle tech vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZJuFNR9LLgEylev3hktPHIphyKa_8yA0irk6fTmJe52me3E-NO-r0WPxkvgujH1fNRhyV0t6KXdosN36nPIap-5_VxYNFgzEfji5gsmo5w2uAwBZfQU5fKM6hqc7SQLwvY9QA2oTOMV6DRIE0QzjJlYTN108JN3Q_uJvrugep1NCuhDTpWnPyzhlcL0rGsiBsK7U0kkO6U2O--Pv3-XZSAadiqMZjck_zVT5yYF2P4aVQeEvlQQx5HJMAU9wLXxL8F0ODLDjn32U"/>
+</div>
+<div class="flex-grow space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-bold text-sm">alice_dev</span>
+<span class="text-xs text-foreground-muted">2 days ago</span>
+</div>
+<p class="text-sm text-foreground-mid">Love this idea. Have you considered integrating with Biconomy for the relay infrastructure? They handle the gas sponsorship layer really well.</p>
+<div class="flex items-center gap-4 pt-2 text-xs text-foreground-muted font-label uppercase tracking-widest">
+<button class="hover:text-primary flex items-center gap-1"><span class="material-symbols-outlined" style="font-size: 14px;">thumb_up</span> 14</button>
+<button class="hover:text-foreground">Reply</button>
+</div>
+</div>
+</div>
+<!-- Comment 2 -->
+<div class="flex gap-4 group">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-border shrink-0">
+<img class="w-full h-full object-cover" data-alt="A clean, modern profile picture of a designer. Bright, warm light-mode setting with a minimalist cream background. Simple geometric shapes subtly visible in the out-of-focus background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdA3plT0euXu_38aIIOrD7_-JTEiSWd4B0OqJ8LXMjPtca5sVJXL0Ig8x6yqhWOEryY3FpwAcCiMAYaEF5YyfNPu9TY0Y0nIsiPVr3uRzcUYdUU33FbKcGpWpjwuajCD0UpsCZcX08okusZaov6kgJ1yWTscTa66gFfEc2cyJbmATKJYtvO-4MsCnCvFc709jbV_y8ZME0yFtfVUe70IjEdSoFVAZEQvQ1d7tyAg9yGc9viW5Qop-wtAOvd0Y8S-UKAkAiWRvpGBc"/>
+</div>
+<div class="flex-grow space-y-1">
+<div class="flex items-center gap-2">
+<span class="font-bold text-sm">ux_ninja</span>
+<span class="text-xs text-foreground-muted">1 day ago</span>
+</div>
+<p class="text-sm text-foreground-mid">The UX implications here are huge for onboarding non-native users. I'd love to help design the funding dashboard UI if you decide to build this!</p>
+<div class="flex items-center gap-4 pt-2 text-xs text-foreground-muted font-label uppercase tracking-widest">
+<button class="hover:text-primary flex items-center gap-1"><span class="material-symbols-outlined" style="font-size: 14px;">thumb_up</span> 8</button>
+<button class="hover:text-foreground">Reply</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column (35%) Sticky Sidebar -->
+<aside class="lg:col-span-4 space-y-6 relative">
+<div class="sticky top-24 space-y-6">
+<!-- About Author Card -->
+<div class="bg-white/80 backdrop-blur-md border border-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+<div class="text-xs font-label text-foreground-muted uppercase tracking-widest mb-4">About the Author</div>
+<div class="flex items-center gap-4 mb-4">
+<div class="w-14 h-14 rounded-full overflow-hidden border border-border shrink-0">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist 3D avatar of a digital creator with a subtle futuristic cyber-punk edge, wearing a simple black hoodie, set against a bright, warm light-mode cream background. The lighting is soft and studio-quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3ASamTvOvdj8a9aRjJxmoXPttbIQjxPFsFh842ec2cUltWb_SSo1SMBOvwsFUtL-6xdvVViaceyND1eSr7_XwJ5DoEVDdDAZlWP4Gcgz4DW2Y9W9J6sd850XDbzz4CbJ9R0p4oV0EDKRCSgPMHmdcadWuxEYLboK0I3snfjjj1ZTjVdclgkeBlJ3h1SVXOR4HzXfmRTvF34uxZqwt7GzrQ-VmUyI0m76DeNxo8xBHBSET0YJgOSvwL7FCa8EvMd299XoTAfOjEss"/>
+</div>
+<div>
+<div class="font-headline font-bold text-lg">block_smith</div>
+<div class="text-xs text-foreground-muted">Joined Jan 2024</div>
+</div>
+</div>
+<p class="text-sm text-foreground-mid mb-6">Building the future of digital ownership. Passionate about improving UX in the decentralized web.</p>
+<div class="flex justify-between items-center py-3 border-t border-border">
+<span class="text-sm font-label uppercase tracking-wider text-foreground-muted">Ideas Submitted</span>
+<span class="font-bold text-primary">12</span>
+</div>
+</div>
+<!-- Similar Ideas Card -->
+<div class="bg-white/80 backdrop-blur-md border border-border rounded-2xl p-6 shadow-sm">
+<div class="text-xs font-label text-foreground-muted uppercase tracking-widest mb-6">Similar Ideas</div>
+<div class="space-y-5">
+<a class="flex gap-4 group" href="#">
+<div class="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-surface-alt border border-border flex items-center justify-center">
+<span class="material-symbols-outlined text-primary/50" style="font-size: 24px;">toll</span>
+</div>
+<div class="flex-grow flex flex-col justify-center">
+<h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">NFT Royalty Tracker Protocol</h4>
+<div class="text-xs text-foreground-muted mt-1">45 upvotes</div>
+</div>
+</a>
+<a class="flex gap-4 group" href="#">
+<div class="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-surface-alt border border-border flex items-center justify-center">
+<span class="material-symbols-outlined text-primary/50" style="font-size: 24px;">login</span>
+</div>
+<div class="flex-grow flex flex-col justify-center">
+<h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">Web3 Onboarding Tool</h4>
+<div class="text-xs text-foreground-muted mt-1">89 upvotes</div>
+</div>
+</a>
+<a class="flex gap-4 group" href="#">
+<div class="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-surface-alt border border-border flex items-center justify-center">
+<span class="material-symbols-outlined text-primary/50" style="font-size: 24px;">account_balance_wallet</span>
+</div>
+<div class="flex-grow flex flex-col justify-center">
+<h4 class="font-bold text-sm group-hover:text-primary transition-colors line-clamp-1">Social Recovery Wallets</h4>
+<div class="text-xs text-foreground-muted mt-1">210 upvotes</div>
+</div>
+</a>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+</body></html>

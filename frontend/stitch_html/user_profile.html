@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IdeaForge - User Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#6c3ce0',
+                            light: '#8b5cf6',
+                        },
+                        surface: {
+                            DEFAULT: '#ffffff',
+                            alt: '#f5f5f0',
+                            dark: '#0a0a0a',
+                        },
+                        foreground: {
+                            DEFAULT: '#0a0a0a',
+                            mid: '#555555',
+                            muted: '#aaaaaa',
+                        },
+                        border: {
+                            DEFAULT: '#e5e5e0',
+                        }
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter", "sans-serif"],
+                        "display": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Space Grotesk", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .dot-pattern {
+            background-image: radial-gradient(circle, #e5e5e0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="bg-surface-alt text-foreground font-body antialiased min-h-screen flex flex-col pt-16">
+<!-- TopNavBar -->
+<nav class="bg-white/80 dark:bg-black/80 backdrop-blur-md fixed top-0 w-full z-50 border-b border-[#e5e5e0] dark:border-[#333333] shadow-sm">
+<div class="flex justify-between items-center px-8 h-16 max-w-7xl mx-auto">
+<div class="text-xl font-black text-[#0a0a0a] dark:text-[#ffffff] tracking-tighter">IdeaForge</div>
+<div class="hidden md:flex gap-8">
+<a class="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 font-label tracking-widest uppercase text-sm" href="#">Explore</a>
+<a class="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 font-label tracking-widest uppercase text-sm" href="#">Submit Idea</a>
+<a class="text-[#6c3ce0] font-bold border-b-2 border-[#6c3ce0] pb-1 font-label tracking-widest uppercase text-sm" href="#">Dashboard</a>
+<a class="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 font-label tracking-widest uppercase text-sm" href="#">Categories</a>
+</div>
+<button class="bg-[#6c3ce0] text-white px-6 py-2 rounded-full font-label tracking-widest uppercase text-xs hover:bg-[#8b5cf6] transition-colors duration-300 hover:scale-95">Get Started</button>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-7xl mx-auto px-4 md:px-8 py-12">
+<!-- Profile Header -->
+<section class="bg-surface-alt rounded-3xl p-8 mb-12 relative overflow-hidden dot-pattern border border-border">
+<div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+<div class="flex items-center gap-6">
+<div class="w-20 h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center text-3xl font-headline font-black shrink-0 border-2 border-primary/20">
+                        S
+                    </div>
+<div>
+<div class="flex items-center gap-3 mb-1">
+<h1 class="text-2xl font-headline font-black tracking-tight text-foreground">Sarah Jenkins</h1>
+<span class="bg-primary/10 text-primary text-[10px] font-label uppercase tracking-wider px-2 py-1 rounded-full font-bold">Pro User</span>
+</div>
+<p class="text-foreground-muted text-sm mb-3">sarah.j@example.com</p>
+<div class="flex flex-wrap items-center gap-y-2 text-sm text-foreground-mid">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+<span>Joined June 2023</span>
+</div>
+<span class="mx-3 text-border hidden sm:inline">|</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">lightbulb</span>
+<span class="font-medium text-foreground">12</span> Ideas Posted
+                            </div>
+<span class="mx-3 text-border hidden sm:inline">|</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">thumb_up</span>
+<span class="font-medium text-foreground">342</span> Total Votes
+                            </div>
+<span class="mx-3 text-border hidden md:inline">|</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">chat_bubble</span>
+<span class="font-medium text-foreground">56</span> Comments
+                            </div>
+</div>
+</div>
+</div>
+<button class="flex items-center gap-2 border border-border px-4 py-2 rounded-full text-sm font-label uppercase tracking-widest text-foreground hover:border-primary hover:text-primary transition-colors bg-white/50 backdrop-blur-sm">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+                    Edit Profile
+                </button>
+</div>
+</section>
+<!-- Tabs -->
+<div class="flex border-b border-border mb-8 gap-8 overflow-x-auto no-scrollbar">
+<button class="pb-4 text-primary font-bold border-b-2 border-primary font-label uppercase tracking-widest text-sm whitespace-nowrap">My Ideas</button>
+<button class="pb-4 text-foreground-muted hover:text-primary transition-colors font-label uppercase tracking-widest text-sm whitespace-nowrap">Voted Ideas</button>
+<button class="pb-4 text-foreground-muted hover:text-primary transition-colors font-label uppercase tracking-widest text-sm whitespace-nowrap">Comments</button>
+</div>
+<!-- Ideas Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Idea Card 1 -->
+<article class="bg-surface/80 backdrop-blur-md rounded-2xl border border-border p-6 shadow-sm hover:shadow-md transition-all duration-300 group flex flex-col h-full cursor-pointer hover:border-primary/30">
+<div class="flex justify-between items-start mb-4">
+<div class="flex gap-2">
+<span class="bg-blue-50 text-blue-600 text-[10px] font-label uppercase tracking-wider px-2 py-1 rounded-full border border-blue-100">DevTools</span>
+<span class="bg-green-50 text-green-600 text-[10px] font-label uppercase tracking-wider px-2 py-1 rounded-full border border-green-100">Active</span>
+</div>
+<button class="text-foreground-muted hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<h3 class="text-lg font-headline font-bold text-foreground mb-2 group-hover:text-primary transition-colors">AI-Powered Code Auditor</h3>
+<p class="text-foreground-mid text-sm mb-6 flex-grow line-clamp-3">A developer tool that uses LLMs to review pull requests, suggesting security fixes, performance optimizations, and ensuring stylistic consistency before human review.</p>
+<div class="flex items-center justify-between pt-4 border-t border-border/50">
+<div class="flex gap-4 text-sm text-foreground-muted">
+<div class="flex items-center gap-1 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]" data-icon="thumb_up">thumb_up</span>
+<span>156</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="chat_bubble">chat_bubble</span>
+<span>24</span>
+</div>
+</div>
+<span class="text-xs text-foreground-muted">2 days ago</span>
+</div>
+</article>
+<!-- Idea Card 2 -->
+<article class="bg-surface/80 backdrop-blur-md rounded-2xl border border-border p-6 shadow-sm hover:shadow-md transition-all duration-300 group flex flex-col h-full cursor-pointer hover:border-primary/30">
+<div class="flex justify-between items-start mb-4">
+<div class="flex gap-2">
+<span class="bg-purple-50 text-purple-600 text-[10px] font-label uppercase tracking-wider px-2 py-1 rounded-full border border-purple-100">Productivity</span>
+<span class="bg-orange-50 text-orange-600 text-[10px] font-label uppercase tracking-wider px-2 py-1 rounded-full border border-orange-100">In Review</span>
+</div>
+<button class="text-foreground-muted hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+<h3 class="text-lg font-headline font-bold text-foreground mb-2 group-hover:text-primary transition-colors">Decentralized Task Manager</h3>
+<p class="text-foreground-mid text-sm mb-6 flex-grow line-clamp-3">A peer-to-peer task management system designed for ad-hoc distributed teams, removing the need for a central server while maintaining data integrity through a local-first architecture.</p>
+<div class="flex items-center justify-between pt-4 border-t border-border/50">
+<div class="flex gap-4 text-sm text-foreground-muted">
+<div class="flex items-center gap-1 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]" data-icon="thumb_up">thumb_up</span>
+<span>89</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="chat_bubble">chat_bubble</span>
+<span>12</span>
+</div>
+</div>
+<span class="text-xs text-foreground-muted">1 week ago</span>
+</div>
+</article>
+<!-- Empty State / Add New -->
+<article class="bg-surface-alt/50 rounded-2xl border border-dashed border-border p-6 flex flex-col items-center justify-center text-center min-h-[240px] hover:bg-surface-alt hover:border-primary/50 transition-all duration-300 cursor-pointer group">
+<div class="w-12 h-12 rounded-full bg-surface border border-border flex items-center justify-center mb-4 group-hover:text-primary group-hover:border-primary/30 transition-colors">
+<span class="material-symbols-outlined text-[24px]">add</span>
+</div>
+<h3 class="font-headline font-bold text-foreground mb-1">Submit New Idea</h3>
+<p class="text-sm text-foreground-muted">Got another spark of inspiration? Share it with the community.</p>
+</article>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-[#0a0a0a] w-full py-12 border-t border-[#333333] mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 max-w-7xl mx-auto w-full gap-6">
+<div class="text-lg font-black text-white">IdeaForge</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-body text-[#aaaaaa] hover:text-[#8b5cf6] text-sm transition-colors" href="#">Privacy Policy</a>
+<a class="font-body text-[#aaaaaa] hover:text-[#8b5cf6] text-sm transition-colors" href="#">Terms of Service</a>
+<a class="font-body text-[#aaaaaa] hover:text-[#8b5cf6] text-sm transition-colors" href="#">Contact</a>
+<a class="font-body text-[#aaaaaa] hover:text-[#8b5cf6] text-sm transition-colors" href="#">Changelog</a>
+</div>
+<div class="font-body text-[#aaaaaa] text-sm">© 2024 IdeaForge. Built for innovators.</div>
+</div>
+</footer>
+</body></html>

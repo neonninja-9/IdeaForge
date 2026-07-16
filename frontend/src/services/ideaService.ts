@@ -1,0 +1,62 @@
+/**
+ * Idea Service
+ * ------------
+ * API layer for all idea endpoints.
+ */
+
+import { apiFetch } from "./apiClient";
+import type {
+  IdeasListResponse,
+  IdeaDetailResponse,
+  DashboardResponse,
+  CreateIdeaPayload,
+} from "../types/idea.types";
+
+const ideaService = {
+  async getIdeas(params: {
+    q?: string;
+    category?: string;
+    tag?: string;
+    difficulty?: string;
+    sort?: string;
+    page?: number;
+    limit?: number;
+  } = {}): Promise<IdeasListResponse> {
+    const searchParams = new URLSearchParams();
+    if (params.q) searchParams.set("q", params.q);
+    if (params.category) searchParams.set("category", params.category);
+    if (params.tag) searchParams.set("tag", params.tag);
+    if (params.difficulty) searchParams.set("difficulty", params.difficulty);
+    if (params.sort) searchParams.set("sort", params.sort);
+    if (params.page) searchParams.set("page", String(params.page));
+    if (params.limit) searchParams.set("limit", String(params.limit));
+
+    const qs = searchParams.toString();
+    return apiFetch<IdeasListResponse>(`/ideas${qs ? `?${qs}` : ""}`);
+  },
+
+  async getIdeaById(id: string): Promise<IdeaDetailResponse> {
+    return apiFetch<IdeaDetailResponse>(`/ideas/${id}`);
+  },
+
+  async createIdea(data: CreateIdeaPayload): Promise<{ status: string; data: { idea: unknown } }> {
+    return apiFetch("/ideas", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+
+  async deleteIdea(id: string): Promise<{ status: string; message: string }> {
+    return apiFetch(`/ideas/${id}`, { method: "DELETE" });
+  },
+
+  async getDashboard(): Promise<DashboardResponse> {
+    return apiFetch<DashboardResponse>("/ideas/dashboard");
+  },
+
+  async getMyIdeas(): Promise<{ status: string; data: { ideas: unknown[] } }> {
+    return apiFetch("/ideas/my");
+  },
+};
+
+export default ideaService;

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IdeaForge - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#6c3ce0',
+                            light: '#8b5cf6',
+                        },
+                        surface: {
+                            DEFAULT: '#ffffff',
+                            alt: '#f5f5f0',
+                            dark: '#0a0a0a',
+                        },
+                        foreground: {
+                            DEFAULT: '#0a0a0a',
+                            mid: '#555555',
+                            muted: '#aaaaaa',
+                        },
+                        border: '#e5e5e0',
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "2rem",
+                        "full": "9999px"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter", "sans-serif"],
+                        "display": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Space Grotesk", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-image: radial-gradient(circle at 2px 2px, rgba(10,10,10,0.05) 1px, transparent 0);
+            background-size: 24px 24px;
+            background-color: theme('colors.surface.alt');
+        }
+    </style>
+</head>
+<body class="font-body text-foreground antialiased min-h-screen flex flex-col pt-16">
+<!-- TopNavBar -->
+<nav class="bg-surface/80 dark:bg-surface-dark/80 backdrop-blur-md fixed top-0 w-full z-50 border-b border-border dark:border-foreground-mid/20 shadow-sm transition-all duration-300 ease-in-out">
+<div class="flex justify-between items-center px-8 h-16 max-w-full mx-auto">
+<div class="flex items-center gap-8">
+<a class="text-2xl font-black tracking-tighter text-foreground dark:text-surface-alt font-headline" href="#">IdeaForge</a>
+<div class="hidden md:flex gap-6">
+<a class="font-label uppercase tracking-[0.15em] text-xs text-foreground-mid hover:text-[#6c3ce0] transition-colors duration-300 font-semibold py-5" href="#">Discover</a>
+<a class="font-label uppercase tracking-[0.15em] text-xs text-foreground-mid hover:text-[#6c3ce0] transition-colors duration-300 font-semibold py-5" href="#">Feed</a>
+<a class="font-label uppercase tracking-[0.15em] text-xs text-foreground-mid hover:text-[#6c3ce0] transition-colors duration-300 font-semibold py-5" href="#">Community</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-foreground-mid hover:text-[#6c3ce0] transition-colors">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</button>
+<button class="text-foreground-mid hover:text-[#6c3ce0] transition-colors relative">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<button class="bg-primary hover:bg-primary-light text-white font-label uppercase tracking-widest text-xs py-2 px-5 rounded-full transition-all duration-300 transform hover:scale-105 ml-2">Submit Idea</button>
+<img alt="User avatar" class="w-8 h-8 rounded-full ml-2 border border-border object-cover" data-alt="A clean, minimalist portrait of a professional individual against a bright white background, used as an avatar. The lighting is soft and even, highlighting modern corporate aesthetics. The image style aligns with a premium, editorial digital platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGB8YbGLn2waMExDzbLjviemHixea7fjDqFE7v_2ciOYeT7hvGlsFw-QG3ftKqvTm18gr-YDKRj3Fg6E2B0m2IDZItau0bmppx3KIN72VsQQwfpSudsTYsvXAxjKrGMgi9RjBcRm8LPpuDSScVJI-6L5WX4rOS7OnNWDUw3lSfr33c7Ib48qGWsth1F5N46pwq3GwN682Ajb5-jQ6bvwMt3vkiNHzCM4gxxp3mz-XbibyqwU0C0k4bgNStnv9hHRkWUVdJEMpGGRw"/>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow max-w-7xl mx-auto w-full px-8 py-12">
+<!-- Header -->
+<header class="mb-10">
+<h1 class="text-[28px] font-headline font-black tracking-tight text-foreground">Dashboard</h1>
+<p class="text-foreground-muted mt-1">Welcome back, Sarah</p>
+</header>
+<!-- Stats Row -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+<!-- Stat Card 1 -->
+<div class="bg-surface/80 backdrop-blur-sm rounded-xl border border-border p-6 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between h-32">
+<div class="flex justify-between items-start">
+<span class="font-label uppercase tracking-widest text-xs text-foreground-mid">Ideas Submitted</span>
+<div class="bg-surface-alt p-2 rounded-full text-primary">
+<span class="material-symbols-outlined text-[18px]">lightbulb</span>
+</div>
+</div>
+<div>
+<span class="text-3xl font-black font-headline tracking-tighter text-foreground">12</span>
+<span class="text-xs text-emerald-500 ml-2 font-medium">+2 this month</span>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="bg-surface/80 backdrop-blur-sm rounded-xl border border-border p-6 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between h-32">
+<div class="flex justify-between items-start">
+<span class="font-label uppercase tracking-widest text-xs text-foreground-mid">Upvotes Received</span>
+<div class="bg-surface-alt p-2 rounded-full text-primary">
+<span class="material-symbols-outlined text-[18px]">arrow_upward</span>
+</div>
+</div>
+<div>
+<span class="text-3xl font-black font-headline tracking-tighter text-foreground">342</span>
+<span class="text-xs text-emerald-500 ml-2 font-medium">+48 this week</span>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="bg-surface/80 backdrop-blur-sm rounded-xl border border-border p-6 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between h-32">
+<div class="flex justify-between items-start">
+<span class="font-label uppercase tracking-widest text-xs text-foreground-mid">Total Comments</span>
+<div class="bg-surface-alt p-2 rounded-full text-primary">
+<span class="material-symbols-outlined text-[18px]">chat_bubble</span>
+</div>
+</div>
+<div>
+<span class="text-3xl font-black font-headline tracking-tighter text-foreground">56</span>
+</div>
+</div>
+<!-- Stat Card 4 -->
+<div class="bg-surface/80 backdrop-blur-sm rounded-xl border border-border p-6 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between h-32">
+<div class="flex justify-between items-start">
+<span class="font-label uppercase tracking-widest text-xs text-foreground-mid">Global Rank</span>
+<div class="bg-surface-alt p-2 rounded-full text-primary">
+<span class="material-symbols-outlined text-[18px]">emoji_events</span>
+</div>
+</div>
+<div>
+<span class="text-3xl font-black font-headline tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-light to-purple-400">#124</span>
+<span class="text-xs text-emerald-500 ml-2 font-medium">Top 5%</span>
+</div>
+</div>
+</section>
+<!-- Middle Section -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+<!-- Chart Area -->
+<div class="lg:col-span-7 bg-surface/90 backdrop-blur-md rounded-2xl border border-border p-8 shadow-sm flex flex-col h-[400px]">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline font-bold text-lg text-foreground">Activity Overview</h2>
+<select class="bg-surface-alt border-none text-xs font-label uppercase tracking-wider rounded-lg text-foreground-mid focus:ring-primary/30">
+<option>Last 30 Days</option>
+<option>Last 7 Days</option>
+<option>This Year</option>
+</select>
+</div>
+<div class="flex-grow flex items-center justify-center bg-surface-alt/50 rounded-xl border border-border/50 border-dashed relative overflow-hidden">
+<!-- Placeholder for Chart -->
+<div class="absolute inset-0 flex flex-col items-center justify-center text-foreground-muted">
+<span class="material-symbols-outlined text-4xl mb-2 opacity-50">show_chart</span>
+<p class="text-sm font-medium">Chart Visualization Loading...</p>
+</div>
+<!-- Decorative subtle grid for empty state -->
+<div class="w-full h-full opacity-10" style="background-image: linear-gradient(#0a0a0a 1px, transparent 1px), linear-gradient(90deg, #0a0a0a 1px, transparent 1px); background-size: 40px 40px;"></div>
+</div>
+</div>
+<!-- Notifications List -->
+<div class="lg:col-span-5 bg-surface/90 backdrop-blur-md rounded-2xl border border-border p-8 shadow-sm flex flex-col h-[400px]">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline font-bold text-lg text-foreground">Recent Notifications</h2>
+<button class="text-xs font-label uppercase tracking-wider text-primary hover:text-primary-light transition-colors">Mark all read</button>
+</div>
+<div class="flex flex-col gap-4 overflow-y-auto pr-2">
+<!-- Notification Item -->
+<div class="flex items-start gap-4 p-4 rounded-xl bg-surface-alt/50 hover:bg-surface-alt transition-colors group cursor-pointer">
+<div class="bg-white rounded-full p-2 text-primary shadow-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[16px]">arrow_upward</span>
+</div>
+<div class="flex-grow">
+<p class="text-sm font-medium text-foreground">Alex upvoted your Idea</p>
+<p class="text-xs text-foreground-muted mt-1">"AI-driven Code Reviewer"</p>
+</div>
+<span class="text-xs text-foreground-muted whitespace-nowrap">2h ago</span>
+</div>
+<!-- Notification Item -->
+<div class="flex items-start gap-4 p-4 rounded-xl bg-surface-alt/50 hover:bg-surface-alt transition-colors group cursor-pointer">
+<div class="bg-white rounded-full p-2 text-blue-500 shadow-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[16px]">chat_bubble</span>
+</div>
+<div class="flex-grow">
+<p class="text-sm font-medium text-foreground">New comment on AI Auditor</p>
+<p class="text-xs text-foreground-muted mt-1 line-clamp-1">"Great concept! Have you considered..."</p>
+</div>
+<span class="text-xs text-foreground-muted whitespace-nowrap">5h ago</span>
+</div>
+<!-- Notification Item -->
+<div class="flex items-start gap-4 p-4 rounded-xl bg-surface-alt/50 hover:bg-surface-alt transition-colors group cursor-pointer">
+<div class="bg-white rounded-full p-2 text-amber-500 shadow-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+</div>
+<div class="flex-grow">
+<p class="text-sm font-medium text-foreground">Your rank improved</p>
+<p class="text-xs text-foreground-muted mt-1">You are now in the top 5% of creators.</p>
+</div>
+<span class="text-xs text-foreground-muted whitespace-nowrap">1d ago</span>
+</div>
+<!-- Notification Item -->
+<div class="flex items-start gap-4 p-4 rounded-xl hover:bg-surface-alt transition-colors group cursor-pointer">
+<div class="bg-white rounded-full p-2 text-foreground-muted shadow-sm group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[16px]">bookmark</span>
+</div>
+<div class="flex-grow">
+<p class="text-sm font-medium text-foreground">Weekly Digest Available</p>
+<p class="text-xs text-foreground-muted mt-1">See top ideas from last week.</p>
+</div>
+<span class="text-xs text-foreground-muted whitespace-nowrap">2d ago</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Bottom Section: Trending Categories -->
+<section>
+<div class="flex justify-between items-end mb-6">
+<h2 class="font-headline font-bold text-lg text-foreground">Trending Categories</h2>
+<a class="text-xs font-label uppercase tracking-wider text-primary hover:text-primary-light transition-colors flex items-center gap-1" href="#">
+                    Explore all <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<!-- Category Card -->
+<div class="bg-surface/80 backdrop-blur-sm rounded-xl border border-border p-5 hover:border-primary/50 hover:shadow-md transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-headline font-bold text-foreground group-hover:text-primary transition-colors">AI / ML</h3>
+<span class="text-xs font-medium text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-full">+24%</span>
+</div>
+<div class="flex items-end justify-between mt-8">
+<div>
+<p class="text-2xl font-black font-headline tracking-tight text-foreground">1.2k</p>
+<p class="text-xs text-foreground-muted uppercase tracking-wider font-label">Active Ideas</p>
+</div>
+<!-- Sparkline placeholder (CSS drawn) -->
+<div class="w-16 h-8 flex items-end gap-[2px] opacity-70 group-hover:opacity-100 transition-opacity">
+<div class="w-2 bg-primary/20 rounded-t-sm h-[30%]"></div>
+<div class="w-2 bg-primary/40 rounded-t-sm h-[50%]"></div>
+<div class="w-2 bg-primary/60 rounded-t-sm h-[40%]"></div>
+<div class="w-2 bg-primary/80 rounded-t-sm h-[70%]"></div>
+<div class="w-2 bg-primary rounded-t-sm h-[100%]"></div>
+</div>
+</div>
+</div>
+<!-- Category Card -->
+<div class="bg-surface/80 backdrop-blur-sm rounded-xl border border-border p-5 hover:border-primary/50 hover:shadow-md transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-headline font-bold text-foreground group-hover:text-primary transition-colors">Web3</h3>
+<span class="text-xs font-medium text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-full">+12%</span>
+</div>
+<div class="flex items-end justify-between mt-8">
+<div>
+<p class="text-2xl font-black font-headline tracking-tight text-foreground">845</p>
+<p class="text-xs text-foreground-muted uppercase tracking-wider font-label">Active Ideas</p>
+</div>
+<div class="w-16 h-8 flex items-end gap-[2px] opacity-70 group-hover:opacity-100 transition-opacity">
+<div class="w-2 bg-primary/20 rounded-t-sm h-[40%]"></div>
+<div class="w-2 bg-primary/40 rounded-t-sm h-[30%]"></div>
+<div class="w-2 bg-primary/60 rounded-t-sm h-[60%]"></div>
+<div class="w-2 bg-primary/80 rounded-t-sm h-[50%]"></div>
+<div class="w-2 bg-primary rounded-t-sm h-[80%]"></div>
+</div>
+</div>
+</div>
+<!-- Category Card -->
+<div class="bg-surface/80 backdrop-blur-sm rounded-xl border border-border p-5 hover:border-primary/50 hover:shadow-md transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-headline font-bold text-foreground group-hover:text-primary transition-colors">DevTools</h3>
+<span class="text-xs font-medium text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-full">+8%</span>
+</div>
+<div class="flex items-end justify-between mt-8">
+<div>
+<p class="text-2xl font-black font-headline tracking-tight text-foreground">620</p>
+<p class="text-xs text-foreground-muted uppercase tracking-wider font-label">Active Ideas</p>
+</div>
+<div class="w-16 h-8 flex items-end gap-[2px] opacity-70 group-hover:opacity-100 transition-opacity">
+<div class="w-2 bg-primary/20 rounded-t-sm h-[60%]"></div>
+<div class="w-2 bg-primary/40 rounded-t-sm h-[50%]"></div>
+<div class="w-2 bg-primary/60 rounded-t-sm h-[70%]"></div>
+<div class="w-2 bg-primary/80 rounded-t-sm h-[60%]"></div>
+<div class="w-2 bg-primary rounded-t-sm h-[90%]"></div>
+</div>
+</div>
+</div>
+<!-- Category Card -->
+<div class="bg-surface/80 backdrop-blur-sm rounded-xl border border-border p-5 hover:border-primary/50 hover:shadow-md transition-all cursor-pointer group">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-headline font-bold text-foreground group-hover:text-primary transition-colors">SaaS</h3>
+<span class="text-xs font-medium text-foreground-muted bg-foreground-muted/10 px-2 py-1 rounded-full">Steady</span>
+</div>
+<div class="flex items-end justify-between mt-8">
+<div>
+<p class="text-2xl font-black font-headline tracking-tight text-foreground">2.1k</p>
+<p class="text-xs text-foreground-muted uppercase tracking-wider font-label">Active Ideas</p>
+</div>
+<div class="w-16 h-8 flex items-end gap-[2px] opacity-70 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0">
+<div class="w-2 bg-primary/40 rounded-t-sm h-[50%]"></div>
+<div class="w-2 bg-primary/40 rounded-t-sm h-[45%]"></div>
+<div class="w-2 bg-primary/40 rounded-t-sm h-[55%]"></div>
+<div class="w-2 bg-primary/40 rounded-t-sm h-[50%]"></div>
+<div class="w-2 bg-primary/40 rounded-t-sm h-[48%]"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-dark dark:bg-surface-dark w-full border-t border-foreground-mid/10 mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center px-8 py-12 gap-6 max-w-7xl mx-auto w-full">
+<div class="text-lg font-black text-surface-alt font-headline">IdeaForge</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-label uppercase tracking-[0.15em] text-xs text-foreground-muted hover:text-surface-alt hover:text-[#8b5cf6] transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Manifesto</a>
+<a class="font-label uppercase tracking-[0.15em] text-xs text-foreground-muted hover:text-surface-alt hover:text-[#8b5cf6] transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Terms</a>
+<a class="font-label uppercase tracking-[0.15em] text-xs text-foreground-muted hover:text-surface-alt hover:text-[#8b5cf6] transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Privacy</a>
+<a class="font-label uppercase tracking-[0.15em] text-xs text-foreground-muted hover:text-surface-alt hover:text-[#8b5cf6] transition-colors opacity-80 hover:opacity-100 transition-opacity" href="#">Support</a>
+</div>
+<div class="font-label uppercase tracking-[0.15em] text-xs text-foreground-muted">
+                © 2024 IdeaForge. Built for innovators.
+            </div>
+</div>
+</footer>
+</body></html>
