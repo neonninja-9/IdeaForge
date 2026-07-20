@@ -11,9 +11,10 @@ import { useAuth } from "../hooks/useAuth";
 import ideaService from "../services/ideaService";
 import categoryService from "../services/categoryService";
 import type { Idea, Category } from "../types/idea.types";
+import PageSkeleton from "../components/PageSkeleton";
 
 export default function IdeasFeedPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,33 +60,9 @@ export default function IdeasFeedPage() {
   }, [searchInput]);
 
   return (
-    <div className="min-h-screen bg-surface-alt">
-      {/* ── Top Nav ── */}
-      <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-edge shadow-sm">
-        <div className="flex justify-between items-center px-6 sm:px-8 h-16 max-w-7xl mx-auto">
-          <div className="flex items-center gap-8">
-            <Link to="/" className="text-xl font-black text-fg tracking-tighter">IdeaForge</Link>
-            <div className="hidden md:flex gap-6">
-              <Link to="/explore" className="text-xs font-semibold uppercase tracking-[0.15em] text-vivid border-b-2 border-vivid py-5">Explore</Link>
-              <Link to="/submit" className="text-xs font-semibold uppercase tracking-[0.15em] text-fg-mid hover:text-vivid transition-colors py-5">Submit Idea</Link>
-              {user && <Link to="/dashboard" className="text-xs font-semibold uppercase tracking-[0.15em] text-fg-mid hover:text-vivid transition-colors py-5">Dashboard</Link>}
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            {user ? (
-              <>
-                <Link to="/dashboard" className="text-xs font-semibold text-fg-mid hover:text-vivid transition-colors">{user.username}</Link>
-                <button onClick={() => logout()} className="text-xs font-semibold text-fg-mid hover:text-red-500 transition-colors cursor-pointer">Logout</button>
-              </>
-            ) : (
-              <Link to="/login" className="bg-fg text-white px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-widest hover:bg-vivid transition-colors">Get Started</Link>
-            )}
-          </div>
-        </div>
-      </nav>
-
+    <div className="min-h-[calc(100vh-4rem)] bg-surface-alt">
       {/* ── Main Content ── */}
-      <main className="pt-24 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <main className="py-10 sm:py-14 max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
         {/* Filter Section */}
         <section className="mb-10 p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-edge">
           <div className="flex flex-col md:flex-row gap-4 items-center mb-4">
@@ -141,12 +118,7 @@ export default function IdeasFeedPage() {
 
         {/* Ideas Grid */}
         {loading ? (
-          <div className="flex justify-center py-20">
-            <svg className="w-8 h-8 animate-spin text-vivid" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
-          </div>
+          <PageSkeleton variant="feed" />
         ) : ideas.length === 0 ? (
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-edge border-dashed p-16 text-center">
             <div className="text-5xl mb-4">🔍</div>

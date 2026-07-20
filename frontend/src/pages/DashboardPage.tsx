@@ -10,9 +10,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import ideaService from "../services/ideaService";
 import type { Idea } from "../types/idea.types";
+import PageSkeleton from "../components/PageSkeleton";
 
 export default function DashboardPage() {
-  const { user, isLoading: authLoading, logout } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   const [stats, setStats] = useState({ ideasCount: 0, totalVotes: 0, totalComments: 0 });
@@ -36,57 +37,16 @@ export default function DashboardPage() {
       .finally(() => setLoading(false));
   }, [user, authLoading, navigate]);
 
-  async function handleLogout() {
-    await logout();
-    navigate("/login");
-  }
-
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface-alt">
-        <div className="flex flex-col items-center gap-4">
-          <svg className="w-8 h-8 animate-spin text-vivid" viewBox="0 0 24 24" fill="none">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-          </svg>
-          <p className="text-fg-mid text-sm font-medium">Loading dashboard...</p>
-        </div>
-      </div>
+      <div className="min-h-[calc(100vh-4rem)] bg-surface-alt"><PageSkeleton variant="dashboard" /></div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-surface-alt">
-      {/* ── Top Nav ── */}
-      <nav className="bg-white/80 backdrop-blur-md fixed top-0 w-full z-50 border-b border-edge shadow-sm">
-        <div className="flex justify-between items-center px-6 sm:px-8 h-16 max-w-7xl mx-auto">
-          <div className="flex items-center gap-8">
-            <Link to="/" className="text-2xl font-black tracking-tighter text-fg">IdeaForge</Link>
-            <div className="hidden md:flex gap-6">
-              <Link to="/explore" className="text-xs font-semibold uppercase tracking-[0.15em] text-fg-mid hover:text-vivid transition-colors py-5">Explore</Link>
-              <Link to="/submit" className="text-xs font-semibold uppercase tracking-[0.15em] text-fg-mid hover:text-vivid transition-colors py-5">Submit Idea</Link>
-              <Link to="/dashboard" className="text-xs font-semibold uppercase tracking-[0.15em] text-vivid border-b-2 border-vivid py-5">Dashboard</Link>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <Link
-              to="/submit"
-              className="bg-fg hover:bg-vivid text-white text-xs font-semibold uppercase tracking-widest py-2 px-5 rounded-full transition-all duration-300"
-            >
-              Submit Idea
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="text-xs font-semibold uppercase tracking-[0.15em] text-fg-mid hover:text-red-500 transition-colors cursor-pointer"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </nav>
-
+    <div className="min-h-[calc(100vh-4rem)] bg-surface-alt">
       {/* ── Main Content ── */}
-      <main className="max-w-7xl mx-auto w-full px-6 sm:px-8 pt-24 pb-16">
+      <main className="max-w-7xl mx-auto w-full px-5 sm:px-6 lg:px-8 py-10 sm:py-14">
         {/* Header */}
         <header className="mb-10">
           <h1 className="text-3xl font-black tracking-tight text-fg">Dashboard</h1>

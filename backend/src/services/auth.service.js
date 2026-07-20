@@ -97,15 +97,21 @@ const authService = {
    *   2. Compare password against stored hash (→ 401 if mismatch)
    *   3. Sign access + refresh tokens
    *
-   * @param   {{ email: string, password: string }} input
+   * @param   {{ identifier: string, password: string }} input
    * @returns {Promise<{ user: object, accessToken: string, refreshToken: string }>}
    * @throws  {AppError} 401 on invalid credentials
    */
-  async login({ email, password }) {
+  async login({ identifier, password }) {
     // 1 — Lookup user
-    const user = await userRepository.findByEmail(email);
+    let user;
+    if (identifier.includes("@")) {
+      user = await userRepository.findByEmail(identifier);
+    } else {
+      user = await userRepository.findByUsername(identifier);
+    }
+
     if (!user) {
-      throw new AppError("Invalid email or password", 401);
+      throw new AppError("Invalid credentials", 401);
     }
 
     // 2 — Verify password

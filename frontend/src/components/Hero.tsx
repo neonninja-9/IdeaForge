@@ -1,5 +1,7 @@
 "use client";
 
+import { Link } from "react-router-dom";
+
 export default function Hero() {
   return (
     <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-surface-alt dot-grid px-5 pt-28 pb-16 sm:px-6 lg:px-10">
@@ -40,19 +42,19 @@ export default function Hero() {
           className="mx-auto flex w-full max-w-sm flex-col justify-center gap-3 animate-reveal-up sm:max-w-none sm:flex-row sm:flex-wrap sm:gap-5"
           style={{ animationDelay: "0.6s" }}
         >
-          <button className="group relative w-full overflow-hidden rounded-full bg-fg px-6 py-4 text-sm font-semibold uppercase tracking-[0.1em] text-fg-on-dark transition-all duration-300 hover:shadow-[0_0_40px_rgba(108,60,224,0.3)] cursor-pointer sm:w-auto sm:px-8 sm:tracking-[0.15em]">
+          <Link to="/register" className="group relative w-full overflow-hidden rounded-full bg-fg px-6 py-4 text-sm font-semibold uppercase tracking-[0.1em] text-fg-on-dark transition-all duration-300 hover:shadow-[0_0_40px_rgba(108,60,224,0.3)] cursor-pointer sm:w-auto sm:px-8 sm:tracking-[0.15em] text-center">
             <span className="relative z-10">Start Building Free</span>
             <span className="absolute inset-0 bg-vivid translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-          </button>
-          <button className="group flex w-full items-center justify-center gap-3 px-6 py-4 text-sm font-semibold uppercase tracking-[0.1em] text-fg-mid transition-all duration-300 hover:text-fg cursor-pointer sm:w-auto sm:px-8 sm:tracking-[0.15em]">
+          </Link>
+          <Link to="/explore" className="group flex w-full items-center justify-center gap-3 px-6 py-4 text-sm font-semibold uppercase tracking-[0.1em] text-fg-mid transition-all duration-300 hover:text-fg cursor-pointer sm:w-auto sm:px-8 sm:tracking-[0.15em]">
             <span className="relative w-10 h-10 rounded-full border-2 border-fg-mid group-hover:border-vivid flex items-center justify-center transition-colors duration-300">
               <svg className="w-4 h-4 ml-0.5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
               </svg>
               <span className="absolute inset-0 rounded-full border-2 border-vivid opacity-0 group-hover:opacity-100" style={{ animation: "pulse-ring 1.5s ease-out infinite" }} />
             </span>
-            Watch the Story
-          </button>
+            Explore Ideas
+          </Link>
         </div>
 
         <div className="mt-14 flex flex-col items-center gap-2 text-fg-light animate-reveal-up sm:mt-20" style={{ animationDelay: "0.9s" }}>

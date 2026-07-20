@@ -12,6 +12,7 @@ import ideaService from "../services/ideaService";
 import commentService from "../services/commentService";
 import voteService from "../services/voteService";
 import type { Idea, Comment } from "../types/idea.types";
+import PageSkeleton from "../components/PageSkeleton";
 
 export default function IdeaDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -94,12 +95,7 @@ export default function IdeaDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface-alt">
-        <svg className="w-8 h-8 animate-spin text-vivid" viewBox="0 0 24 24" fill="none">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-        </svg>
-      </div>
+      <div className="min-h-[calc(100vh-4rem)] bg-surface-alt"><PageSkeleton variant="detail" /></div>
     );
   }
 
@@ -113,30 +109,9 @@ export default function IdeaDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-surface-alt">
-      {/* ── Top Nav ── */}
-      <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-edge shadow-sm">
-        <div className="flex justify-between items-center px-6 sm:px-8 h-16 max-w-7xl mx-auto">
-          <div className="flex items-center gap-8">
-            <Link to="/" className="text-xl font-black text-fg tracking-tighter">IdeaForge</Link>
-            <div className="hidden md:flex gap-6">
-              <Link to="/explore" className="text-xs font-semibold uppercase tracking-[0.15em] text-fg-mid hover:text-vivid transition-colors py-5">Explore</Link>
-              <Link to="/submit" className="text-xs font-semibold uppercase tracking-[0.15em] text-fg-mid hover:text-vivid transition-colors py-5">Submit Idea</Link>
-              {user && <Link to="/dashboard" className="text-xs font-semibold uppercase tracking-[0.15em] text-fg-mid hover:text-vivid transition-colors py-5">Dashboard</Link>}
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            {user ? (
-              <Link to="/dashboard" className="text-xs font-semibold text-fg-mid hover:text-vivid transition-colors">{user.username}</Link>
-            ) : (
-              <Link to="/login" className="bg-fg text-white px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-widest hover:bg-vivid transition-colors">Sign In</Link>
-            )}
-          </div>
-        </div>
-      </nav>
-
+    <div className="min-h-[calc(100vh-4rem)] bg-surface-alt">
       {/* ── Main Content ── */}
-      <main className="max-w-7xl mx-auto px-6 lg:px-8 pt-28 pb-20">
+      <main className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-10 sm:py-14">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-fg-muted uppercase tracking-wider mb-8">
           <Link to="/explore" className="hover:text-vivid transition-colors">Explore</Link>

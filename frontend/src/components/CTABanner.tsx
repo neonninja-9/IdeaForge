@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function CTABanner() {
   const [inView, setInView] = useState(false);
@@ -39,12 +40,12 @@ export default function CTABanner() {
           need to survive the market.
         </p>
         <div className="relative mx-auto flex w-full max-w-sm flex-col justify-center gap-3 sm:max-w-none sm:flex-row sm:flex-wrap sm:gap-4">
-          <button className="w-full rounded-full bg-white px-6 py-4 text-sm font-semibold uppercase tracking-[0.1em] text-fg transition-all duration-300 hover:bg-vivid hover:text-white cursor-pointer hover:shadow-[0_0_40px_rgba(108,60,224,0.3)] sm:w-auto sm:px-8 sm:tracking-[0.12em]">
+          <Link to="/register" className="w-full rounded-full bg-white px-6 py-4 text-sm font-semibold uppercase tracking-[0.1em] text-fg transition-all duration-300 hover:bg-vivid hover:text-white cursor-pointer hover:shadow-[0_0_40px_rgba(108,60,224,0.3)] sm:w-auto sm:px-8 sm:tracking-[0.12em] text-center">
             Start Building Free
-          </button>
-          <button className="w-full rounded-full border border-white/20 px-6 py-4 text-sm font-semibold uppercase tracking-[0.1em] text-white/60 transition-all duration-300 hover:border-vivid-light hover:text-vivid-light cursor-pointer sm:w-auto sm:px-8 sm:tracking-[0.12em]">
-            Talk to Strategy
-          </button>
+          </Link>
+          <Link to="/explore" className="w-full rounded-full border border-white/20 px-6 py-4 text-sm font-semibold uppercase tracking-[0.1em] text-white/60 transition-all duration-300 hover:border-vivid-light hover:text-vivid-light cursor-pointer sm:w-auto sm:px-8 sm:tracking-[0.12em] text-center">
+            Explore Ideas
+          </Link>
         </div>
       </div>
     </section>

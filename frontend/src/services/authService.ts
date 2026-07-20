@@ -59,7 +59,7 @@ const authService = {
   },
 
   /**
-   * POST /login — Authenticate with email + password.
+   * POST /login — Authenticate with identifier (username or email) + password.
    */
   async login(payload: LoginPayload): Promise<AuthResponse> {
     return authFetch<AuthResponse>("/login", {

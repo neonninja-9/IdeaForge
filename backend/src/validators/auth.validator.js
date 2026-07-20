@@ -57,13 +57,10 @@ export const registerRules = [
  *   - password : not empty (we don't enforce strength rules on login)
  */
 export const loginRules = [
-  body("email")
+  body("identifier")
     .trim()
     .notEmpty()
-    .withMessage("Email is required")
-    .isEmail()
-    .withMessage("Must be a valid email address")
-    .normalizeEmail(),
+    .withMessage("Username or email is required"),
 
   body("password")
     .notEmpty()

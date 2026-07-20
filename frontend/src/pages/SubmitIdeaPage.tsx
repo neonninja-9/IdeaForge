@@ -6,12 +6,13 @@
  */
 
 import { useState, useEffect, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import ideaService from "../services/ideaService";
 import categoryService from "../services/categoryService";
 import tagService from "../services/tagService";
 import type { Category, Tag } from "../types/idea.types";
+import PageSkeleton from "../components/PageSkeleton";
 
 function generateTechStack(tagNames: string[], difficulty: string): string {
   const lower = tagNames.map(t => t.toLowerCase());
@@ -46,6 +47,7 @@ export default function SubmitIdeaPage() {
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [allTags, setAllTags] = useState<Tag[]>([]);
+  const [referenceLoading, setReferenceLoading] = useState(true);
 
   const [title, setTitle] = useState("");
   const [problem, setProblem] = useState("");
@@ -70,7 +72,7 @@ export default function SubmitIdeaPage() {
     ]).then(([catRes, tagRes]) => {
       setCategories(catRes.data.categories);
       setAllTags(tagRes.data.tags);
-    }).catch(console.error);
+    }).catch(console.error).finally(() => setReferenceLoading(false));
   }, []);
 
   // Compute tech stack suggestion
@@ -123,34 +125,16 @@ export default function SubmitIdeaPage() {
     }
   }
 
-  if (authLoading) {
+  if (authLoading || referenceLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface-alt">
-        <svg className="w-8 h-8 animate-spin text-vivid" viewBox="0 0 24 24" fill="none">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-        </svg>
-      </div>
+      <div className="min-h-[calc(100vh-4rem)] bg-surface-alt"><PageSkeleton variant="form" /></div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-surface-alt">
-      {/* ── Top Nav ── */}
-      <header className="bg-white/80 backdrop-blur-md fixed top-0 w-full z-50 border-b border-edge shadow-sm">
-        <div className="flex justify-between items-center px-6 sm:px-8 h-16 max-w-7xl mx-auto">
-          <Link to="/" className="text-2xl font-black tracking-tighter text-fg">IdeaForge</Link>
-          <div className="hidden md:flex items-center gap-8">
-            <Link to="/explore" className="text-xs font-semibold uppercase tracking-[0.15em] text-fg-mid hover:text-vivid transition-colors">Explore</Link>
-            <Link to="/submit" className="text-xs font-semibold uppercase tracking-[0.15em] text-vivid border-b-2 border-vivid py-5">Submit Idea</Link>
-            <Link to="/dashboard" className="text-xs font-semibold uppercase tracking-[0.15em] text-fg-mid hover:text-vivid transition-colors">Dashboard</Link>
-          </div>
-          <Link to="/dashboard" className="text-xs font-semibold text-fg-mid hover:text-vivid transition-colors">{user?.username}</Link>
-        </div>
-      </header>
-
+    <div className="min-h-[calc(100vh-4rem)] bg-surface-alt">
       {/* ── Main ── */}
-      <main className="pt-28 pb-24 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+      <main className="py-10 sm:py-14 px-5 sm:px-6 lg:px-8 flex flex-col items-center">
         <div className="text-center mb-10 max-w-2xl mx-auto">
           <h1 className="text-3xl font-black tracking-tight text-fg mb-3">Submit Your Idea</h1>
           <p className="text-fg-mid text-base">Share a real-world problem and your proposed solution with the community</p>

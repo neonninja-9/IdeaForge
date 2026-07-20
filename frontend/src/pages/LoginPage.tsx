@@ -21,19 +21,17 @@ import { useAuth } from "../hooks/useAuth";
 import AuthDoodles from "../components/AuthDoodles";
 
 interface FormErrors {
-  email?: string;
+  identifier?: string;
   password?: string;
 }
 
 // ─── Validation ────────────────────────────────────────────────
 
-function validateLogin(email: string, password: string): FormErrors {
+function validateLogin(identifier: string, password: string): FormErrors {
   const errors: FormErrors = {};
 
-  if (!email.trim()) {
-    errors.email = "Email is required";
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errors.email = "Must be a valid email address";
+  if (!identifier.trim()) {
+    errors.identifier = "Username or email is required";
   }
 
   if (!password) {
@@ -49,7 +47,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -59,7 +57,7 @@ export default function LoginPage() {
 
   function handleBlur(field: string) {
     setTouched((prev) => ({ ...prev, [field]: true }));
-    const validationErrors = validateLogin(email, password);
+    const validationErrors = validateLogin(identifier, password);
     setErrors((prev) => ({ ...prev, [field]: validationErrors[field as keyof FormErrors] }));
   }
 
@@ -67,15 +65,15 @@ export default function LoginPage() {
     e.preventDefault();
     setServerError("");
 
-    const validationErrors = validateLogin(email, password);
+    const validationErrors = validateLogin(identifier, password);
     setErrors(validationErrors);
-    setTouched({ email: true, password: true });
+    setTouched({ identifier: true, password: true });
 
     if (Object.keys(validationErrors).length > 0) return;
 
     setIsSubmitting(true);
     try {
-      await login(email, password);
+      await login(identifier, password);
       navigate("/dashboard");
     } catch (err: unknown) {
       const error = err as Error & { validationErrors?: { field: string; message: string }[] };
@@ -155,27 +153,27 @@ export default function LoginPage() {
             )}
 
             <form onSubmit={handleSubmit} noValidate className="space-y-5">
-              {/* Email */}
+              {/* Identifier */}
               <div>
-                <label htmlFor="login-email" className="block text-xs font-semibold uppercase tracking-[0.12em] text-fg-mid mb-2">
-                  Email
+                <label htmlFor="login-identifier" className="block text-xs font-semibold uppercase tracking-[0.12em] text-fg-mid mb-2">
+                  Username or Email
                 </label>
                 <input
-                  id="login-email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onBlur={() => handleBlur("email")}
-                  placeholder="you@example.com"
-                  autoComplete="email"
+                  id="login-identifier"
+                  type="text"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  onBlur={() => handleBlur("identifier")}
+                  placeholder="you@example.com or username"
+                  autoComplete="username"
                   className={`w-full min-h-12 px-4 py-3 text-sm bg-surface-alt border rounded-xl text-fg placeholder:text-fg-muted focus:outline-none focus:ring-2 transition-all duration-300 ${
-                    touched.email && errors.email
+                    touched.identifier && errors.identifier
                       ? "border-red-400 focus:ring-red-300"
                       : "border-edge focus:ring-vivid/30 focus:border-vivid"
                   }`}
                 />
-                {touched.email && errors.email && (
-                  <p className="mt-1.5 text-xs text-red-500 animate-reveal-up">{errors.email}</p>
+                {touched.identifier && errors.identifier && (
+                  <p className="mt-1.5 text-xs text-red-500 animate-reveal-up">{errors.identifier}</p>
                 )}
               </div>
 

@@ -54,10 +54,10 @@ const authController = {
    */
   async login(req, res, next) {
     try {
-      const { email, password } = req.body;
+      const { identifier, password } = req.body;
 
       const { user, accessToken, refreshToken } = await authService.login({
-        email,
+        identifier,
         password,
       });
 
