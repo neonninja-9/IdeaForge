@@ -1,335 +1,98 @@
-/**
- * IdeaDetailPage
- * --------------
- * Full detail view of a single idea with comments, voting, and tech stack.
- * Fetches real data from the API.
- */
-
-import { useState, useEffect, type FormEvent } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { ArrowLeft, ArrowUp, Bot, Check, ChevronRight, CircleAlert, Heart, Lightbulb, MessageCircle, Send, Share2, Sparkles, Target, TrendingUp, Users } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import ideaService from "../services/ideaService";
 import commentService from "../services/commentService";
 import voteService from "../services/voteService";
-import type { Idea, Comment } from "../types/idea.types";
+import type { Comment, Idea } from "../types/idea.types";
 import PageSkeleton from "../components/PageSkeleton";
+import { isFavoriteIdea, toggleFavoriteIdea } from "../lib/favorites";
+
+function score(idea: Idea, adjustment = 0) { return Math.min(96, Math.max(58, 65 + idea.voteCount * 4 + idea.commentCount * 2 + adjustment)); }
+function date(dateValue: string) { return new Date(dateValue).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" }); }
 
 export default function IdeaDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
-
   const [idea, setIdea] = useState<Idea | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  // Voting state
   const [hasVoted, setHasVoted] = useState(false);
   const [voteCount, setVoteCount] = useState(0);
   const [voting, setVoting] = useState(false);
-
-  // Comment form
   const [commentText, setCommentText] = useState("");
   const [submittingComment, setSubmittingComment] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     if (!id) return;
-
     setLoading(true);
-    Promise.all([
-      ideaService.getIdeaById(id),
-      commentService.getComments(id),
-    ])
-      .then(([ideaRes, commentsRes]) => {
-        setIdea(ideaRes.data.idea);
-        setHasVoted(ideaRes.data.idea.hasVoted || false);
-        setVoteCount(ideaRes.data.idea.voteCount);
-        setComments(commentsRes.data.comments);
-      })
-      .catch((err) => setError(err.message))
+    Promise.all([ideaService.getIdeaById(id), commentService.getComments(id)])
+      .then(([ideaResponse, commentsResponse]) => { setIdea(ideaResponse.data.idea); setIsFavorite(isFavoriteIdea(ideaResponse.data.idea.id || ideaResponse.data.idea._id)); setHasVoted(ideaResponse.data.idea.hasVoted || false); setVoteCount(ideaResponse.data.idea.voteCount); setComments(commentsResponse.data.comments); })
+      .catch((requestError) => setError(requestError.message))
       .finally(() => setLoading(false));
   }, [id]);
+
+  const validation = useMemo(() => idea ? [
+    { label: "Market demand", value: score(idea, 4), color: "#6366f1" },
+    { label: "Feasibility", value: score(idea, -8), color: "#8b5cf6" },
+    { label: "Innovation", value: score(idea, 1), color: "#f59e0b" },
+  ] : [], [idea]);
 
   async function handleVote() {
     if (!user) return navigate("/login");
     if (!id || voting) return;
-
     setVoting(true);
-    try {
-      const res = await voteService.toggleVote(id);
-      setHasVoted(res.data.voted);
-      setVoteCount(res.data.voteCount);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setVoting(false);
-    }
+    try { const response = await voteService.toggleVote(id); setHasVoted(response.data.voted); setVoteCount(response.data.voteCount); }
+    catch (voteError) { console.error(voteError); }
+    finally { setVoting(false); }
   }
-
-  async function handleCommentSubmit(ev: FormEvent) {
-    ev.preventDefault();
+  async function handleCommentSubmit(event: FormEvent) {
+    event.preventDefault();
     if (!user) return navigate("/login");
     if (!id || !commentText.trim()) return;
-
     setSubmittingComment(true);
-    try {
-      const res = await commentService.addComment(id, commentText.trim());
-      setComments(prev => [...prev, res.data.comment]);
-      setCommentText("");
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setSubmittingComment(false);
-    }
+    try { const response = await commentService.addComment(id, commentText.trim()); setComments((current) => [...current, response.data.comment]); setCommentText(""); }
+    catch (commentError) { console.error(commentError); }
+    finally { setSubmittingComment(false); }
   }
+  async function handleDeleteComment(commentId: string) { try { await commentService.deleteComment(commentId); setComments((current) => current.filter((comment) => (comment.id || comment._id) !== commentId)); } catch (deleteError) { console.error(deleteError); } }
+  function handleFavorite() { if (!id) return; setIsFavorite(toggleFavoriteIdea(id)); }
 
-  async function handleDeleteComment(commentId: string) {
-    try {
-      await commentService.deleteComment(commentId);
-      setComments(prev => prev.filter(c => (c.id || c._id) !== commentId));
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  if (loading) return <div className="min-h-[calc(100vh-76px)] bg-[#fafaf8]"><PageSkeleton variant="detail" /></div>;
+  if (error || !idea) return <div className="min-h-screen bg-[#fafaf8] grid place-items-center px-5"><div className="text-center"><CircleAlert className="mx-auto text-rose-400" size={30} /><p className="mt-4 text-slate-600">{error || "Idea not found"}</p><Link to="/explore" className="mt-4 inline-flex text-sm font-semibold text-indigo-600">Back to ideas</Link></div></div>;
 
-  if (loading) {
-    return (
-      <div className="min-h-[calc(100vh-4rem)] bg-surface-alt"><PageSkeleton variant="detail" /></div>
-    );
-  }
-
-  if (error || !idea) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-surface-alt gap-4">
-        <p className="text-lg text-fg-mid">{error || "Idea not found"}</p>
-        <Link to="/explore" className="text-vivid hover:text-vivid-hover text-sm font-semibold">← Back to Explore</Link>
-      </div>
-    );
-  }
+  const overallScore = score(idea, 2);
+  const roadmap = [
+    { name: "Research", detail: "Validate the problem with 5 target users", done: true },
+    { name: "Prototype", detail: "Sketch the smallest useful experience", done: false },
+    { name: "MVP", detail: "Build and test the core value loop", done: false },
+    { name: "Launch", detail: "Share with your first focused community", done: false },
+  ];
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-surface-alt">
-      {/* ── Main Content ── */}
-      <main className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-10 sm:py-14">
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-fg-muted uppercase tracking-wider mb-8">
-          <Link to="/explore" className="hover:text-vivid transition-colors">Explore</Link>
-          <span>›</span>
-          <span className="hover:text-vivid transition-colors">{idea.category?.name}</span>
-          <span>›</span>
-          <span className="text-fg-mid">{idea.title}</span>
-        </nav>
+    <div className="min-h-[calc(100vh-76px)] bg-[#fafaf8]">
+      <main className="mx-auto max-w-[1440px] px-5 py-7 sm:px-8 sm:py-10 xl:px-12">
+        <div className="mb-7 flex items-center justify-between gap-4"><Link to="/explore" className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-500 transition hover:bg-white hover:text-slate-900"><ArrowLeft size={18} /> All ideas</Link><div className="flex items-center gap-2"><button onClick={handleFavorite} className={`grid size-11 place-items-center rounded-xl transition ${isFavorite ? "bg-rose-50 text-rose-500" : "text-slate-500 hover:bg-white hover:text-rose-500"}`} aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}><Heart size={18} className={isFavorite ? "fill-current" : ""} /></button><button className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-500 transition hover:bg-white hover:text-indigo-600"><Share2 size={18} /> <span className="hidden sm:inline">Share</span></button></div></div>
+        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_400px]">
+          <div className="space-y-8">
+            <header className="relative overflow-hidden rounded-[30px] bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-600 p-7 text-white shadow-[0_25px_65px_-35px_rgba(79,70,229,.75)] sm:p-10"><div className="pointer-events-none absolute -right-20 -top-24 size-80 rounded-full bg-white/10 blur-3xl" /><div className="relative"><div className="flex flex-wrap items-center gap-3 text-sm"><span className="rounded-full bg-white/15 px-3 py-1.5 font-semibold text-indigo-50">{idea.category?.name || "Uncategorized"}</span><span className="text-indigo-100">Created {date(idea.createdAt)}</span></div><h1 className="font-heading mt-6 max-w-3xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl">{idea.title}</h1><div className="mt-7 flex flex-wrap items-center gap-4 border-t border-white/15 pt-5"><div className="flex items-center gap-3"><span className="grid size-10 place-items-center rounded-xl bg-white/15 text-sm font-bold">{idea.author?.username?.charAt(0).toUpperCase()}</span><div><p className="text-sm font-semibold">{idea.author?.username}</p><p className="text-xs text-indigo-100">Idea creator</p></div></div><span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-indigo-50">{idea.difficulty} path</span></div></div></header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          {/* ── Left Column ── */}
-          <div className="lg:col-span-8 space-y-10">
-            {/* Header */}
-            <header className="space-y-5">
-              <div className="flex items-center gap-3 text-sm">
-                <span className="px-3 py-1 bg-vivid/10 text-vivid font-bold uppercase tracking-widest rounded-full text-xs">
-                  {idea.category?.name}
-                </span>
-                <span className="text-fg-muted">
-                  {new Date(idea.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                </span>
-              </div>
+            <section className="grid gap-4 md:grid-cols-2"><article className="rounded-[24px] border border-rose-100 bg-white p-6 shadow-sm"><span className="grid size-10 place-items-center rounded-2xl bg-rose-50 text-rose-500"><CircleAlert size={20} /></span><h2 className="font-heading mt-5 text-lg font-bold text-slate-900">The opportunity</h2><p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-600">{idea.problem}</p></article><article className="rounded-[24px] border border-emerald-100 bg-white p-6 shadow-sm"><span className="grid size-10 place-items-center rounded-2xl bg-emerald-50 text-emerald-500"><Lightbulb size={20} /></span><h2 className="font-heading mt-5 text-lg font-bold text-slate-900">The first solution</h2><p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-600">{idea.solution}</p></article></section>
+            {idea.impact && <section className="rounded-[24px] border border-indigo-100 bg-gradient-to-r from-indigo-50/80 to-violet-50/50 p-6"><div className="flex gap-4"><span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-white text-indigo-600 shadow-sm"><Target size={20} /></span><div><h2 className="font-heading text-lg font-bold text-slate-900">The impact to aim for</h2><p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-600">{idea.impact}</p></div></div></section>}
+            {idea.suggestedTechStack && <section className="rounded-[24px] border border-violet-100 bg-white p-6 shadow-sm"><div className="flex gap-4"><span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-violet-50 text-violet-600"><Sparkles size={20} /></span><div><p className="text-xs font-bold uppercase tracking-wide text-violet-600">Suggested foundation</p><p className="mt-2 text-sm leading-7 text-slate-600">{idea.suggestedTechStack}</p></div></div></section>}
 
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight leading-tight text-fg">
-                {idea.title}
-              </h1>
+            <section className="rounded-[28px] border border-slate-100 bg-white p-6 shadow-sm sm:p-8"><div className="flex items-start justify-between gap-4"><div><p className="text-sm font-semibold text-indigo-600">AI ROADMAP</p><h2 className="font-heading mt-1 text-2xl font-bold text-slate-900">From spark to first proof</h2></div><span className="grid size-11 place-items-center rounded-2xl bg-indigo-50 text-indigo-600"><Bot size={20} /></span></div><ol className="mt-8 space-y-0">{roadmap.map((stage, index) => <li key={stage.name} className="relative flex gap-4 pb-7 last:pb-0">{index < roadmap.length - 1 && <span className="absolute left-[15px] top-8 h-[calc(100%-7px)] w-px bg-slate-100" />}<span className={`z-10 grid size-8 shrink-0 place-items-center rounded-full ${stage.done ? "bg-emerald-500 text-white" : "border-2 border-indigo-200 bg-white text-indigo-500"}`}>{stage.done ? <Check size={16} /> : index + 1}</span><div className="pt-1"><p className="text-sm font-bold text-slate-800">{stage.name}</p><p className="mt-1 text-sm text-slate-500">{stage.detail}</p></div></li>)}</ol><button className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-xl bg-indigo-50 px-4 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-100">Open full roadmap <ChevronRight size={16} /></button></section>
 
-              <div className="flex items-center justify-between py-4 border-y border-edge/50">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-vivid/10 flex items-center justify-center text-vivid font-bold text-sm">
-                    {idea.author?.username?.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <div className="font-bold text-fg text-sm">{idea.author?.username}</div>
-                    <div className="text-xs text-fg-muted uppercase tracking-wider">Author</div>
-                  </div>
-                </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
-                  idea.difficulty === "Beginner" ? "bg-green-100 text-green-700" :
-                  idea.difficulty === "Intermediate" ? "bg-yellow-100 text-yellow-700" :
-                  "bg-red-100 text-red-700"
-                }`}>
-                  {idea.difficulty}
-                </span>
-              </div>
-            </header>
-
-            {/* Content Body */}
-            <article className="space-y-8 text-base text-fg-mid leading-relaxed">
-              {/* The Problem */}
-              <section>
-                <h2 className="text-lg font-bold text-fg mb-3 flex items-center gap-2">
-                  <span className="text-red-500">⚡</span> The Problem
-                </h2>
-                <p className="whitespace-pre-wrap">{idea.problem}</p>
-              </section>
-
-              {/* Proposed Solution */}
-              <section>
-                <h2 className="text-lg font-bold text-fg mb-3 flex items-center gap-2">
-                  <span className="text-green-500">💡</span> Proposed Solution
-                </h2>
-                <p className="whitespace-pre-wrap">{idea.solution}</p>
-              </section>
-
-              {/* Impact */}
-              {idea.impact && (
-                <section>
-                  <h2 className="text-lg font-bold text-fg mb-3 flex items-center gap-2">
-                    <span className="text-blue-500">🎯</span> Expected Impact
-                  </h2>
-                  <p className="whitespace-pre-wrap">{idea.impact}</p>
-                </section>
-              )}
-
-              {/* Tech Stack */}
-              {idea.suggestedTechStack && (
-                <section className="p-5 rounded-xl bg-vivid/5 border border-vivid/20">
-                  <h2 className="text-sm font-bold text-vivid mb-2 uppercase tracking-wider">🛠️ Suggested Tech Stack</h2>
-                  <p className="text-sm text-fg-mid">{idea.suggestedTechStack}</p>
-                </section>
-              )}
-            </article>
-
-            {/* Comments Section */}
-            <section className="border-t border-edge pt-10">
-              <h2 className="text-lg font-bold text-fg mb-6">
-                Discussion ({comments.length})
-              </h2>
-
-              {/* Comment Form */}
-              {user ? (
-                <form onSubmit={handleCommentSubmit} className="mb-8">
-                  <div className="flex gap-3">
-                    <div className="w-9 h-9 rounded-full bg-vivid/10 flex-shrink-0 flex items-center justify-center text-vivid font-bold text-xs">
-                      {user.username.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="flex-grow">
-                      <textarea
-                        value={commentText}
-                        onChange={(e) => setCommentText(e.target.value)}
-                        rows={3}
-                        placeholder="Share your thoughts, suggest improvements, or discuss implementation..."
-                        className="w-full px-4 py-3 bg-surface-alt border border-edge rounded-xl text-sm text-fg placeholder:text-fg-muted focus:outline-none focus:ring-2 focus:ring-vivid/30 focus:border-vivid transition-all resize-none"
-                      />
-                      <div className="flex justify-end mt-2">
-                        <button
-                          type="submit"
-                          disabled={submittingComment || !commentText.trim()}
-                          className="bg-fg text-white text-xs font-semibold uppercase tracking-widest py-2 px-6 rounded-full hover:bg-vivid transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                        >
-                          {submittingComment ? "Posting..." : "Post Comment"}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </form>
-              ) : (
-                <div className="mb-8 p-4 rounded-xl bg-surface-alt border border-edge text-center">
-                  <p className="text-sm text-fg-mid">
-                    <Link to="/login" className="text-vivid font-semibold hover:text-vivid-hover">Sign in</Link> to join the discussion.
-                  </p>
-                </div>
-              )}
-
-              {/* Comments List */}
-              <div className="space-y-4">
-                {comments.length === 0 ? (
-                  <p className="text-sm text-fg-muted text-center py-8">No comments yet. Be the first to share your thoughts!</p>
-                ) : (
-                  comments.map((comment) => (
-                    <div key={comment.id || comment._id} className="flex gap-3 p-4 rounded-xl bg-white/50 hover:bg-white/80 transition-colors">
-                      <div className="w-8 h-8 rounded-full bg-surface-alt flex-shrink-0 flex items-center justify-center text-fg-mid font-bold text-xs">
-                        {comment.user?.username?.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="flex-grow">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-sm font-semibold text-fg">{comment.user?.username}</span>
-                          <span className="text-xs text-fg-muted">
-                            {new Date(comment.createdAt).toLocaleDateString()}
-                          </span>
-                          {user && comment.user?._id === user.id && (
-                            <button
-                              onClick={() => handleDeleteComment(comment.id || comment._id)}
-                              className="ml-auto text-xs text-red-400 hover:text-red-600 transition-colors cursor-pointer"
-                            >
-                              Delete
-                            </button>
-                          )}
-                        </div>
-                        <p className="text-sm text-fg-mid">{comment.text}</p>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </section>
+            <section className="rounded-[28px] border border-slate-100 bg-white p-6 shadow-sm sm:p-8"><div className="flex items-center justify-between"><div><p className="text-sm font-semibold text-indigo-600">DISCUSSION</p><h2 className="font-heading mt-1 text-2xl font-bold text-slate-900">Build this idea together</h2></div><span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-500"><MessageCircle size={14} /> {comments.length}</span></div>{user ? <form onSubmit={handleCommentSubmit} className="mt-7"><textarea value={commentText} onChange={(event) => setCommentText(event.target.value)} rows={3} placeholder="Offer a thought, challenge an assumption, or suggest a next move..." className="w-full resize-none rounded-2xl border border-slate-200 bg-[#fcfcfd] px-4 py-3 text-sm leading-6 text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50" /><div className="mt-3 flex justify-end"><button type="submit" disabled={submittingComment || !commentText.trim()} className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50">{submittingComment ? "Posting..." : "Add to discussion"}<Send size={15} /></button></div></form> : <p className="mt-6 rounded-2xl bg-slate-50 p-4 text-sm text-slate-500"><Link to="/login" className="font-semibold text-indigo-600">Sign in</Link> to add your perspective.</p>}<div className="mt-7 space-y-4">{comments.length === 0 ? <p className="py-5 text-center text-sm text-slate-400">No conversation yet—your perspective could start it.</p> : comments.map((comment) => <article key={comment.id || comment._id} className="rounded-2xl bg-slate-50 p-4"><div className="flex items-center gap-3"><span className="grid size-8 place-items-center rounded-xl bg-white text-xs font-bold text-indigo-600 shadow-sm">{comment.user?.username?.charAt(0).toUpperCase()}</span><div><p className="text-sm font-semibold text-slate-700">{comment.user?.username}</p><p className="text-xs text-slate-400">{date(comment.createdAt)}</p></div>{user && comment.user?._id === user.id && <button onClick={() => handleDeleteComment(comment.id || comment._id)} className="ml-auto text-xs font-medium text-rose-500 hover:text-rose-600">Delete</button>}</div><p className="mt-3 text-sm leading-6 text-slate-600">{comment.text}</p></article>)}</div></section>
           </div>
 
-          {/* ── Right Sidebar ── */}
-          <aside className="lg:col-span-4 space-y-6">
-            {/* Vote Card */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-edge p-6 sticky top-24">
-              <div className="text-center mb-4">
-                <div className="text-4xl font-black text-fg mb-1">{voteCount}</div>
-                <p className="text-xs text-fg-muted uppercase tracking-wider">Upvotes</p>
-              </div>
-              <button
-                onClick={handleVote}
-                disabled={voting}
-                className={`w-full py-3 rounded-xl text-sm font-semibold uppercase tracking-widest transition-all cursor-pointer ${
-                  hasVoted
-                    ? "bg-vivid text-white hover:bg-vivid-hover"
-                    : "bg-surface-alt border border-edge text-fg hover:border-vivid hover:text-vivid"
-                }`}
-              >
-                {voting ? "..." : hasVoted ? "★ Upvoted" : "↑ Upvote"}
-              </button>
-
-              {/* Tags */}
-              {idea.tags && idea.tags.length > 0 && (
-                <div className="mt-6 pt-6 border-t border-edge">
-                  <h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-fg-mid mb-3">Tags</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {idea.tags.map(tag => (
-                      <span key={tag._id} className="text-xs font-medium text-fg-mid bg-surface-alt px-3 py-1 rounded-full">
-                        {tag.name}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Stats */}
-              <div className="mt-6 pt-6 border-t border-edge space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-fg-muted">Comments</span>
-                  <span className="font-semibold text-fg">{comments.length}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-fg-muted">Difficulty</span>
-                  <span className={`font-semibold ${
-                    idea.difficulty === "Beginner" ? "text-green-600" :
-                    idea.difficulty === "Intermediate" ? "text-yellow-600" :
-                    "text-red-600"
-                  }`}>
-                    {idea.difficulty}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-fg-muted">Posted</span>
-                  <span className="font-semibold text-fg">
-                    {new Date(idea.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </aside>
+          <aside className="space-y-6 xl:sticky xl:top-24 xl:h-fit"><section className="overflow-hidden rounded-[28px] border border-indigo-100 bg-white shadow-[0_18px_50px_-32px_rgba(79,70,229,.4)]"><div className="bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-5 text-white"><p className="text-xs font-semibold tracking-wide text-indigo-100">AI VALIDATION</p><div className="mt-3 flex items-end justify-between"><h2 className="font-heading text-xl font-bold">Opportunity signal</h2><span className="text-3xl font-bold">{overallScore}</span></div><div className="mt-3 h-2 overflow-hidden rounded-full bg-white/20"><span className="block h-full rounded-full bg-white" style={{ width: `${overallScore}%` }} /></div></div><div className="grid grid-cols-3 gap-2 p-5">{validation.map((metric) => <div key={metric.label} className="text-center"><div className="mx-auto grid size-[70px] place-items-center rounded-full" style={{ background: `conic-gradient(${metric.color} ${metric.value * 3.6}deg, #eef2ff 0deg)` }}><span className="grid size-[58px] place-items-center rounded-full bg-white text-sm font-bold text-slate-800">{metric.value}</span></div><p className="mt-2 text-[10px] font-semibold leading-4 text-slate-500">{metric.label}</p></div>)}</div><div className="border-t border-slate-100 px-6 py-5"><p className="text-sm leading-6 text-slate-600">This idea has a promising core. Test the problem with people in your first target group before investing in the full build.</p><button className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700">View validation notes <ChevronRight size={16} /></button></div></section>
+            <section className="rounded-[28px] border border-slate-100 bg-white p-6 shadow-sm"><div className="flex items-center gap-3"><span className="grid size-10 place-items-center rounded-2xl bg-amber-50 text-amber-600"><TrendingUp size={19} /></span><div><p className="text-sm font-semibold text-slate-800">Community momentum</p><p className="text-xs text-slate-400">Signals around this idea</p></div></div><div className="mt-5 grid grid-cols-2 gap-3"><div className="rounded-2xl bg-slate-50 p-4"><ArrowUp size={17} className="text-indigo-500" /><p className="mt-3 text-2xl font-bold text-slate-900">{voteCount}</p><p className="text-xs text-slate-400">Upvotes</p></div><div className="rounded-2xl bg-slate-50 p-4"><Users size={17} className="text-violet-500" /><p className="mt-3 text-2xl font-bold text-slate-900">{comments.length}</p><p className="text-xs text-slate-400">Voices</p></div></div><button onClick={handleVote} disabled={voting} className={`mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold transition ${hasVoted ? "bg-indigo-600 text-white hover:bg-indigo-700" : "border border-indigo-100 bg-indigo-50 text-indigo-600 hover:bg-indigo-100"}`}><ArrowUp size={17} />{voting ? "Updating..." : hasVoted ? "You support this" : "Support this idea"}</button></section>
+            <section className="rounded-[28px] border border-slate-100 bg-white p-6 shadow-sm"><p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Focus areas</p><div className="mt-4 flex flex-wrap gap-2">{idea.tags?.length ? idea.tags.map((tag) => <span key={tag._id || tag.id} className="rounded-full bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-600">{tag.name}</span>) : <span className="text-sm text-slate-400">No focus areas added yet.</span>}</div></section></aside>
         </div>
       </main>
     </div>

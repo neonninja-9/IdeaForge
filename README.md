@@ -6,6 +6,8 @@ Forging raw problems into polished projects
 
 **IdeaForge** is a specialized platform designed to help **developers, university students, researchers, and innovators** discover meaningful project ideas from real-world problems.
 
+Backend endpoint documentation is available in [backend/API.md](backend/API.md). It covers the existing community APIs plus the synced Project Canvas, account preferences, profile update, and AI Studio endpoints. For the build checklist—what is complete, browser-only, and next to implement—see [backend/BACKEND_STATUS.md](backend/BACKEND_STATUS.md).
+
 Many social platforms such as general discussion forums contain valuable ideas, but they are buried under irrelevant content. This platform focuses exclusively on **structured idea sharing**, making it easier to discover **high-quality development ideas categorized by real-life domains**.
 
 The platform allows users worldwide to **submit, explore, and refine project ideas** using a powerful **tagging, categorization, and recommendation system**.
@@ -333,4 +335,3 @@ Possible solutions:
 The **IdeaForge** aims to become the **largest repository of real-world development ideas**.
 
 By combining **structured categorization, tagging, and AI recommendations**, the platform will significantly reduce the time developers spend searching for ideas and instead help them **focus on building impactful solutions.**
-

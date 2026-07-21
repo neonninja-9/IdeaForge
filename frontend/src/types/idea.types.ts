@@ -110,6 +110,13 @@ export interface DashboardResponse {
   };
 }
 
+export interface MyIdeasResponse {
+  status: "success";
+  data: {
+    ideas: Idea[];
+  };
+}
+
 export interface CreateIdeaPayload {
   title: string;
   problem: string;

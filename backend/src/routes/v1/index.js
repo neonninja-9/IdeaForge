@@ -12,6 +12,9 @@ import categoryRoutes from "./category.routes.js";
 import tagRoutes from "./tag.routes.js";
 import commentRoutes from "./comment.routes.js";
 import voteRoutes from "./vote.routes.js";
+import projectRoutes from "./project.routes.js";
+import userRoutes from "./user.routes.js";
+import aiRoutes from "./ai.routes.js";
 
 const router = Router();
 
@@ -21,5 +24,8 @@ router.use("/categories", categoryRoutes);
 router.use("/tags", tagRoutes);
 router.use("/comments", commentRoutes);
 router.use("/votes", voteRoutes);
+router.use("/projects", projectRoutes);
+router.use("/users", userRoutes);
+router.use("/ai", aiRoutes);
 
 export default router;

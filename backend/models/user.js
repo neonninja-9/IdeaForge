@@ -24,7 +24,11 @@ const userSchema = mongoose.Schema({
         type: String,
         enum: ["user", "admin"],
         default: "user",
-    }
+    },
+    preferences: {
+        productUpdates: { type: Boolean, default: true },
+        weeklyReflection: { type: Boolean, default: false },
+    },
 }, {
     timestamps: true
 });

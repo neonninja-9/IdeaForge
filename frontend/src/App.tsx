@@ -1,6 +1,8 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
+import AppShell from "./components/AppShell";
 import Footer from "./components/Footer";
 import Hero from "./components/Hero";
 import TrustedBy from "./components/TrustedBy";
@@ -8,14 +10,21 @@ import CoreCapabilities from "./components/CoreCapabilities";
 import ThreeStages from "./components/ThreeStages";
 import SocialProof from "./components/SocialProof";
 import CTABanner from "./components/CTABanner";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import DashboardPage from "./pages/DashboardPage";
-import IdeasFeedPage from "./pages/IdeasFeedPage";
-import IdeaDetailPage from "./pages/IdeaDetailPage";
-import UserProfilePage from "./pages/UserProfilePage";
-import SubmitIdeaPage from "./pages/SubmitIdeaPage";
 import { useAuth } from "./hooks/useAuth";
+import ClickEffects from "./components/ClickEffects";
+
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const RegisterPage = lazy(() => import("./pages/RegisterPage"));
+const DashboardPage = lazy(() => import("./pages/DashboardPage"));
+const IdeasFeedPage = lazy(() => import("./pages/IdeasFeedPage"));
+const IdeaDetailPage = lazy(() => import("./pages/IdeaDetailPage"));
+const UserProfilePage = lazy(() => import("./pages/UserProfilePage"));
+const SubmitIdeaPage = lazy(() => import("./pages/SubmitIdeaPage"));
+const ProjectsPage = lazy(() => import("./pages/ProjectsPage"));
+const AIStudioPage = lazy(() => import("./pages/AIStudioPage"));
+const TemplatesPage = lazy(() => import("./pages/TemplatesPage"));
+const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
+const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 
 function LandingPage() {
   const { user, isLoading } = useAuth();
@@ -52,15 +61,7 @@ function LandingLayout() {
 }
 
 function WorkspaceLayout() {
-  return (
-    <div className="min-h-screen bg-surface-alt flex flex-col">
-      <Navbar />
-      <div className="flex-1 pt-16">
-        <Outlet />
-      </div>
-      <Footer />
-    </div>
-  );
+  return <AppShell />;
 }
 
 function App() {
@@ -68,6 +69,7 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <div className="font-sans antialiased bg-surface flex flex-col min-h-screen">
+          <Suspense fallback={<div className="grid min-h-screen place-items-center bg-[#fafaf8]" aria-busy="true" aria-label="Loading page"><div className="flex items-center gap-3 rounded-2xl bg-white px-5 py-4 text-sm font-medium text-slate-500 shadow-sm"><span className="size-2 animate-pulse rounded-full bg-indigo-500" /> Loading your workspace…</div></div>}>
           <Routes>
             {/* Auth pages — full-page immersion, no Navbar/Footer */}
             <Route path="/login" element={<LoginPage />} />
@@ -85,8 +87,15 @@ function App() {
               <Route path="/idea/:id" element={<IdeaDetailPage />} />
               <Route path="/profile" element={<UserProfilePage />} />
               <Route path="/submit" element={<SubmitIdeaPage />} />
+              <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/templates" element={<TemplatesPage />} />
+              <Route path="/favorites" element={<FavoritesPage />} />
+              <Route path="/ai-studio" element={<AIStudioPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
             </Route>
           </Routes>
+          </Suspense>
+          <ClickEffects />
         </div>
       </AuthProvider>
     </BrowserRouter>

@@ -1,54 +1,49 @@
-/**
- * SubmitIdeaPage
- * --------------
- * Functional form for submitting new ideas to the platform.
- * Fetches categories and tags from the API, auto-generates tech stack suggestions.
- */
-
-import { useState, useEffect, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Bot,
+  Check,
+  ChevronDown,
+  FileText,
+  ImagePlus,
+  Lightbulb,
+  LoaderCircle,
+  Mic,
+  Paperclip,
+  RefreshCw,
+  Sparkles,
+  WandSparkles,
+} from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import ideaService from "../services/ideaService";
 import categoryService from "../services/categoryService";
 import tagService from "../services/tagService";
+import aiService from "../services/aiService";
 import type { Category, Tag } from "../types/idea.types";
 import PageSkeleton from "../components/PageSkeleton";
 
 function generateTechStack(tagNames: string[], difficulty: string): string {
-  const lower = tagNames.map(t => t.toLowerCase());
-  let frontend = "HTML/CSS/JS";
+  const lower = tagNames.map((tag) => tag.toLowerCase());
+  let frontend = "React + TypeScript";
   let backend = "Node.js + Express";
   let database = "MongoDB";
-
-  if (lower.some(t => ["web development", "react", "typescript"].includes(t))) frontend = "React + TypeScript";
-  if (lower.some(t => ["mobile app"].includes(t))) frontend = "React Native or Flutter";
-  if (lower.some(t => ["ai", "machine learning", "data science", "computer vision", "nlp"].includes(t))) backend = "Python (FastAPI)";
-  if (lower.some(t => ["blockchain"].includes(t))) backend = "Solidity + Hardhat";
-  if (lower.some(t => ["cloud computing", "devops"].includes(t))) database = "PostgreSQL + Redis";
-
-  if (difficulty === "Beginner") {
-    return `Beginner-friendly: ${frontend}, Firebase`;
-  }
-  return `Frontend: ${frontend} | Backend: ${backend} | Database: ${database}`;
+  if (lower.some((tag) => ["mobile app"].includes(tag))) frontend = "React Native or Flutter";
+  if (lower.some((tag) => ["ai", "machine learning", "data science", "computer vision", "nlp"].includes(tag))) backend = "Python (FastAPI)";
+  if (lower.some((tag) => ["cloud computing", "devops"].includes(tag))) database = "PostgreSQL + Redis";
+  return difficulty === "Beginner" ? `A simple start: ${frontend}, Firebase` : `${frontend} · ${backend} · ${database}`;
 }
 
-interface FormErrors {
-  title?: string;
-  problem?: string;
-  solution?: string;
-  category?: string;
-  tags?: string;
-  difficulty?: string;
-}
+interface FormErrors { title?: string; problem?: string; solution?: string; category?: string; tags?: string; difficulty?: string; }
 
 export default function SubmitIdeaPage() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
-
+  const [searchParams] = useSearchParams();
   const [categories, setCategories] = useState<Category[]>([]);
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [referenceLoading, setReferenceLoading] = useState(true);
-
   const [title, setTitle] = useState("");
   const [problem, setProblem] = useState("");
   const [solution, setSolution] = useState("");
@@ -56,249 +51,96 @@ export default function SubmitIdeaPage() {
   const [difficulty, setDifficulty] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
   const [errors, setErrors] = useState<FormErrors>({});
   const [serverError, setServerError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isThinking, setIsThinking] = useState(false);
+  const [showBlueprint, setShowBlueprint] = useState(false);
+  const [aiAdvice, setAiAdvice] = useState("");
 
+  useEffect(() => { if (!authLoading && !user) navigate("/login"); }, [user, authLoading, navigate]);
   useEffect(() => {
-    if (!authLoading && !user) navigate("/login");
-  }, [user, authLoading, navigate]);
-
-  useEffect(() => {
-    Promise.all([
-      categoryService.getCategories(),
-      tagService.getTags(),
-    ]).then(([catRes, tagRes]) => {
-      setCategories(catRes.data.categories);
-      setAllTags(tagRes.data.tags);
-    }).catch(console.error).finally(() => setReferenceLoading(false));
+    Promise.all([categoryService.getCategories(), tagService.getTags()])
+      .then(([categoryResponse, tagResponse]) => { setCategories(categoryResponse.data.categories); setAllTags(tagResponse.data.tags); })
+      .catch(console.error)
+      .finally(() => setReferenceLoading(false));
   }, []);
+  useEffect(() => { const prompt = searchParams.get("prompt"); if (prompt) setProblem(prompt); }, [searchParams]);
 
-  // Compute tech stack suggestion
-  const selectedTagNames = allTags.filter(t => selectedTags.includes(t.id || t._id)).map(t => t.name);
+  const selectedTagNames = allTags.filter((tag) => selectedTags.includes(tag.id || tag._id)).map((tag) => tag.name);
   const techStack = selectedTagNames.length > 0 && difficulty ? generateTechStack(selectedTagNames, difficulty) : "";
+  const confidence = Math.min(100, Math.round((title.trim() ? 20 : 0) + Math.min(problem.trim().length, 160) / 160 * 35 + Math.min(solution.trim().length, 160) / 160 * 30 + (selectedTags.length > 0 ? 10 : 0) + (difficulty ? 5 : 0)));
+  const activeCategory = categories.find((category) => (category.id || category._id) === selectedCategory)?.name || "your category";
+  const blueprint = useMemo(() => [
+    { label: "Problem", text: problem.trim() || "Clarify the real-world friction your idea will remove." },
+    { label: "Solution", text: solution.trim() || "Describe the simplest useful experience that solves it." },
+    { label: "Target audience", text: `Start with a focused group that feels this ${activeCategory} problem most often.` },
+    { label: "Unique value", text: impact.trim() || "Make the first outcome feel faster, clearer, or more personal than existing alternatives." },
+  ], [problem, solution, impact, activeCategory]);
 
-  function toggleTag(tagId: string) {
-    setSelectedTags(prev =>
-      prev.includes(tagId) ? prev.filter(id => id !== tagId) : prev.length < 5 ? [...prev, tagId] : prev
-    );
-  }
-
+  function toggleTag(tagId: string) { setSelectedTags((current) => current.includes(tagId) ? current.filter((id) => id !== tagId) : current.length < 5 ? [...current, tagId] : current); }
   function validate(): FormErrors {
-    const e: FormErrors = {};
-    if (!title.trim() || title.trim().length < 5) e.title = "Title must be at least 5 characters";
-    if (!problem.trim() || problem.trim().length < 20) e.problem = "Describe the problem (at least 20 characters)";
-    if (!solution.trim() || solution.trim().length < 20) e.solution = "Describe the solution (at least 20 characters)";
-    if (!selectedCategory) e.category = "Select a category";
-    if (selectedTags.length === 0) e.tags = "Select at least one tag";
-    if (!difficulty) e.difficulty = "Select a difficulty level";
-    return e;
+    const next: FormErrors = {};
+    if (title.trim().length < 5) next.title = "Give your idea a title of at least 5 characters.";
+    if (problem.trim().length < 20) next.problem = "Describe the problem in at least 20 characters.";
+    if (solution.trim().length < 20) next.solution = "Describe a possible solution in at least 20 characters.";
+    if (!selectedCategory) next.category = "Choose a category.";
+    if (!selectedTags.length) next.tags = "Choose at least one focus area.";
+    if (!difficulty) next.difficulty = "Choose a starting level.";
+    return next;
   }
-
-  async function handleSubmit(ev: FormEvent) {
-    ev.preventDefault();
-    setServerError("");
-
-    const validationErrors = validate();
-    setErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) return;
-
+  async function handleSubmit(event: FormEvent) {
+    event.preventDefault(); setServerError("");
+    const nextErrors = validate(); setErrors(nextErrors); if (Object.keys(nextErrors).length) return;
     setIsSubmitting(true);
     try {
-      await ideaService.createIdea({
-        title: title.trim(),
-        problem: problem.trim(),
-        solution: solution.trim(),
-        impact: impact.trim() || undefined,
-        difficulty: difficulty as "Beginner" | "Intermediate" | "Advanced",
-        category: selectedCategory,
-        tags: selectedTags,
-        suggestedTechStack: techStack || undefined,
-      });
+      await ideaService.createIdea({ title: title.trim(), problem: problem.trim(), solution: solution.trim(), impact: impact.trim() || undefined, difficulty: difficulty as "Beginner" | "Intermediate" | "Advanced", category: selectedCategory, tags: selectedTags, suggestedTechStack: techStack || undefined });
       navigate("/dashboard");
-    } catch (err: unknown) {
-      const error = err as Error;
-      setServerError(error.message || "Failed to submit idea. Please try again.");
+    } catch (error) { setServerError(error instanceof Error ? error.message : "We couldn't save your idea. Please try again."); }
+    finally { setIsSubmitting(false); }
+  }
+  async function generateBlueprint() {
+    setIsThinking(true);
+    try {
+      const message = [title, problem, solution].filter(Boolean).join(" — ") || "Help me shape a new project idea";
+      const response = await aiService.assist(message, { ideaTitle: title });
+      setAiAdvice(response.data.message);
+    } catch {
+      setAiAdvice("The AI suggestion is unavailable right now. You can still use this blueprint as a starting point.");
     } finally {
-      setIsSubmitting(false);
+      setIsThinking(false);
+      setShowBlueprint(true);
     }
   }
 
-  if (authLoading || referenceLoading) {
-    return (
-      <div className="min-h-[calc(100vh-4rem)] bg-surface-alt"><PageSkeleton variant="form" /></div>
-    );
-  }
+  if (authLoading || referenceLoading) return <div className="min-h-[calc(100vh-76px)] bg-[#fafaf8]"><PageSkeleton variant="form" /></div>;
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-surface-alt">
-      {/* ── Main ── */}
-      <main className="py-10 sm:py-14 px-5 sm:px-6 lg:px-8 flex flex-col items-center">
-        <div className="text-center mb-10 max-w-2xl mx-auto">
-          <h1 className="text-3xl font-black tracking-tight text-fg mb-3">Submit Your Idea</h1>
-          <p className="text-fg-mid text-base">Share a real-world problem and your proposed solution with the community</p>
-        </div>
+    <div className="min-h-[calc(100vh-76px)] bg-[#fafaf8] px-5 py-7 sm:px-8 sm:py-10 xl:px-12">
+      <div className="mx-auto max-w-[1440px]">
+        <div className="mb-8 flex items-center justify-between gap-4"><button onClick={() => navigate(-1)} className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-500 transition hover:bg-white hover:text-slate-900"><ArrowLeft size={18} /> Back</button><div className="hidden items-center gap-2 text-sm text-slate-400 sm:flex"><span className="size-2 rounded-full bg-emerald-500" /> Draft saved locally</div></div>
+        <div className="mb-8 max-w-3xl"><p className="text-sm font-semibold text-indigo-600">IDEA CAPTURE</p><h1 className="font-heading mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Give your thought room to grow.</h1><p className="mt-3 text-base leading-7 text-slate-500">Start messy. Your AI collaborator will help turn the spark into a clear opportunity.</p></div>
 
-        <div className="w-full max-w-[720px] bg-white/90 backdrop-blur-xl rounded-2xl border border-edge shadow-lg p-8 sm:p-10 relative overflow-hidden">
-          <div className="absolute -top-32 -right-32 w-64 h-64 bg-vivid/10 rounded-full blur-[80px] pointer-events-none" />
-
-          {serverError && (
-            <div className="mb-6 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
-              {serverError}
+        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_430px]">
+          <form onSubmit={handleSubmit} noValidate className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-[0_18px_50px_-32px_rgba(15,23,42,0.32)] sm:p-8">
+            {serverError && <div className="mb-6 rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-700">{serverError}</div>}
+            <div className="flex items-start justify-between gap-5"><div><p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">The spark</p><h2 className="font-heading mt-1 text-xl font-bold text-slate-900">What are you thinking about?</h2></div><div className="flex items-center gap-3"><div className="hidden text-right sm:block"><p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Idea clarity</p><p className="mt-1 text-sm font-bold text-indigo-600">{confidence}%</p></div><span className="grid size-11 place-items-center rounded-2xl bg-indigo-50 text-indigo-600"><Lightbulb size={20} /></span></div></div>
+            <div className="mt-7 space-y-6">
+              <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-700">Name your idea</span><input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Give this thought a working title" className={`w-full rounded-2xl border bg-[#fcfcfd] px-4 py-3.5 text-base text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 ${errors.title ? "border-rose-300" : "border-slate-200"}`} />{errors.title && <span className="mt-1.5 block text-xs text-rose-600">{errors.title}</span>}</label>
+              <label className="block"><span className="mb-2 flex items-center justify-between text-sm font-semibold text-slate-700">Describe your idea <span className="font-normal text-slate-400">{problem.length} characters</span></span><textarea value={problem} onChange={(event) => setProblem(event.target.value)} rows={7} placeholder="Describe the problem, the moment you noticed it, or the possibility you can't stop thinking about..." className={`w-full resize-none rounded-2xl border bg-[#fcfcfd] px-4 py-4 text-base leading-7 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 ${errors.problem ? "border-rose-300" : "border-slate-200"}`} />{errors.problem && <span className="mt-1.5 block text-xs text-rose-600">{errors.problem}</span>}</label>
+              <div className="-mt-3 flex flex-wrap items-center gap-1"><button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-xl px-3 text-xs font-medium text-slate-500 transition hover:bg-indigo-50 hover:text-indigo-600"><Mic size={16} /> Voice</button><button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-xl px-3 text-xs font-medium text-slate-500 transition hover:bg-indigo-50 hover:text-indigo-600"><ImagePlus size={16} /> Image</button><button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-xl px-3 text-xs font-medium text-slate-500 transition hover:bg-indigo-50 hover:text-indigo-600"><Paperclip size={16} /> Attach</button><button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-xl px-3 text-xs font-medium text-slate-500 transition hover:bg-indigo-50 hover:text-indigo-600"><FileText size={16} /> Sketch</button></div>
+              <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-700">A possible first solution</span><textarea value={solution} onChange={(event) => setSolution(event.target.value)} rows={4} placeholder="How could this become useful? Don't worry about getting it right yet." className={`w-full resize-none rounded-2xl border bg-[#fcfcfd] px-4 py-4 text-base leading-7 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 ${errors.solution ? "border-rose-300" : "border-slate-200"}`} />{errors.solution && <span className="mt-1.5 block text-xs text-rose-600">{errors.solution}</span>}</label>
+              <div className="grid gap-5 md:grid-cols-2"><label className="block"><span className="mb-2 block text-sm font-semibold text-slate-700">Category</span><span className="relative block"><select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)} className={`w-full appearance-none rounded-2xl border bg-[#fcfcfd] px-4 py-3.5 text-sm text-slate-700 outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 ${errors.category ? "border-rose-300" : "border-slate-200"}`}><option value="">Choose a category</option>{categories.map((category) => <option key={category.id || category._id} value={category.id || category._id}>{category.icon} {category.name}</option>)}</select><ChevronDown size={17} className="pointer-events-none absolute right-4 top-3.5 text-slate-400" /></span>{errors.category && <span className="mt-1.5 block text-xs text-rose-600">{errors.category}</span>}</label><div><span className="mb-2 block text-sm font-semibold text-slate-700">Starting point</span><div className="grid grid-cols-3 gap-2">{["Beginner", "Intermediate", "Advanced"].map((level) => <button key={level} type="button" onClick={() => setDifficulty(level)} className={`min-h-[50px] rounded-xl border px-2 text-xs font-semibold transition ${difficulty === level ? "border-indigo-200 bg-indigo-50 text-indigo-600" : "border-slate-200 bg-[#fcfcfd] text-slate-500 hover:border-indigo-200"}`}>{level}</button>)}</div>{errors.difficulty && <span className="mt-1.5 block text-xs text-rose-600">{errors.difficulty}</span>}</div></div>
+              <div><div className="mb-2 flex items-center justify-between"><span className="text-sm font-semibold text-slate-700">Focus areas</span><span className="text-xs text-slate-400">Up to 5</span></div><div className="flex flex-wrap gap-2">{allTags.map((tag) => { const id = tag.id || tag._id; const selected = selectedTags.includes(id); return <button key={id} type="button" onClick={() => toggleTag(id)} className={`rounded-full border px-3 py-2 text-xs font-medium transition ${selected ? "border-indigo-200 bg-indigo-50 text-indigo-600" : "border-slate-200 bg-white text-slate-500 hover:border-indigo-200"}`}>{selected && <Check size={13} className="mr-1 inline" />}{tag.name}</button>; })}</div>{errors.tags && <span className="mt-1.5 block text-xs text-rose-600">{errors.tags}</span>}</div>
+              <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-700">The impact you hope for <span className="font-normal text-slate-400">optional</span></span><textarea value={impact} onChange={(event) => setImpact(event.target.value)} rows={2} placeholder="What would a better future look like?" className="w-full resize-none rounded-2xl border border-slate-200 bg-[#fcfcfd] px-4 py-3 text-sm leading-6 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50" /></label>
             </div>
-          )}
-
-          <form onSubmit={handleSubmit} noValidate className="space-y-6 relative z-10">
-            {/* Title */}
-            <div>
-              <label htmlFor="title" className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-fg-mid mb-2">Idea Title</label>
-              <input
-                id="title"
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g., AI-Based Crop Disease Detection"
-                className={`w-full px-5 py-3.5 bg-surface-alt border rounded-xl text-sm text-fg placeholder:text-fg-muted focus:outline-none focus:ring-2 transition-all ${errors.title ? "border-red-400 focus:ring-red-300" : "border-edge focus:ring-vivid/30 focus:border-vivid"}`}
-              />
-              {errors.title && <p className="mt-1 text-xs text-red-500">{errors.title}</p>}
-            </div>
-
-            {/* Category */}
-            <div>
-              <label htmlFor="category" className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-fg-mid mb-2">Category</label>
-              <select
-                id="category"
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className={`w-full px-5 py-3.5 bg-surface-alt border rounded-xl text-sm text-fg focus:outline-none focus:ring-2 transition-all cursor-pointer ${errors.category ? "border-red-400 focus:ring-red-300" : "border-edge focus:ring-vivid/30 focus:border-vivid"}`}
-              >
-                <option value="">Select a category...</option>
-                {categories.map(cat => (
-                  <option key={cat.id || cat._id} value={cat.id || cat._id}>{cat.icon} {cat.name}</option>
-                ))}
-              </select>
-              {errors.category && <p className="mt-1 text-xs text-red-500">{errors.category}</p>}
-            </div>
-
-            {/* Problem */}
-            <div>
-              <label htmlFor="problem" className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-fg-mid mb-2">The Problem</label>
-              <textarea
-                id="problem"
-                value={problem}
-                onChange={(e) => setProblem(e.target.value)}
-                rows={4}
-                placeholder="Describe the real-world problem this idea solves..."
-                className={`w-full px-5 py-3.5 bg-surface-alt border rounded-xl text-sm text-fg placeholder:text-fg-muted focus:outline-none focus:ring-2 transition-all resize-none ${errors.problem ? "border-red-400 focus:ring-red-300" : "border-edge focus:ring-vivid/30 focus:border-vivid"}`}
-              />
-              {errors.problem && <p className="mt-1 text-xs text-red-500">{errors.problem}</p>}
-            </div>
-
-            {/* Solution */}
-            <div>
-              <label htmlFor="solution" className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-fg-mid mb-2">Proposed Solution</label>
-              <textarea
-                id="solution"
-                value={solution}
-                onChange={(e) => setSolution(e.target.value)}
-                rows={4}
-                placeholder="Describe your proposed approach or concept..."
-                className={`w-full px-5 py-3.5 bg-surface-alt border rounded-xl text-sm text-fg placeholder:text-fg-muted focus:outline-none focus:ring-2 transition-all resize-none ${errors.solution ? "border-red-400 focus:ring-red-300" : "border-edge focus:ring-vivid/30 focus:border-vivid"}`}
-              />
-              {errors.solution && <p className="mt-1 text-xs text-red-500">{errors.solution}</p>}
-            </div>
-
-            {/* Impact */}
-            <div>
-              <label htmlFor="impact" className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-fg-mid mb-2">Expected Impact <span className="text-fg-muted">(optional)</span></label>
-              <textarea
-                id="impact"
-                value={impact}
-                onChange={(e) => setImpact(e.target.value)}
-                rows={2}
-                placeholder="What impact could this project have?"
-                className="w-full px-5 py-3.5 bg-surface-alt border border-edge rounded-xl text-sm text-fg placeholder:text-fg-muted focus:outline-none focus:ring-2 focus:ring-vivid/30 focus:border-vivid transition-all resize-none"
-              />
-            </div>
-
-            {/* Difficulty */}
-            <div>
-              <label className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-fg-mid mb-3">Difficulty Level</label>
-              <div className="flex gap-3">
-                {["Beginner", "Intermediate", "Advanced"].map(level => (
-                  <button
-                    key={level}
-                    type="button"
-                    onClick={() => setDifficulty(level)}
-                    className={`flex-1 py-3 rounded-xl text-sm font-semibold border transition-all cursor-pointer ${
-                      difficulty === level
-                        ? level === "Beginner" ? "bg-green-50 border-green-400 text-green-700" :
-                          level === "Intermediate" ? "bg-yellow-50 border-yellow-400 text-yellow-700" :
-                          "bg-red-50 border-red-400 text-red-700"
-                        : "bg-surface-alt border-edge text-fg-mid hover:border-vivid/30"
-                    }`}
-                  >
-                    {level}
-                  </button>
-                ))}
-              </div>
-              {errors.difficulty && <p className="mt-1 text-xs text-red-500">{errors.difficulty}</p>}
-            </div>
-
-            {/* Tags */}
-            <div>
-              <label className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-fg-mid mb-3">Tags <span className="text-fg-muted">(select up to 5)</span></label>
-              <div className="flex flex-wrap gap-2">
-                {allTags.map(tag => {
-                  const isSelected = selectedTags.includes(tag.id || tag._id);
-                  return (
-                    <button
-                      key={tag.id || tag._id}
-                      type="button"
-                      onClick={() => toggleTag(tag.id || tag._id)}
-                      className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all cursor-pointer ${
-                        isSelected
-                          ? "bg-vivid/10 border-vivid text-vivid"
-                          : "bg-surface-alt border-edge text-fg-mid hover:border-vivid/30"
-                      }`}
-                    >
-                      {tag.name}
-                    </button>
-                  );
-                })}
-              </div>
-              {errors.tags && <p className="mt-1 text-xs text-red-500">{errors.tags}</p>}
-            </div>
-
-            {/* Tech Stack Suggestion */}
-            {techStack && (
-              <div className="p-4 rounded-xl bg-vivid/5 border border-vivid/20">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-vivid mb-2">💡 Suggested Tech Stack</p>
-                <p className="text-sm text-fg-mid">{techStack}</p>
-              </div>
-            )}
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="group relative w-full overflow-hidden min-h-12 rounded-xl bg-fg text-white text-sm font-semibold uppercase tracking-[0.1em] transition-all duration-300 hover:shadow-[0_0_40px_rgba(108,60,224,0.3)] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
-            >
-              <span className="relative z-10 flex items-center justify-center gap-2">
-                {isSubmitting && (
-                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                )}
-                {isSubmitting ? "Submitting..." : "Submit Idea"}
-              </span>
-              <span className="absolute inset-0 bg-vivid translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-            </button>
+            <div className="mt-8 flex flex-col-reverse gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:justify-between"><button type="button" onClick={generateBlueprint} disabled={isThinking} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-indigo-50 px-5 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-100 disabled:opacity-60"><WandSparkles size={18} /> {isThinking ? "Thinking through it..." : "Preview with AI"}</button><button type="submit" disabled={isSubmitting} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:-translate-y-0.5 hover:bg-indigo-700 disabled:opacity-60">{isSubmitting && <LoaderCircle size={17} className="animate-spin" />}{isSubmitting ? "Saving your idea..." : "Save idea"}<ArrowRight size={17} /></button></div>
           </form>
+
+          <aside className="xl:sticky xl:top-24 xl:h-fit"><div className="overflow-hidden rounded-[28px] border border-indigo-100 bg-gradient-to-b from-indigo-50/80 to-white shadow-[0_18px_50px_-32px_rgba(79,70,229,0.4)]"><div className="border-b border-indigo-100 bg-white/65 p-6"><div className="flex items-center justify-between"><span className="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1.5 text-xs font-semibold text-indigo-700"><Bot size={15} /> AI collaborator</span><span className="flex items-center gap-1 text-xs font-medium text-emerald-600"><span className="size-1.5 rounded-full bg-emerald-500" /> Ready</span></div><h2 className="font-heading mt-5 text-xl font-bold text-slate-900">Your idea, expanded.</h2><p className="mt-2 text-sm leading-6 text-slate-500">A calm first look at the structure emerging from your thought.</p></div><div className="p-5 sm:p-6">{isThinking ? <div className="flex min-h-72 flex-col items-center justify-center text-center"><span className="grid size-14 place-items-center rounded-2xl bg-white text-indigo-600 shadow-sm"><Sparkles size={24} className="animate-pulse" /></span><p className="mt-5 text-sm font-semibold text-slate-700">Looking for the opportunity...</p><p className="mt-1 text-xs text-slate-400">Finding patterns in your idea</p></div> : showBlueprint ? <div className="space-y-3">{blueprint.map((card, index) => <article key={card.label} className="animate-reveal-up rounded-2xl border border-white bg-white/90 p-4 shadow-sm" style={{ animationDelay: `${index * 75}ms` }}><p className="text-xs font-bold text-indigo-600">{card.label}</p><p className="mt-1.5 text-sm leading-6 text-slate-600">{card.text}</p></article>)}{aiAdvice && <article className="rounded-2xl border border-violet-100 bg-violet-50/60 p-4"><p className="text-xs font-bold text-violet-600">AI perspective</p><p className="mt-1.5 text-sm leading-6 text-slate-600">{aiAdvice}</p></article>}{techStack && <article className="rounded-2xl border border-violet-100 bg-violet-50/60 p-4"><p className="text-xs font-bold text-violet-600">Suggested foundation</p><p className="mt-1.5 text-sm leading-6 text-slate-600">{techStack}</p></article>}<button type="button" onClick={generateBlueprint} className="mt-2 inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700"><RefreshCw size={15} /> Regenerate preview</button></div> : <div className="flex min-h-72 flex-col items-center justify-center text-center"><span className="grid size-14 place-items-center rounded-2xl bg-white text-indigo-600 shadow-sm"><Sparkles size={24} /></span><h3 className="font-heading mt-5 text-lg font-bold text-slate-800">A blueprint is waiting.</h3><p className="mt-2 max-w-xs text-sm leading-6 text-slate-500">Share a little about the problem and solution, then ask AI to reveal the first shape of your idea.</p><button type="button" onClick={generateBlueprint} className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700"><Sparkles size={16} /> Create a preview</button></div>}</div></div>
+            <div className="mt-4 flex items-center gap-3 rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-800"><WandSparkles size={17} className="shrink-0" /> This preview is a creative starting point—review and shape it with your own expertise.</div></aside>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

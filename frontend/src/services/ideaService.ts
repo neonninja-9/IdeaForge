@@ -10,6 +10,7 @@ import type {
   IdeaDetailResponse,
   DashboardResponse,
   CreateIdeaPayload,
+  MyIdeasResponse,
 } from "../types/idea.types";
 
 const ideaService = {
@@ -54,7 +55,7 @@ const ideaService = {
     return apiFetch<DashboardResponse>("/ideas/dashboard");
   },
 
-  async getMyIdeas(): Promise<{ status: string; data: { ideas: unknown[] } }> {
+  async getMyIdeas(): Promise<MyIdeasResponse> {
     return apiFetch("/ideas/my");
   },
 };

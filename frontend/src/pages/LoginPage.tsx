@@ -19,6 +19,7 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import AuthDoodles from "../components/AuthDoodles";
+import { InteractiveParticles } from "../components/ui/interactive-particles";
 
 interface FormErrors {
   identifier?: string;
@@ -102,17 +103,20 @@ export default function LoginPage() {
         <div className="absolute bottom-1/4 right-1/4 h-56 w-56 rounded-full bg-vivid-light/10 blur-[80px] pointer-events-none animate-doodle-float" style={{ animationDelay: "2s" }} />
 
         {/* Branding */}
-        <div className="relative z-10 text-center px-12">
-          <h2 className="text-5xl xl:text-6xl font-black tracking-tight text-fg leading-[1.1] mb-5">
-            Welcome back to
-            <br />
-            <span className="bg-gradient-to-r from-vivid via-vivid-light to-purple-400 bg-clip-text text-transparent">
-              IdeaForge
-            </span>
-          </h2>
-          <p className="text-fg-mid text-lg max-w-md mx-auto leading-relaxed">
-            Your ideas have been waiting. Sign in and pick up right where you left off.
-          </p>
+        <div className="relative z-10 text-center px-12 flex flex-col items-center gap-10 w-full">
+          <div className="w-full">
+            <div className="h-[250px] w-full mb-5 -mt-10">
+              <InteractiveParticles 
+                src="/ideaforge-text.svg" 
+                background="transparent" 
+                color="#6c3ce0" 
+                allowUpload={false} 
+              />
+            </div>
+            <p className="text-fg-mid text-lg max-w-md mx-auto leading-relaxed -mt-12">
+              Your ideas have been waiting. Sign in and pick up right where you left off.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -166,11 +170,10 @@ export default function LoginPage() {
                   onBlur={() => handleBlur("identifier")}
                   placeholder="you@example.com or username"
                   autoComplete="username"
-                  className={`w-full min-h-12 px-4 py-3 text-sm bg-surface-alt border rounded-xl text-fg placeholder:text-fg-muted focus:outline-none focus:ring-2 transition-all duration-300 ${
-                    touched.identifier && errors.identifier
+                  className={`w-full min-h-12 px-4 py-3 text-sm bg-surface-alt border rounded-xl text-fg placeholder:text-fg-muted focus:outline-none focus:ring-2 transition-all duration-300 ${touched.identifier && errors.identifier
                       ? "border-red-400 focus:ring-red-300"
                       : "border-edge focus:ring-vivid/30 focus:border-vivid"
-                  }`}
+                    }`}
                 />
                 {touched.identifier && errors.identifier && (
                   <p className="mt-1.5 text-xs text-red-500 animate-reveal-up">{errors.identifier}</p>
@@ -191,17 +194,15 @@ export default function LoginPage() {
                     onBlur={() => handleBlur("password")}
                     placeholder="Enter your password"
                     autoComplete="current-password"
-                    className={`w-full min-h-12 px-4 py-3 pr-12 text-sm bg-surface-alt border rounded-xl text-fg placeholder:text-fg-muted focus:outline-none focus:ring-2 transition-all duration-300 ${
-                      touched.password && errors.password
+                    className={`w-full min-h-12 px-4 py-3 pr-12 text-sm bg-surface-alt border rounded-xl text-fg placeholder:text-fg-muted focus:outline-none focus:ring-2 transition-all duration-300 ${touched.password && errors.password
                         ? "border-red-400 focus:ring-red-300"
                         : "border-edge focus:ring-vivid/30 focus:border-vivid"
-                    }`}
+                      }`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-fg-muted hover:text-fg transition-colors p-1"
-                    tabIndex={-1}
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? (
@@ -220,7 +221,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="group relative w-full overflow-hidden min-h-12 rounded-xl bg-fg text-fg-on-dark text-sm font-semibold uppercase tracking-[0.1em] transition-all duration-300 hover:shadow-[0_0_40px_rgba(108,60,224,0.3)] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+                className="group relative w-full overflow-hidden min-h-12 rounded-xl bg-vivid text-fg-on-dark text-sm font-semibold transition-all duration-300 hover:shadow-[0_0_40px_rgba(108,60,224,0.3)] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   {isSubmitting && (
@@ -231,7 +232,7 @@ export default function LoginPage() {
                   )}
                   {isSubmitting ? "Signing in…" : "Sign In"}
                 </span>
-                <span className="absolute inset-0 bg-vivid translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                <span className="absolute inset-0 bg-vivid-hover translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
               </button>
             </form>
 
