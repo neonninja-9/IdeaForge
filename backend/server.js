@@ -9,12 +9,13 @@ import { morganSuccessHandler, morganErrorHandler } from "./src/middlewares/morg
 import v1Router from "./src/routes/v1/index.js";
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN ? process.env.CLIENT_ORIGIN.split(",") : true;
 
 // ─── Global Middleware ─────────────────────────────────────────
 app.use(morganSuccessHandler);
 app.use(morganErrorHandler);
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -47,6 +48,15 @@ app.use((err, req, res, _next) => {
         return res.status(err.statusCode).json({
             status: "fail",
             message: err.message,
+        });
+    }
+
+    // Mongoose CastError (e.g. invalid ObjectId)
+    if (err.name === "CastError") {
+        logger.warn(`[${req.method} ${req.originalUrl}] Invalid ID format for field ${err.path}`);
+        return res.status(400).json({
+            status: "fail",
+            message: `Invalid ID format for ${err.path}`,
         });
     }
 

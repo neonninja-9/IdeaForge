@@ -13,6 +13,8 @@
 import { Router } from "express";
 import ideaController from "../../controllers/idea.controller.js";
 import authenticate from "../../middlewares/authenticate.js";
+import validate from "../../middlewares/validate.js";
+import { createIdeaRules, updateIdeaRules } from "../../validators/idea.validator.js";
 
 const router = Router();
 
@@ -28,7 +30,8 @@ router.get("/dashboard", authenticate, ideaController.dashboard);
 // This must come after /my and /dashboard so they aren't treated as :id
 router.get("/:id", optionalAuth, ideaController.getById);
 
-router.post("/", authenticate, ideaController.create);
+router.post("/", authenticate, createIdeaRules, validate, ideaController.create);
+router.patch("/:id", authenticate, updateIdeaRules, validate, ideaController.update);
 router.delete("/:id", authenticate, ideaController.delete);
 
 /**

@@ -7,6 +7,8 @@
 import Idea from "../../models/idea.js";
 import Vote from "../../models/vote.js";
 import Comment from "../../models/comment.js";
+import Category from "../../models/category.js";
+import Tag from "../../models/tag.js";
 import AppError from "../utils/AppError.js";
 
 const ideaService = {
@@ -126,6 +128,36 @@ const ideaService = {
     },
 
     /**
+     * Update an existing idea (only by its author).
+     */
+    async update(ideaId, userId, data) {
+        const idea = await Idea.findById(ideaId);
+        if (!idea) {
+            throw new AppError("Idea not found", 404);
+        }
+        if (idea.author.toString() !== userId) {
+            throw new AppError("You can only edit your own ideas", 403);
+        }
+
+        if (data.category) {
+            const cat = await Category.findById(data.category);
+            if (!cat) throw new AppError("Invalid category", 400);
+        }
+        if (data.tags && data.tags.length > 0) {
+            const tags = await Tag.find({ _id: { $in: data.tags } });
+            if (tags.length !== data.tags.length) throw new AppError("One or more tags are invalid", 400);
+        }
+
+        const updated = await Idea.findByIdAndUpdate(ideaId, data, { new: true, runValidators: true })
+            .populate("author", "username")
+            .populate("category", "name slug icon")
+            .populate("tags", "name slug")
+            .lean();
+
+        return updated;
+    },
+
+    /**
      * Delete an idea (only by its author).
      */
     async delete(ideaId, userId) {
@@ -148,14 +180,21 @@ const ideaService = {
     },
 
     /**
-     * Get ideas created by a specific user.
+     * Get ideas created by a specific user with pagination.
      */
-    async getByAuthor(userId) {
-        const ideas = await Idea.find({ author: userId })
-            .sort({ createdAt: -1 })
-            .populate("category", "name slug icon")
-            .populate("tags", "name slug")
-            .lean();
+    async getByAuthor(userId, { page = 1, limit = 20 } = {}) {
+        const skip = (page - 1) * limit;
+
+        const [ideas, total] = await Promise.all([
+            Idea.find({ author: userId })
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .populate("category", "name slug icon")
+                .populate("tags", "name slug")
+                .lean(),
+            Idea.countDocuments({ author: userId }),
+        ]);
 
         const ideaIds = ideas.map(i => i._id);
         const [voteCounts, commentCounts] = await Promise.all([
@@ -172,12 +211,19 @@ const ideaService = {
         const voteMap = Object.fromEntries(voteCounts.map(v => [v._id.toString(), v.count]));
         const commentMap = Object.fromEntries(commentCounts.map(c => [c._id.toString(), c.count]));
 
-        return ideas.map(idea => ({
+        const enriched = ideas.map(idea => ({
             ...idea,
             id: idea._id.toString(),
             voteCount: voteMap[idea._id.toString()] || 0,
             commentCount: commentMap[idea._id.toString()] || 0,
         }));
+
+        return {
+            ideas: enriched,
+            total,
+            page,
+            totalPages: Math.ceil(total / limit),
+        };
     },
 
     /**
