@@ -47,16 +47,31 @@ const ideaService = {
     });
   },
 
+  async updateIdea(id: string, data: Partial<CreateIdeaPayload>): Promise<{ status: string; data: { idea: unknown } }> {
+    return apiFetch(`/ideas/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+  },
+
   async deleteIdea(id: string): Promise<{ status: string; message: string }> {
     return apiFetch(`/ideas/${id}`, { method: "DELETE" });
   },
 
-  async getDashboard(): Promise<DashboardResponse> {
-    return apiFetch<DashboardResponse>("/ideas/dashboard");
+  async getDashboard(params?: { page?: number; limit?: number }): Promise<DashboardResponse> {
+    const searchParams = new URLSearchParams();
+    if (params?.page) searchParams.set("page", String(params.page));
+    if (params?.limit) searchParams.set("limit", String(params.limit));
+    const qs = searchParams.toString();
+    return apiFetch<DashboardResponse>(`/ideas/dashboard${qs ? `?${qs}` : ""}`);
   },
 
-  async getMyIdeas(): Promise<MyIdeasResponse> {
-    return apiFetch("/ideas/my");
+  async getMyIdeas(params?: { page?: number; limit?: number }): Promise<MyIdeasResponse> {
+    const searchParams = new URLSearchParams();
+    if (params?.page) searchParams.set("page", String(params.page));
+    if (params?.limit) searchParams.set("limit", String(params.limit));
+    const qs = searchParams.toString();
+    return apiFetch<MyIdeasResponse>(`/ideas/my${qs ? `?${qs}` : ""}`);
   },
 };
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 
 const navLinks = [
   { label: "Explore", to: "/explore" },

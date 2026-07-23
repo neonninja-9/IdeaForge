@@ -5,19 +5,28 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face { font-family: "Juana-Regular"; src: url("/fonts/Juana-Regular.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Juana-Medium"; src: url("/fonts/Juana-Medium.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Juana-Light"; src: url("/fonts/Juana-Light.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Editorialnew-Ultralight"; src: url("/fonts/EditorialNew-Ultralight.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Editorialnew-Regular"; src: url("/fonts/EditorialNew-Regular.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Editorialnew-UltralightItalic"; src: url("/fonts/EditorialNew-UltralightItalic.woff2") format("woff2"); font-style: italic; font-display: swap; }
+@font-face { font-family: "Izmir-Regular"; src: url("/fonts/Izmir-Regular.woff2") format("woff2"); font-display: swap; }
+
 @theme {
   --font-sans: "Inter", "Geist Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Poppins", "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Fraunces", "Poppins", ui-serif, Georgia, serif;
 
   /* Surface colors — use as bg-surface-* */
-  --color-surface: #ffffff;
-  --color-surface-alt: #fafaf8;
+  --color-surface: #fafafa;
+  --color-surface-alt: #f5f5f5;
   --color-surface-cream: #fafaf8;
+  --color-surface-idea: #ece9e1; /* Exclusively for idea page */
   --color-surface-dark: #0a0a0a;
   --color-surface-dark-card: #141414;
 
   /* Foreground — use as text-fg-* */
-  --color-fg: #0a0a0a;
+  --color-fg: #111111;
   --color-fg-strong: #000000;
   --color-fg-mid: #555555;
   --color-fg-light: #888888;
@@ -29,9 +38,9 @@
   --color-edge-dark: #2a2a2a;
 
   /* Accent */
-  --color-vivid: #6366f1;
-  --color-vivid-light: #8b5cf6;
-  --color-vivid-hover: #4f46e5;
+  --color-vivid: #e53935;
+  --color-vivid-light: #ef5350;
+  --color-vivid-hover: #d32f2f;
 
   /* Dot grid */
   --color-dot: #d0d0c8;
@@ -50,6 +59,140 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 
+/* ── Workspace dark theme ────────────────────────────────────────────────
+   Product pages currently use utility-based light surfaces. These mappings
+   establish a small, consistent dark surface system while leaving the canvas
+   behind the workspace visible only in dark mode. */
+
+:root {
+  /* Exact Custom Fonts */
+  --fsize: 1.04166666667vw;
+  --f-regular: "Fraunces", "Juana-Regular", serif;
+  --f-medium: "Fraunces", "Juana-Medium", serif;
+  --f-light: "Fraunces", "Juana-Light", serif;
+  --f-edit: "Editorialnew-Ultralight", serif;
+  --f-edit-regular: "Editorialnew-Regular", serif;
+  --f-edit-italic: "Editorialnew-UltralightItalic", serif;
+  --f-izmir: "Izmir-Regular", sans-serif;
+  
+  /* Dark Mode Palette */
+  --color-caviar: #010101;
+  --color-rein-rgb: 49, 46, 46;    /* #312E2E */
+  --color-shadow-rgb: 78, 73, 73;  /* #4E4949 */
+  --color-saddle-rgb: 92, 85, 81;  /* #5C5551 */
+  --color-mustang: #7d7d7d;
+  
+  --color-dark-text-primary: #e5e5e5;
+}
+
+.dark body {
+  background: var(--color-caviar);
+  color: var(--color-dark-text-primary);
+}
+
+html.dark,
+.dark #root {
+  background: var(--color-caviar);
+}
+
+.dark .bg-\[\#fafaf8\],
+.dark .bg-\[\#fafaf8\]\/85 {
+  background-color: transparent;
+}
+
+/* Attribute matching also covers Tailwind's arbitrary-value classes when the
+   generated utility order differs between page bundles. */
+.dark [class*="bg-[#fafaf8]"] {
+  background-color: transparent !important;
+}
+
+.dark .bg-white,
+.dark .bg-white\/80,
+.dark .bg-white\/85,
+.dark .bg-white\/95 {
+  background-color: rgba(var(--color-rein-rgb), 0.88);
+}
+
+.dark .bg-slate-50,
+.dark .bg-slate-100 {
+  background-color: rgba(var(--color-shadow-rgb), 0.82);
+}
+
+.dark .bg-slate-200 {
+  background-color: rgba(var(--color-saddle-rgb), 0.8);
+}
+
+.dark .bg-indigo-50,
+.dark .bg-violet-50 {
+  background-color: rgba(var(--color-shadow-rgb), 0.38);
+}
+
+.dark .bg-emerald-50 {
+  background-color: rgba(var(--color-saddle-rgb), 0.38);
+}
+
+.dark .text-slate-950,
+.dark .text-slate-900,
+.dark .text-slate-800,
+.dark .text-slate-700 {
+  color: var(--color-dark-text-primary);
+}
+
+.dark .text-slate-600,
+.dark .text-slate-500,
+.dark .text-slate-400 {
+  color: var(--color-mustang);
+}
+
+.dark .text-indigo-600,
+.dark .text-indigo-700 {
+  color: var(--color-mustang);
+}
+
+.dark .border-white,
+.dark .border-white\/80,
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-indigo-100,
+.dark .border-indigo-100\/70 {
+  border-color: rgba(var(--color-saddle-rgb), 0.4);
+}
+
+.dark .shadow-indigo-100,
+.dark .shadow-indigo-100\/60,
+.dark .shadow-indigo-200,
+.dark .shadow-slate-100,
+.dark .shadow-slate-200,
+.dark .shadow-slate-200\/50,
+.dark .shadow-slate-200\/70,
+.dark .shadow-indigo-950\/15 {
+  --tw-shadow-color: rgba(0, 0, 0, 0.75) !important;
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+  color: var(--color-dark-text-primary);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--color-mustang);
+}
+
+
+
+/* Applied briefly when the theme changes, avoiding permanent transitions on
+   motion-heavy components while making the light/dark switch feel cohesive. */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow !important;
+  transition-duration: 360ms !important;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
 button,
 a,
 input {
@@ -62,39 +205,7 @@ input {
   outline-offset: 3px;
 }
 
-/* OriginKit Click Effects: a global, non-interactive click feedback layer. */
-.click-effects {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-}
 
-.click-effect {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-}
-
-.click-effect__line,
-.click-effect__spark {
-  position: absolute;
-  left: 0;
-  top: 0;
-  display: block;
-  background: var(--color-vivid);
-  transform-origin: 0 50%;
-}
-
-.click-effect__line {
-  width: 23px;
-  height: 2px;
-}
-
-.click-effect__spark {
-  width: 3px;
-  height: 3px;
-}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -167,70 +278,7 @@ input {
   animation: marquee 30s linear infinite;
 }
 
-/* ── Auth Doodle Animations ─────────────────────────────────── */
 
-@keyframes doodleFloat {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-18px) rotate(2deg); }
-  75% { transform: translateY(10px) rotate(-1deg); }
-}
-
-@keyframes doodleDrift {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  25% { transform: translate(12px, -16px) rotate(5deg); }
-  50% { transform: translate(-8px, -8px) rotate(-3deg); }
-  75% { transform: translate(6px, 12px) rotate(2deg); }
-}
-
-@keyframes doodleSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes doodleBob {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-10px) scale(1.04); }
-}
-
-@keyframes doodleFlicker {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  25% { opacity: 1; transform: scale(1.1); }
-  50% { opacity: 0.4; transform: scale(0.95); }
-  75% { opacity: 0.9; transform: scale(1.05); }
-}
-
-@keyframes doodlePulse {
-  0%, 100% { transform: scale(1); opacity: 0.6; }
-  50% { transform: scale(1.2); opacity: 1; }
-}
-
-.animate-doodle-float {
-  animation: doodleFloat 8s ease-in-out infinite;
-}
-
-.animate-doodle-drift {
-  animation: doodleDrift 12s ease-in-out infinite;
-}
-
-.animate-doodle-spin {
-  animation: doodleSpin 20s linear infinite;
-}
-
-.animate-doodle-spin-slow {
-  animation: doodleSpin 30s linear infinite;
-}
-
-.animate-doodle-bob {
-  animation: doodleBob 5s ease-in-out infinite;
-}
-
-.animate-doodle-flicker {
-  animation: doodleFlicker 3s ease-in-out infinite;
-}
-
-.animate-doodle-pulse {
-  animation: doodlePulse 4s ease-in-out infinite;
-}
 
 @theme inline {
   --font-heading: var(--font-sans);
@@ -276,13 +324,13 @@ input {
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
+  --background: oklch(0.985 0 0); /* #fafafa */
+  --foreground: oklch(0.145 0 0); /* #111111 */
+  --card: oklch(0.985 0 0);
   --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
+  --popover: oklch(0.985 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(0.55 0.17 25); /* #e53935 red */
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -354,4 +402,15 @@ input {
   html {
     @apply font-sans;
   }
+}
+
+/* Keep these after shadcn's base layer: its background token is emitted last. */
+html.dark,
+html.dark body,
+html.dark #root {
+  background-color: #100d1b !important;
+}
+
+html.dark [class*="bg-[#fafaf8]"] {
+  background-color: transparent !important;
 }

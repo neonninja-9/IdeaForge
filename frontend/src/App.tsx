@@ -1,17 +1,17 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import Navbar from "./components/Navbar";
-import AppShell from "./components/AppShell";
-import Footer from "./components/Footer";
-import Hero from "./components/Hero";
-import TrustedBy from "./components/TrustedBy";
-import CoreCapabilities from "./components/CoreCapabilities";
-import ThreeStages from "./components/ThreeStages";
-import SocialProof from "./components/SocialProof";
-import CTABanner from "./components/CTABanner";
+import Navbar from "./components/Navbar/Navbar";
+import AppShell from "./components/AppShell/AppShell";
+import Footer from "./components/Footer/Footer";
+import Hero from "./components/Hero/Hero";
+import TrustedBy from "./components/TrustedBy/TrustedBy";
+import CoreCapabilities from "./components/CoreCapabilities/CoreCapabilities";
+import ThreeStages from "./components/ThreeStages/ThreeStages";
+import SocialProof from "./components/SocialProof/SocialProof";
+import CTABanner from "./components/CTABanner/CTABanner";
 import { useAuth } from "./hooks/useAuth";
-import ClickEffects from "./components/ClickEffects";
+import ClickEffects from "./components/ClickEffects/ClickEffects";
 
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
@@ -20,11 +20,13 @@ const IdeasFeedPage = lazy(() => import("./pages/IdeasFeedPage"));
 const IdeaDetailPage = lazy(() => import("./pages/IdeaDetailPage"));
 const UserProfilePage = lazy(() => import("./pages/UserProfilePage"));
 const SubmitIdeaPage = lazy(() => import("./pages/SubmitIdeaPage"));
+const EditIdeaPage = lazy(() => import("./pages/EditIdeaPage"));
 const ProjectsPage = lazy(() => import("./pages/ProjectsPage"));
 const AIStudioPage = lazy(() => import("./pages/AIStudioPage"));
 const TemplatesPage = lazy(() => import("./pages/TemplatesPage"));
 const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 function LandingPage() {
   const { user, isLoading } = useAuth();
@@ -87,12 +89,16 @@ function App() {
               <Route path="/idea/:id" element={<IdeaDetailPage />} />
               <Route path="/profile" element={<UserProfilePage />} />
               <Route path="/submit" element={<SubmitIdeaPage />} />
+              <Route path="/edit-idea/:id" element={<EditIdeaPage />} />
               <Route path="/projects" element={<ProjectsPage />} />
               <Route path="/templates" element={<TemplatesPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/ai-studio" element={<AIStudioPage />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Route>
+
+            {/* Catch-all 404 route */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
           </Suspense>
           <ClickEffects />

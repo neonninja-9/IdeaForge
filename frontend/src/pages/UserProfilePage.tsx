@@ -4,7 +4,7 @@ import { Settings } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import ideaService from "../services/ideaService";
 import type { Idea } from "../types/idea.types";
-import PageSkeleton from "../components/PageSkeleton";
+import PageSkeleton from "../components/PageSkeleton/PageSkeleton";
 
 export default function UserProfilePage() {
   const { user, isLoading } = useAuth();
@@ -26,7 +26,7 @@ export default function UserProfilePage() {
   }, [user]);
 
   if (isLoading || !user) {
-    return <div className="min-h-[calc(100vh-76px)] bg-[#fafaf8]"><PageSkeleton variant="profile" /></div>;
+    return <div className="min-h-[calc(100vh-76px)] bg-[var(--background)]"><PageSkeleton variant="profile" /></div>;
   }
 
   const totalVotes = ideas.reduce((sum, idea) => sum + (idea.voteCount || 0), 0);

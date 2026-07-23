@@ -17,8 +17,8 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import AuthDoodles from "../components/AuthDoodles";
-import { InteractiveParticles } from "../components/ui/interactive-particles";
+import AuthDoodles from "../components/AuthDoodles/AuthDoodles";
+import { InteractiveParticles } from "../components/ui/interactive-particles/interactive-particles";
 
 interface FormErrors {
   username?: string;

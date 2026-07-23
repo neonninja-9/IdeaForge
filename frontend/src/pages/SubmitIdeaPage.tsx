@@ -22,7 +22,7 @@ import categoryService from "../services/categoryService";
 import tagService from "../services/tagService";
 import aiService from "../services/aiService";
 import type { Category, Tag } from "../types/idea.types";
-import PageSkeleton from "../components/PageSkeleton";
+import PageSkeleton from "../components/PageSkeleton/PageSkeleton";
 
 function generateTechStack(tagNames: string[], difficulty: string): string {
   const lower = tagNames.map((tag) => tag.toLowerCase());
@@ -113,10 +113,10 @@ export default function SubmitIdeaPage() {
     }
   }
 
-  if (authLoading || referenceLoading) return <div className="min-h-[calc(100vh-76px)] bg-[#fafaf8]"><PageSkeleton variant="form" /></div>;
+  if (authLoading || referenceLoading) return <div className="min-h-[calc(100vh-76px)] bg-[var(--color-surface-idea)]"><PageSkeleton variant="form" /></div>;
 
   return (
-    <div className="min-h-[calc(100vh-76px)] bg-[#fafaf8] px-5 py-7 sm:px-8 sm:py-10 xl:px-12">
+    <div className="min-h-[calc(100vh-76px)] bg-[var(--color-surface-idea)] px-5 py-7 sm:px-8 sm:py-10 xl:px-12">
       <div className="mx-auto max-w-[1440px]">
         <div className="mb-8 flex items-center justify-between gap-4"><button onClick={() => navigate(-1)} className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-500 transition hover:bg-white hover:text-slate-900"><ArrowLeft size={18} /> Back</button><div className="hidden items-center gap-2 text-sm text-slate-400 sm:flex"><span className="size-2 rounded-full bg-emerald-500" /> Draft saved locally</div></div>
         <div className="mb-8 max-w-3xl"><p className="text-sm font-semibold text-indigo-600">IDEA CAPTURE</p><h1 className="font-heading mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Give your thought room to grow.</h1><p className="mt-3 text-base leading-7 text-slate-500">Start messy. Your AI collaborator will help turn the spark into a clear opportunity.</p></div>

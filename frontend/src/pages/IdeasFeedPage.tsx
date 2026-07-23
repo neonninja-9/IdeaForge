@@ -11,7 +11,7 @@ import { useAuth } from "../hooks/useAuth";
 import ideaService from "../services/ideaService";
 import categoryService from "../services/categoryService";
 import type { Idea, Category } from "../types/idea.types";
-import PageSkeleton from "../components/PageSkeleton";
+import PageSkeleton from "../components/PageSkeleton/PageSkeleton";
 
 export default function IdeasFeedPage() {
   const { user } = useAuth();

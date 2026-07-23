@@ -1,0 +1,18 @@
+/* ── Option-Wheel overlay ────────────────────────────────────────────────
+   Transparent overlay with a left-to-right gradient blur so the wheel
+   floats over page content without a solid sidebar panel. */
+.ow-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.45) 55%, transparent 100%);
+  backdrop-filter: blur(18px) saturate(1.6);
+  -webkit-backdrop-filter: blur(18px) saturate(1.6);
+  mask-image: linear-gradient(to right, black 0%, black 50%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 0%, black 50%, transparent 100%);
+}
+
+.dark .ow-overlay::before {
+  background: linear-gradient(to right, rgba(1, 1, 1, 0.88) 0%, rgba(1, 1, 1, 0.5) 55%, transparent 100%);
+}

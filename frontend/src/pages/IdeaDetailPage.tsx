@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, ArrowUp, Bot, Check, ChevronRight, CircleAlert, Heart, Lightbulb, MessageCircle, Send, Share2, Sparkles, Target, TrendingUp, Users } from "lucide-react";
+import { ArrowLeft, ArrowUp, Bot, Check, ChevronRight, CircleAlert, Heart, Lightbulb, MessageCircle, Send, Share2, Sparkles, Target, TrendingUp, Users, Edit3 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import ideaService from "../services/ideaService";
 import commentService from "../services/commentService";
+import favoriteService from "../services/favoriteService";
 import voteService from "../services/voteService";
 import type { Comment, Idea } from "../types/idea.types";
-import PageSkeleton from "../components/PageSkeleton";
-import { isFavoriteIdea, toggleFavoriteIdea } from "../lib/favorites";
+import PageSkeleton from "../components/PageSkeleton/PageSkeleton";
+
 
 function score(idea: Idea, adjustment = 0) { return Math.min(96, Math.max(58, 65 + idea.voteCount * 4 + idea.commentCount * 2 + adjustment)); }
 function date(dateValue: string) { return new Date(dateValue).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" }); }
@@ -28,13 +29,25 @@ export default function IdeaDetailPage() {
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
-    setLoading(true);
-    Promise.all([ideaService.getIdeaById(id), commentService.getComments(id)])
-      .then(([ideaResponse, commentsResponse]) => { setIdea(ideaResponse.data.idea); setIsFavorite(isFavoriteIdea(ideaResponse.data.idea.id || ideaResponse.data.idea._id)); setHasVoted(ideaResponse.data.idea.hasVoted || false); setVoteCount(ideaResponse.data.idea.voteCount); setComments(commentsResponse.data.comments); })
+    if (id) {
+      setLoading(true);
+      Promise.all([
+        ideaService.getIdeaById(id),
+        commentService.getComments(id),
+        user ? favoriteService.getFavorites().catch(() => ({ data: { favorites: [] as string[] } })) : Promise.resolve({ data: { favorites: [] as string[] } })
+      ])
+      .then(([ideaResponse, commentsResponse, favResponse]) => {
+        setIdea(ideaResponse.data.idea);
+        const favIds = favResponse.data.favorites;
+        setIsFavorite(favIds.includes(ideaResponse.data.idea.id || ideaResponse.data.idea._id));
+        setHasVoted(ideaResponse.data.idea.hasVoted || false);
+        setVoteCount(ideaResponse.data.idea.voteCount);
+        setComments(commentsResponse.data.comments);
+      })
       .catch((requestError) => setError(requestError.message))
       .finally(() => setLoading(false));
-  }, [id]);
+    }
+  }, [id, user]);
 
   const validation = useMemo(() => idea ? [
     { label: "Market demand", value: score(idea, 4), color: "#6366f1" },
@@ -60,9 +73,18 @@ export default function IdeaDetailPage() {
     finally { setSubmittingComment(false); }
   }
   async function handleDeleteComment(commentId: string) { try { await commentService.deleteComment(commentId); setComments((current) => current.filter((comment) => (comment.id || comment._id) !== commentId)); } catch (deleteError) { console.error(deleteError); } }
-  function handleFavorite() { if (!id) return; setIsFavorite(toggleFavoriteIdea(id)); }
+  function handleFavorite() {
+    if (!id || !user) return;
+    const newIsFavorite = !isFavorite;
+    setIsFavorite(newIsFavorite);
+    if (newIsFavorite) {
+      favoriteService.addFavorite(id).catch(() => setIsFavorite(false));
+    } else {
+      favoriteService.removeFavorite(id).catch(() => setIsFavorite(true));
+    }
+  }
 
-  if (loading) return <div className="min-h-[calc(100vh-76px)] bg-[#fafaf8]"><PageSkeleton variant="detail" /></div>;
+  if (loading) return <div className="min-h-[calc(100vh-76px)] bg-[var(--color-surface-idea)]"><PageSkeleton variant="detail" /></div>;
   if (error || !idea) return <div className="min-h-screen bg-[#fafaf8] grid place-items-center px-5"><div className="text-center"><CircleAlert className="mx-auto text-rose-400" size={30} /><p className="mt-4 text-slate-600">{error || "Idea not found"}</p><Link to="/explore" className="mt-4 inline-flex text-sm font-semibold text-indigo-600">Back to ideas</Link></div></div>;
 
   const overallScore = score(idea, 2);
@@ -73,10 +95,12 @@ export default function IdeaDetailPage() {
     { name: "Launch", detail: "Share with your first focused community", done: false },
   ];
 
+  const isAuthor = user && idea.author && (user.id === (idea.author as any).id || user.id === (idea.author as any)._id);
+
   return (
-    <div className="min-h-[calc(100vh-76px)] bg-[#fafaf8]">
+    <div className="min-h-[calc(100vh-76px)] bg-[var(--color-surface-idea)]">
       <main className="mx-auto max-w-[1440px] px-5 py-7 sm:px-8 sm:py-10 xl:px-12">
-        <div className="mb-7 flex items-center justify-between gap-4"><Link to="/explore" className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-500 transition hover:bg-white hover:text-slate-900"><ArrowLeft size={18} /> All ideas</Link><div className="flex items-center gap-2"><button onClick={handleFavorite} className={`grid size-11 place-items-center rounded-xl transition ${isFavorite ? "bg-rose-50 text-rose-500" : "text-slate-500 hover:bg-white hover:text-rose-500"}`} aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}><Heart size={18} className={isFavorite ? "fill-current" : ""} /></button><button className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-500 transition hover:bg-white hover:text-indigo-600"><Share2 size={18} /> <span className="hidden sm:inline">Share</span></button></div></div>
+        <div className="mb-7 flex items-center justify-between gap-4"><Link to="/explore" className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-500 transition hover:bg-white hover:text-slate-900"><ArrowLeft size={18} /> All ideas</Link><div className="flex items-center gap-2">{isAuthor && <Link to={`/edit-idea/${id}`} className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-500 transition hover:bg-white hover:text-indigo-600"><Edit3 size={18} /> <span className="hidden sm:inline">Edit</span></Link>}<button onClick={handleFavorite} className={`grid size-11 place-items-center rounded-xl transition ${isFavorite ? "bg-rose-50 text-rose-500" : "text-slate-500 hover:bg-white hover:text-rose-500"}`} aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}><Heart size={18} className={isFavorite ? "fill-current" : ""} /></button><button className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-500 transition hover:bg-white hover:text-indigo-600"><Share2 size={18} /> <span className="hidden sm:inline">Share</span></button></div></div>
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_400px]">
           <div className="space-y-8">
             <header className="relative overflow-hidden rounded-[30px] bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-600 p-7 text-white shadow-[0_25px_65px_-35px_rgba(79,70,229,.75)] sm:p-10"><div className="pointer-events-none absolute -right-20 -top-24 size-80 rounded-full bg-white/10 blur-3xl" /><div className="relative"><div className="flex flex-wrap items-center gap-3 text-sm"><span className="rounded-full bg-white/15 px-3 py-1.5 font-semibold text-indigo-50">{idea.category?.name || "Uncategorized"}</span><span className="text-indigo-100">Created {date(idea.createdAt)}</span></div><h1 className="font-heading mt-6 max-w-3xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl">{idea.title}</h1><div className="mt-7 flex flex-wrap items-center gap-4 border-t border-white/15 pt-5"><div className="flex items-center gap-3"><span className="grid size-10 place-items-center rounded-xl bg-white/15 text-sm font-bold">{idea.author?.username?.charAt(0).toUpperCase()}</span><div><p className="text-sm font-semibold">{idea.author?.username}</p><p className="text-xs text-indigo-100">Idea creator</p></div></div><span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-indigo-50">{idea.difficulty} path</span></div></div></header>

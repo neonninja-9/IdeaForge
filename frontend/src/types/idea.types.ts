@@ -107,6 +107,9 @@ export interface DashboardResponse {
       totalComments: number;
     };
     ideas: Idea[];
+    total?: number;
+    page?: number;
+    totalPages?: number;
   };
 }
 
@@ -114,6 +117,9 @@ export interface MyIdeasResponse {
   status: "success";
   data: {
     ideas: Idea[];
+    total?: number;
+    page?: number;
+    totalPages?: number;
   };
 }
 
