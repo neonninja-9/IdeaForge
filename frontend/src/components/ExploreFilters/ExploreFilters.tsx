@@ -59,6 +59,7 @@ export default function ExploreFilters({ categories, tags }: ExploreFiltersProps
             name="q"
             defaultValue={currentQ}
             placeholder="Search ideas by title or problem..."
+            aria-label="Search ideas"
             className="w-full pl-12 pr-4 py-3 bg-surface-alt border border-edge rounded-xl focus:outline-none focus:ring-2 focus:ring-vivid/50 focus:border-vivid transition-all"
           />
         </div>
@@ -71,6 +72,8 @@ export default function ExploreFilters({ categories, tags }: ExploreFiltersProps
         <button
           type="button"
           onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+          aria-label="Toggle filters"
+          aria-expanded={isFiltersOpen}
           className="md:hidden px-4 py-3 bg-surface-alt border border-edge text-fg font-medium rounded-xl flex items-center justify-center"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,6 +86,7 @@ export default function ExploreFilters({ categories, tags }: ExploreFiltersProps
         <select
           value={currentCategory}
           onChange={(e) => router.push(pathname + "?" + createQueryString("category", e.target.value))}
+          aria-label="Filter by category"
           className="w-full px-4 py-2.5 bg-surface border border-edge rounded-xl focus:outline-none focus:ring-2 focus:ring-vivid/50 appearance-none"
         >
           <option value="">All Categories</option>
@@ -94,6 +98,7 @@ export default function ExploreFilters({ categories, tags }: ExploreFiltersProps
         <select
           value={currentTag}
           onChange={(e) => router.push(pathname + "?" + createQueryString("tag", e.target.value))}
+          aria-label="Filter by tag"
           className="w-full px-4 py-2.5 bg-surface border border-edge rounded-xl focus:outline-none focus:ring-2 focus:ring-vivid/50 appearance-none"
         >
           <option value="">All Tags</option>
@@ -105,6 +110,7 @@ export default function ExploreFilters({ categories, tags }: ExploreFiltersProps
         <select
           value={currentDifficulty}
           onChange={(e) => router.push(pathname + "?" + createQueryString("difficulty", e.target.value))}
+          aria-label="Filter by difficulty"
           className="w-full px-4 py-2.5 bg-surface border border-edge rounded-xl focus:outline-none focus:ring-2 focus:ring-vivid/50 appearance-none"
         >
           <option value="">Any Difficulty</option>
@@ -116,6 +122,7 @@ export default function ExploreFilters({ categories, tags }: ExploreFiltersProps
         <select
           value={currentSort}
           onChange={(e) => router.push(pathname + "?" + createQueryString("sort", e.target.value))}
+          aria-label="Sort ideas"
           className="w-full px-4 py-2.5 bg-surface border border-edge rounded-xl focus:outline-none focus:ring-2 focus:ring-vivid/50 appearance-none"
         >
           <option value="newest">Newest First</option>
