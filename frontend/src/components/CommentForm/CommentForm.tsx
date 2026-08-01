@@ -26,7 +26,9 @@ export default function CommentForm({ ideaId }: { ideaId: string }) {
             {state.error}
           </div>
         )}
+        <label htmlFor="comment-text" className="sr-only">Comment</label>
         <textarea
+          id="comment-text"
           name="text"
           rows={3}
           required
@@ -37,9 +39,16 @@ export default function CommentForm({ ideaId }: { ideaId: string }) {
           <button
             type="submit"
             disabled={isPending}
-            className="px-6 py-2 bg-fg text-fg-on-dark font-semibold rounded-xl hover:bg-vivid transition-colors disabled:opacity-70 flex items-center gap-2"
+            className="px-6 py-2 bg-fg text-fg-on-dark font-semibold rounded-xl hover:bg-vivid transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
           >
-            {isPending ? "Posting..." : "Post Comment"}
+            {isPending ? (
+              <>
+                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                Posting...
+              </>
+            ) : (
+              "Post Comment"
+            )}
           </button>
         </div>
       </form>
