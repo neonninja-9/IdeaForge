@@ -63,12 +63,12 @@ export default function Footer() {
           <div>
             <h4 className="text-[11px] font-mono uppercase tracking-[0.25em] text-fg-muted mb-5">Newsletter</h4>
             <p className="text-sm text-fg-muted mb-5 leading-relaxed">Stay ahead of the curve with our weekly editorial on idea architecture.</p>
-            <div className="flex flex-col gap-2 min-[420px]:flex-row">
-              <input type="email" placeholder="Email" className="min-h-11 flex-1 px-4 py-2.5 text-sm bg-surface-dark-card border border-edge-dark rounded-lg text-white placeholder:text-fg-muted focus:outline-none focus:border-vivid/50 transition-colors" />
-              <button className="min-h-11 px-4 py-2.5 bg-vivid hover:bg-vivid-hover rounded-lg text-white transition-colors duration-300 cursor-pointer flex items-center justify-center" aria-label="Subscribe">
+            <form className="flex flex-col gap-2 min-[420px]:flex-row" onSubmit={(e) => e.preventDefault()}>
+              <input type="email" placeholder="Email" aria-label="Email address for newsletter" autoComplete="email" required className="min-h-11 flex-1 px-4 py-2.5 text-sm bg-surface-dark-card border border-edge-dark rounded-lg text-white placeholder:text-fg-muted focus:outline-none focus:border-vivid/50 transition-colors" />
+              <button type="submit" className="min-h-11 px-4 py-2.5 bg-vivid hover:bg-vivid-hover rounded-lg text-white transition-colors duration-300 cursor-pointer flex items-center justify-center" aria-label="Subscribe">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </button>
-            </div>
+            </form>
           </div>
         </div>
 
