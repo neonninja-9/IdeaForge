@@ -12,7 +12,6 @@ import {
   Mic,
   Plus,
   Send,
-  Sparkles,
   Trash2,
   TrendingUp,
   Vote,

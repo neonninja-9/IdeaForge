@@ -7,6 +7,7 @@
  *   GET    /dashboard    → get dashboard stats + ideas
  *   GET    /:id          → get single idea (public, optionally auth for vote status)
  *   POST   /             → create idea (auth required)
+ *   PATCH  /:id          → update own idea (auth required)
  *   DELETE /:id          → delete own idea (auth required)
  */
 
@@ -15,6 +16,7 @@ import ideaController from "../../controllers/idea.controller.js";
 import authenticate from "../../middlewares/authenticate.js";
 import validate from "../../middlewares/validate.js";
 import { createIdeaRules, updateIdeaRules } from "../../validators/idea.validator.js";
+import { validateObjectId } from "../../middlewares/validateObjectId.js";
 
 const router = Router();
 
@@ -28,11 +30,11 @@ router.get("/my", authenticate, ideaController.getMyIdeas);
 router.get("/dashboard", authenticate, ideaController.dashboard);
 
 // This must come after /my and /dashboard so they aren't treated as :id
-router.get("/:id", optionalAuth, ideaController.getById);
+router.get("/:id", validateObjectId("id"), optionalAuth, ideaController.getById);
 
 router.post("/", authenticate, createIdeaRules, validate, ideaController.create);
-router.patch("/:id", authenticate, updateIdeaRules, validate, ideaController.update);
-router.delete("/:id", authenticate, ideaController.delete);
+router.patch("/:id", authenticate, validateObjectId("id"), updateIdeaRules, validate, ideaController.update);
+router.delete("/:id", authenticate, validateObjectId("id"), ideaController.delete);
 
 /**
  * Optional auth — doesn't reject if no token, but attaches req.user if present.

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Heart, Lightbulb } from "lucide-react";
 import { Link } from "react-router-dom";
-import ideaService from "../services/ideaService";
 import favoriteService from "../services/favoriteService";
 import type { Idea } from "../types/idea.types";
 
@@ -10,17 +9,14 @@ export default function FavoritesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    favoriteService.getFavorites()
+    favoriteService.getFavorites({ populate: true })
       .then((res) => {
-        const ids = res.data.favorites;
-        if (!ids.length) { setLoading(false); return; }
-        ideaService.getIdeas({ limit: 100 })
-          .then((response) => setIdeas(response.data.ideas.filter((idea) => ids.includes(idea.id || idea._id))))
-          .catch(console.error)
-          .finally(() => setLoading(false));
+        setIdeas(res.data.ideas || []);
       })
       .catch((err) => {
-        console.error(err);
+        console.error("Failed to load favorites:", err);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);
@@ -55,7 +51,7 @@ export default function FavoritesPage() {
                 </div>
                 <h2 className="font-heading mt-6 text-xl font-bold text-slate-900 dark:text-white">{idea.title}</h2>
                 <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-500 dark:text-slate-400">{idea.problem}</p>
-                <p className="mt-5 text-xs text-slate-400 dark:text-slate-500">{idea.voteCount} votes · {idea.commentCount} comments</p>
+                <p className="mt-5 text-xs text-slate-400 dark:text-slate-500">{idea.voteCount || 0} votes · {idea.commentCount || 0} comments</p>
               </Link>
             ))}
           </section>

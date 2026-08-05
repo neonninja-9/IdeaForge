@@ -21,7 +21,15 @@ export interface Tag {
 
 export interface IdeaAuthor {
   _id: string;
+  id?: string;
   username: string;
+}
+
+export interface Attachment {
+  name: string;
+  url: string;
+  type: string;
+  size?: number;
 }
 
 export interface Idea {
@@ -34,6 +42,7 @@ export interface Idea {
   difficulty: "Beginner" | "Intermediate" | "Advanced";
   suggestedTechStack?: string;
   status: "draft" | "published";
+  attachments?: Attachment[];
   author: IdeaAuthor;
   category: Category;
   tags: Tag[];
@@ -49,7 +58,7 @@ export interface Comment {
   _id: string;
   text: string;
   idea: string;
-  user: { _id: string; username: string };
+  user: { _id: string; id?: string; username: string };
   createdAt: string;
 }
 
@@ -130,8 +139,36 @@ export interface CreateIdeaPayload {
   solution: string;
   impact?: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
-  category: string;
-  tags: string[];
+  category?: string;
+  tags?: string[];
   suggestedTechStack?: string;
   status?: "draft" | "published";
+  attachments?: Attachment[];
+}
+
+export interface NotificationItem {
+  id: string;
+  _id?: string;
+  recipient: string;
+  actor: { _id: string; id?: string; username: string; avatarUrl?: string };
+  type: "vote" | "comment" | "mention" | "system";
+  idea?: { _id: string; id?: string; title: string };
+  read: boolean;
+  createdAt: string;
+}
+
+export interface NotificationsResponse {
+  status: "success";
+  data: {
+    notifications: NotificationItem[];
+    unreadCount: number;
+  };
+}
+
+export interface FavoritesResponse {
+  status: "success";
+  data: {
+    favorites: string[];
+    ideas?: Idea[];
+  };
 }

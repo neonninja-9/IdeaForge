@@ -55,7 +55,7 @@ const ideaController = {
      */
     async create(req, res, next) {
         try {
-            const { title, problem, solution, impact, difficulty, category, tags, suggestedTechStack, status } = req.body;
+            const { title, problem, solution, impact, difficulty, category, tags, suggestedTechStack, status, attachments } = req.body;
 
             const idea = await ideaService.create({
                 title,
@@ -67,6 +67,7 @@ const ideaController = {
                 tags,
                 suggestedTechStack,
                 status,
+                attachments: Array.isArray(attachments) ? attachments : [],
                 author: req.user.id,
             });
 
@@ -85,7 +86,7 @@ const ideaController = {
     async update(req, res, next) {
         try {
             // Pick only allowed fields
-            const { title, problem, solution, impact, difficulty, category, tags, suggestedTechStack, status } = req.body;
+            const { title, problem, solution, impact, difficulty, category, tags, suggestedTechStack, status, attachments } = req.body;
             
             // Basic body validation
             if (Object.keys(req.body).length === 0) {
@@ -102,6 +103,7 @@ const ideaController = {
             if (tags !== undefined) data.tags = tags;
             if (suggestedTechStack !== undefined) data.suggestedTechStack = suggestedTechStack;
             if (status !== undefined) data.status = status;
+            if (attachments !== undefined) data.attachments = Array.isArray(attachments) ? attachments : [];
 
             const idea = await ideaService.update(req.params.id, req.user.id, data);
 

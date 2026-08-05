@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, useCallback } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import PageTransition from "../PageTransition/PageTransition";
 import {
@@ -21,6 +21,8 @@ import { useAuth } from "../../hooks/useAuth";
 import { AppleSpotlight } from "../ui/apple-spotlight/apple-spotlight";
 import { DotField } from "../ui/dot-field/dot-field";
 import OptionWheel from "../ui/option-wheel/option-wheel";
+import notificationService from "../../services/notificationService";
+import type { NotificationItem } from "../../types/idea.types";
 import "./AppShell.css";
 
 type NavigationItem = {
@@ -58,12 +60,26 @@ function isCurrent(item: NavigationItem, pathname: string) {
   return item.match ? item.match(pathname) : pathname === item.to;
 }
 
+function timeAgo(dateString: string): string {
+  const diff = Date.now() - new Date(dateString).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
 export default function AppShell() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [appleSpotlightFocusSignal, setAppleSpotlightFocusSignal] = useState(0);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [mobileSearchQuery, setMobileSearchQuery] = useState("");
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
   const notificationCloseTimerRef = useRef<number | null>(null);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("ideaforge-theme") === "dark");
   const { user } = useAuth();
@@ -72,12 +88,35 @@ export default function AppShell() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const activeWheelIndex = Math.max(0, wheelNavigation.findIndex((item) => isCurrent(item, pathname)));
 
+  const fetchNotifications = useCallback(async () => {
+    if (!user) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+    try {
+      setLoadingNotifications(true);
+      const res = await notificationService.getNotifications();
+      setNotifications(res.data.notifications || []);
+      setUnreadCount(res.data.unreadCount || 0);
+    } catch {
+      // Ignore background notification fetch errors
+    } finally {
+      setLoadingNotifications(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [fetchNotifications]);
+
   const handleNotificationEnter = () => {
     if (notificationCloseTimerRef.current) {
       window.clearTimeout(notificationCloseTimerRef.current);
       notificationCloseTimerRef.current = null;
     }
     setNotificationsOpen(true);
+    fetchNotifications();
   };
 
   const handleNotificationLeave = () => {
@@ -87,6 +126,34 @@ export default function AppShell() {
     notificationCloseTimerRef.current = window.setTimeout(() => {
       setNotificationsOpen(false);
     }, 220);
+  };
+
+  const handleMarkAllRead = async () => {
+    try {
+      await notificationService.markAllAsRead();
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      setUnreadCount(0);
+    } catch (e) {
+      console.error("Failed to mark all as read:", e);
+    }
+  };
+
+  const handleNotificationClick = async (notification: NotificationItem) => {
+    if (!notification.read) {
+      const nid = notification.id || notification._id;
+      if (nid) {
+        notificationService.markAsRead(nid).catch(console.error);
+        setNotifications((prev) =>
+          prev.map((n) => (n.id === nid || n._id === nid ? { ...n, read: true } : n))
+        );
+        setUnreadCount((c) => Math.max(0, c - 1));
+      }
+    }
+    setNotificationsOpen(false);
+    if (notification.idea) {
+      const ideaId = (notification.idea as any).id || notification.idea._id;
+      if (ideaId) navigate(`/idea/${ideaId}`);
+    }
   };
 
   useEffect(() => {
@@ -140,11 +207,10 @@ export default function AppShell() {
   return (
     <div className="relative isolate min-h-screen bg-[var(--background)] text-[var(--foreground)] transition-colors dark:text-slate-100" style={darkMode ? { backgroundColor: "#08070d" } : undefined}>
       {darkMode && <DotField dotRadius={1} dotSpacing={11} gradientFrom="rgba(33, 28, 48, 0.45)" gradientTo="rgba(24, 21, 36, 0.35)" className="pointer-events-none fixed inset-0 z-0 bg-[#08070d] opacity-80" />}
-      {/* Wheel overlay — transparent, floats over the page with gradient blur */}
+      
+      {/* Wheel overlay */}
       <aside className="ow-overlay group fixed inset-y-0 left-0 z-50 hidden w-[320px] -translate-x-[296px] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:translate-x-0 focus-within:translate-x-0 lg:block" aria-label="Main navigation">
-        {/* Invisible hit-area so cursor can trigger the slide-in */}
         <div className="absolute inset-y-0 right-0 w-8 cursor-pointer" aria-hidden="true" />
-        {/* Current page label pinned at the top */}
         <div className="relative z-10 px-8 pt-7 pb-2">
           <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400 dark:text-[#7d7d7d]">Current Page</span>
           <h2 className="mt-1 font-heading text-lg font-bold text-slate-900 dark:text-white">{wheelNavigation[activeWheelIndex]?.label ?? "Home"}</h2>
@@ -175,10 +241,7 @@ export default function AppShell() {
       </aside>
 
       <div className="relative z-10 min-h-screen transition-colors" style={darkMode ? { backgroundColor: "transparent" } : undefined}>
-        <header 
-          className="sticky top-0 z-40 flex h-[88px] items-center gap-6 px-6 sm:px-12"
-        >
-          {/* Header background with gradient and mask for smooth blur fade */}
+        <header className="sticky top-0 z-40 flex h-[88px] items-center gap-6 px-6 sm:px-12">
           <div 
             className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[var(--background)] to-[var(--background)]/0 backdrop-blur-xl [mask-image:linear-gradient(to_bottom,black_20%,transparent)] dark:from-[#08070d] dark:to-transparent" 
             style={darkMode ? { 
@@ -205,6 +268,8 @@ export default function AppShell() {
             <button onClick={() => { setMobileSearchOpen(true); window.setTimeout(() => searchInputRef.current?.focus(), 0); }} className="grid size-11 place-items-center rounded-full text-slate-500 transition hover:bg-white hover:text-vivid sm:hidden" aria-label="Search community ideas">
               <Search size={20} />
             </button>
+            
+            {/* Notification bell */}
             <div 
               className="relative"
               onMouseEnter={handleNotificationEnter}
@@ -218,7 +283,11 @@ export default function AppShell() {
                 aria-haspopup="dialog"
               >
                 <Bell size={20} />
-                <span className="absolute right-2.5 top-2.5 size-2 rounded-full bg-vivid ring-2 ring-white dark:ring-[#08070d]" />
+                {unreadCount > 0 && (
+                  <span className="absolute right-2 top-2 grid size-4 place-items-center rounded-full bg-rose-500 text-[9px] font-bold text-white ring-2 ring-white dark:ring-[#08070d]">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
               </button>
 
               {notificationsOpen && (
@@ -230,44 +299,72 @@ export default function AppShell() {
                   <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-3">
                     <div className="flex items-center gap-2">
                       <h2 className="font-heading text-base font-bold text-slate-900 dark:text-white">Notifications</h2>
-                      <span className="rounded-full bg-vivid/10 dark:bg-vivid/20 px-2 py-0.5 text-[10px] font-bold text-vivid dark:text-vivid-light">3 new</span>
+                      {unreadCount > 0 && (
+                        <span className="rounded-full bg-vivid/10 dark:bg-vivid/20 px-2 py-0.5 text-[10px] font-bold text-vivid dark:text-vivid-light">
+                          {unreadCount} new
+                        </span>
+                      )}
                     </div>
-                    <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 cursor-pointer">
-                      Mark all read
-                    </span>
+                    {user && notifications.some((n) => !n.read) && (
+                      <button 
+                        onClick={handleMarkAllRead} 
+                        className="text-[11px] font-medium text-slate-400 dark:text-slate-500 hover:text-vivid dark:hover:text-vivid-light cursor-pointer"
+                      >
+                        Mark all read
+                      </button>
+                    )}
                   </div>
 
-                  <div className="mt-3 divide-y divide-slate-100 dark:divide-white/5">
-                    <div className="py-2.5 first:pt-0 last:pb-0 flex items-start gap-3">
-                      <span className="mt-1.5 size-2 rounded-full bg-vivid shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">Welcome to IdeaForge!</p>
-                        <p className="mt-0.5 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">Start capturing and presenting your raw venture ideas.</p>
-                        <span className="mt-1 block text-[10px] text-slate-400 dark:text-slate-500">Just now</span>
+                  <div className="mt-3 max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-white/5">
+                    {!user ? (
+                      <div className="py-6 text-center">
+                        <p className="text-xs text-slate-500 dark:text-slate-400">Sign in to get notified about upvotes and comments on your ideas.</p>
+                        <Link to="/login" className="mt-3 inline-flex text-xs font-semibold text-vivid dark:text-vivid-light">Sign In</Link>
                       </div>
-                    </div>
-
-                    <div className="py-2.5 first:pt-0 last:pb-0 flex items-start gap-3">
-                      <span className="mt-1.5 size-2 rounded-full bg-indigo-500 shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">Trending in Community</p>
-                        <p className="mt-0.5 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">Explore new developer tools and health tech ideas.</p>
-                        <span className="mt-1 block text-[10px] text-slate-400 dark:text-slate-500">2h ago</span>
+                    ) : loadingNotifications && notifications.length === 0 ? (
+                      <div className="py-6 text-center text-xs text-slate-400">Loading notifications...</div>
+                    ) : notifications.length === 0 ? (
+                      <div className="py-6 text-center">
+                        <p className="text-xs text-slate-400 dark:text-slate-500">No notifications yet. When members interact with your ideas, updates will appear here.</p>
                       </div>
-                    </div>
-
-                    <div className="py-2.5 first:pt-0 last:pb-0 flex items-start gap-3">
-                      <span className="mt-1.5 size-2 rounded-full bg-emerald-500 shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">Raw Idea Capture</p>
-                        <p className="mt-0.5 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">Your ideas auto-save locally while typing.</p>
-                        <span className="mt-1 block text-[10px] text-slate-400 dark:text-slate-500">1d ago</span>
-                      </div>
-                    </div>
+                    ) : (
+                      notifications.map((n) => {
+                        const nid = n.id || n._id;
+                        return (
+                          <div 
+                            key={nid} 
+                            onClick={() => handleNotificationClick(n)}
+                            className={`py-2.5 first:pt-0 last:pb-0 flex items-start gap-3 cursor-pointer rounded-xl px-2 -mx-2 transition hover:bg-slate-50 dark:hover:bg-white/5 ${!n.read ? "bg-vivid/5 dark:bg-vivid/10" : ""}`}
+                          >
+                            <span className={`mt-1.5 size-2 rounded-full shrink-0 ${n.type === "vote" ? "bg-indigo-500" : n.type === "comment" ? "bg-emerald-500" : "bg-vivid"}`} />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                                {n.actor?.username || "Someone"}{" "}
+                                <span className="font-normal text-slate-600 dark:text-slate-400">
+                                  {n.type === "vote" ? "upvoted your idea" : n.type === "comment" ? "commented on your idea" : "interacted with you"}
+                                </span>
+                              </p>
+                              {n.idea?.title && (
+                                <p className="mt-0.5 truncate text-[11px] font-medium text-vivid dark:text-vivid-light">
+                                  "{n.idea.title}"
+                                </p>
+                              )}
+                              <span className="mt-1 block text-[10px] text-slate-400 dark:text-slate-500">
+                                {timeAgo(n.createdAt)}
+                              </span>
+                            </div>
+                            {!n.read && (
+                              <span className="size-1.5 rounded-full bg-vivid shrink-0 self-center" />
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
                   </div>
                 </div>
               )}
             </div>
+
             <Link to="/profile" className="grid size-10 place-items-center rounded-full bg-slate-100 dark:bg-white/10 text-sm font-bold text-slate-900 dark:text-white transition hover:bg-vivid hover:text-white" aria-label="Open profile">
               {user?.username?.slice(0, 1).toUpperCase() || "U"}
             </Link>

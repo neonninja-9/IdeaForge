@@ -12,9 +12,37 @@ const notificationController = {
                 .populate("idea", "title")
                 .lean();
 
+            const unreadCount = await Notification.countDocuments({
+                recipient: req.user.id,
+                read: false,
+            });
+
             return res.status(200).json({
                 status: "success",
-                data: { notifications },
+                data: {
+                    notifications: notifications.map(n => ({
+                        ...n,
+                        id: n._id.toString(),
+                    })),
+                    unreadCount,
+                },
+            });
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    /** PATCH /api/v1/notifications/read-all */
+    async markAllRead(req, res, next) {
+        try {
+            await Notification.updateMany(
+                { recipient: req.user.id, read: false },
+                { read: true }
+            );
+
+            return res.status(200).json({
+                status: "success",
+                message: "All notifications marked as read",
             });
         } catch (err) {
             next(err);

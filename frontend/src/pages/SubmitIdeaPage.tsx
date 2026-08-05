@@ -3,17 +3,12 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
-  Bot,
   Check,
   ChevronDown,
-  FileText,
-  ImagePlus,
   Lightbulb,
   LoaderCircle,
   Mic,
-  Paperclip,
   PartyPopper,
-  RefreshCw,
   Save,
   Sparkles,
   WandSparkles,
@@ -22,9 +17,9 @@ import { useAuth } from "../hooks/useAuth";
 import ideaService from "../services/ideaService";
 import categoryService from "../services/categoryService";
 import tagService from "../services/tagService";
-import aiService from "../services/aiService";
-import type { Category, Tag } from "../types/idea.types";
+import type { Category, Tag, Attachment } from "../types/idea.types";
 import PageSkeleton from "../components/PageSkeleton/PageSkeleton";
+import AttachmentUploader from "../components/AttachmentUploader/AttachmentUploader";
 
 /* ─── Constants ─────────────────────────────────────────────────── */
 const DRAFT_STORAGE_KEY = "ideaforge:draft";
@@ -44,7 +39,7 @@ function generateTechStack(tagNames: string[], difficulty: string): string {
 
 /* ─── Types ──────────────────────────────────────────────────────── */
 interface FormErrors { title?: string; problem?: string; solution?: string; category?: string; tags?: string; difficulty?: string; }
-interface DraftData { title: string; problem: string; solution: string; impact: string; difficulty: string; selectedCategory: string; selectedTags: string[]; savedAt: number; }
+interface DraftData { title: string; problem: string; solution: string; impact: string; difficulty: string; selectedCategory: string; selectedTags: string[]; attachments: Attachment[]; savedAt: number; }
 
 /* ─── Draft persistence helpers ──────────────────────────────────── */
 function loadDraft(): DraftData | null {
@@ -71,10 +66,10 @@ function ComingSoonButton({ icon: Icon, label }: { icon: React.ComponentType<{ s
       <button
         type="button"
         disabled
-        className="inline-flex min-h-10 cursor-not-allowed items-center gap-2 rounded-xl px-3 text-xs font-medium text-slate-300 dark:text-slate-600"
+        className="inline-flex min-h-9 cursor-not-allowed items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-slate-300 dark:text-slate-600"
         aria-label={`${label} — coming soon`}
       >
-        <Icon size={16} /> {label}
+        <Icon size={15} /> {label}
       </button>
       <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 shadow-lg transition group-hover:opacity-100">
         Coming soon
@@ -98,13 +93,11 @@ export default function SubmitIdeaPage() {
   const [difficulty, setDifficulty] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [errors, setErrors] = useState<FormErrors>({});
   const [serverError, setServerError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
-  const [isThinking, setIsThinking] = useState(false);
-  const [showBlueprint, setShowBlueprint] = useState(false);
-  const [aiAdvice, setAiAdvice] = useState("");
 
   // Draft auto-save state
   const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
@@ -138,6 +131,7 @@ export default function SubmitIdeaPage() {
       setDifficulty(draft.difficulty || "");
       setSelectedCategory(draft.selectedCategory || "");
       setSelectedTags(draft.selectedTags || []);
+      setAttachments(draft.attachments || []);
       setDraftSavedAt(draft.savedAt);
     }
   }, []);
@@ -146,20 +140,18 @@ export default function SubmitIdeaPage() {
   const debouncedSave = useCallback(() => {
     if (draftTimerRef.current) clearTimeout(draftTimerRef.current);
     draftTimerRef.current = setTimeout(() => {
-      saveDraft({ title, problem, solution, impact, difficulty, selectedCategory, selectedTags });
+      saveDraft({ title, problem, solution, impact, difficulty, selectedCategory, selectedTags, attachments });
       setDraftSavedAt(Date.now());
     }, DRAFT_SAVE_DELAY);
-  }, [title, problem, solution, impact, difficulty, selectedCategory, selectedTags]);
+  }, [title, problem, solution, impact, difficulty, selectedCategory, selectedTags, attachments]);
 
   useEffect(() => {
-    // Don't save until hydration is done
     if (!hasHydratedRef.current) return;
-    // Only save if there's something to save
-    if (title || problem || solution || impact || difficulty || selectedCategory || selectedTags.length) {
+    if (title || problem || solution || impact || difficulty || selectedCategory || selectedTags.length || attachments.length) {
       debouncedSave();
     }
     return () => { if (draftTimerRef.current) clearTimeout(draftTimerRef.current); };
-  }, [title, problem, solution, impact, difficulty, selectedCategory, selectedTags, debouncedSave]);
+  }, [title, problem, solution, impact, difficulty, selectedCategory, selectedTags, attachments, debouncedSave]);
 
   /* ─── Derived values ───────────────────────────────────────────── */
   const selectedTagNames = allTags.filter((tag) => selectedTags.includes(tag.id || tag._id)).map((tag) => tag.name);
@@ -178,7 +170,7 @@ export default function SubmitIdeaPage() {
 
   function validate(): FormErrors {
     const next: FormErrors = {};
-    if (title.trim().length < 5) next.title = "Give your idea a title of at least 5 characters.";
+    if (title.trim().length < 3) next.title = "Give your idea a title of at least 3 characters.";
     if (problem.trim().length < 20) next.problem = "Describe the problem in at least 20 characters.";
     if (solution.trim().length < 20) next.solution = "Describe a possible solution in at least 20 characters.";
     if (!selectedCategory) next.category = "Choose a category.";
@@ -191,7 +183,6 @@ export default function SubmitIdeaPage() {
     event.preventDefault();
     setServerError("");
 
-    // Drafts skip validation — allow incomplete saves
     if (status === "published") {
       const nextErrors = validate();
       setErrors(nextErrors);
@@ -208,19 +199,18 @@ export default function SubmitIdeaPage() {
         solution: solution.trim(),
         impact: impact.trim() || undefined,
         difficulty: (difficulty || "Beginner") as "Beginner" | "Intermediate" | "Advanced",
-        category: selectedCategory,
+        category: selectedCategory || undefined,
         tags: selectedTags,
         suggestedTechStack: techStack || undefined,
         status,
+        attachments,
       });
 
       clearDraft();
 
       if (status === "draft") {
-        // For drafts, navigate to dashboard with a subtle indicator
         navigate("/dashboard");
       } else {
-        // Published — show success modal
         const newIdea = response.data.idea as { _id?: string; id?: string };
         const newId = newIdea.id || newIdea._id || "";
         setCreatedIdeaId(newId);
@@ -234,23 +224,9 @@ export default function SubmitIdeaPage() {
     }
   }
 
-  async function generateBlueprint() {
-    setIsThinking(true);
-    try {
-      const message = [title, problem, solution].filter(Boolean).join(" — ") || "Help me shape a new project idea";
-      const response = await aiService.assist(message, { ideaTitle: title });
-      setAiAdvice(response.data.message);
-    } catch {
-      setAiAdvice("The AI suggestion is unavailable right now. You can still use this blueprint as a starting point.");
-    } finally {
-      setIsThinking(false);
-      setShowBlueprint(true);
-    }
-  }
-
   function resetForm() {
-    setTitle(""); setProblem(""); setSolution(""); setImpact(""); setDifficulty(""); setSelectedCategory(""); setSelectedTags([]);
-    setErrors({}); setServerError(""); setShowBlueprint(false); setAiAdvice(""); setDraftSavedAt(null);
+    setTitle(""); setProblem(""); setSolution(""); setImpact(""); setDifficulty(""); setSelectedCategory(""); setSelectedTags([]); setAttachments([]);
+    setErrors({}); setServerError(""); setDraftSavedAt(null);
     clearDraft();
   }
 
@@ -295,31 +271,111 @@ export default function SubmitIdeaPage() {
   return (
     <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent px-5 py-7 sm:px-8 sm:py-10 xl:px-12 transition-colors duration-500">
       <div className="mx-auto max-w-[1440px]">
-        <div className="mb-8 flex items-center justify-between gap-4"><button onClick={() => navigate(-1)} className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-500 dark:text-slate-400 transition hover:bg-white dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"><ArrowLeft size={18} /> Back</button><div className="hidden items-center gap-2 text-sm text-slate-400 dark:text-slate-500 sm:flex">{draftSavedAt ? <><span className="size-2 rounded-full bg-emerald-500" /> Draft saved at {formatDraftTime(draftSavedAt)}</> : <><span className="size-2 rounded-full bg-slate-300 dark:bg-slate-600" /> No draft</>}</div></div>
+        <div className="mb-8 flex items-center justify-between gap-4">
+          <button onClick={() => navigate(-1)} className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-500 dark:text-slate-400 transition hover:bg-white dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"><ArrowLeft size={18} /> Back</button>
+          <div className="hidden items-center gap-2 text-sm text-slate-400 dark:text-slate-500 sm:flex">{draftSavedAt ? <><span className="size-2 rounded-full bg-emerald-500" /> Draft saved at {formatDraftTime(draftSavedAt)}</> : <><span className="size-2 rounded-full bg-slate-300 dark:bg-slate-600" /> No draft</>}</div>
+        </div>
         <div className="mb-8 max-w-3xl">
           <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">IDEA CAPTURE</p>
           <h1 className="font-heading mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">Give your thought room to grow.</h1>
-          <p className="mt-3 text-base leading-7 text-slate-500 dark:text-slate-400">Start messy. Capture your raw thoughts, structure the core opportunity, and present it clearly to the community.</p>
+          <p className="mt-3 text-base leading-7 text-slate-500 dark:text-slate-400">Start messy. Capture your raw thoughts, attach visuals or specs, and present it clearly to the community.</p>
         </div>
 
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_430px]">
           <form onSubmit={(e) => handleSubmit(e, "published")} noValidate className="rounded-[28px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-5 shadow-[0_18px_50px_-32px_rgba(15,23,42,0.32)] dark:shadow-none sm:p-8 transition-colors duration-500">
             {serverError && <div className="mb-6 rounded-2xl border border-rose-100 dark:border-rose-500/20 bg-rose-50 dark:bg-rose-500/10 px-4 py-3 text-sm text-rose-700 dark:text-rose-400">{serverError}</div>}
-            <div className="flex items-start justify-between gap-5"><div><p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">The spark</p><h2 className="font-heading mt-1 text-xl font-bold text-slate-900 dark:text-white">What are you thinking about?</h2></div><div className="flex items-center gap-3"><div className="hidden text-right sm:block"><p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Idea clarity</p><p className="mt-1 text-sm font-bold text-indigo-600 dark:text-indigo-400">{confidence}%</p></div><span className="grid size-11 place-items-center rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"><Lightbulb size={20} /></span></div></div>
-            <div className="mt-7 space-y-6">
-              <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Name your idea</span><input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Give this thought a working title" className={`w-full rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-3.5 text-base text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.title ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />{errors.title && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.title}</span>}</label>
-              <label className="block"><span className="mb-2 flex items-center justify-between text-sm font-semibold text-slate-700 dark:text-slate-300">Describe your idea <span className="font-normal text-slate-400 dark:text-slate-500">{problem.length} characters</span></span><textarea value={problem} onChange={(event) => setProblem(event.target.value)} rows={7} placeholder="Describe the problem, the moment you noticed it, or the possibility you can't stop thinking about..." className={`w-full resize-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-4 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.problem ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />{errors.problem && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.problem}</span>}</label>
-              <div className="-mt-3 flex flex-wrap items-center gap-1">
-                <ComingSoonButton icon={Mic} label="Voice" />
-                <ComingSoonButton icon={ImagePlus} label="Image" />
-                <ComingSoonButton icon={Paperclip} label="Attach" />
-                <ComingSoonButton icon={FileText} label="Sketch" />
+            
+            <div className="flex items-start justify-between gap-5">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">The spark</p>
+                <h2 className="font-heading mt-1 text-xl font-bold text-slate-900 dark:text-white">What are you thinking about?</h2>
               </div>
-              <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">A possible first solution</span><textarea value={solution} onChange={(event) => setSolution(event.target.value)} rows={4} placeholder="How could this become useful? Don't worry about getting it right yet." className={`w-full resize-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-4 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.solution ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />{errors.solution && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.solution}</span>}</label>
-              <div className="grid gap-5 md:grid-cols-2"><label className="block"><span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Category</span><span className="relative block"><select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)} className={`w-full appearance-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-3.5 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.category ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`}><option value="">Choose a category</option>{categories.map((category) => <option key={category.id || category._id} value={category.id || category._id}>{category.icon} {category.name}</option>)}</select><ChevronDown size={17} className="pointer-events-none absolute right-4 top-3.5 text-slate-400 dark:text-slate-500" /></span>{errors.category && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.category}</span>}</label><div><span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Starting point</span><div className="grid grid-cols-3 gap-2">{["Beginner", "Intermediate", "Advanced"].map((level) => <button key={level} type="button" onClick={() => setDifficulty(level)} className={`min-h-[50px] rounded-xl border px-2 text-xs font-semibold transition ${difficulty === level ? "border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" : "border-slate-200 dark:border-white/10 bg-[#fcfcfd] dark:bg-[#1a1625] text-slate-500 dark:text-slate-400 hover:border-indigo-200 dark:hover:border-indigo-500/30"}`}>{level}</button>)}</div>{errors.difficulty && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.difficulty}</span>}</div></div>
-              <div><div className="mb-2 flex items-center justify-between"><span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Focus areas</span><span className="text-xs text-slate-400 dark:text-slate-500">Up to 5</span></div><div className="flex flex-wrap gap-2">{allTags.map((tag) => { const id = tag.id || tag._id; const selected = selectedTags.includes(id); return <button key={id} type="button" onClick={() => toggleTag(id)} className={`rounded-full border px-3 py-2 text-xs font-medium transition ${selected ? "border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" : "border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] text-slate-500 dark:text-slate-400 hover:border-indigo-200 dark:hover:border-indigo-500/30"}`}>{selected && <Check size={13} className="mr-1 inline" />}{tag.name}</button>; })}</div>{errors.tags && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.tags}</span>}</div>
-              <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">The impact you hope for <span className="font-normal text-slate-400 dark:text-slate-500">optional</span></span><textarea value={impact} onChange={(event) => setImpact(event.target.value)} rows={2} placeholder="What would a better future look like?" className="w-full resize-none rounded-2xl border border-slate-200 dark:border-white/10 bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-3 text-sm leading-6 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10" /></label>
+              <div className="flex items-center gap-3">
+                <div className="hidden text-right sm:block">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Idea clarity</p>
+                  <p className="mt-1 text-sm font-bold text-indigo-600 dark:text-indigo-400">{confidence}%</p>
+                </div>
+                <span className="grid size-11 place-items-center rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"><Lightbulb size={20} /></span>
+              </div>
             </div>
+
+            <div className="mt-7 space-y-6">
+              <label className="block">
+                <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Name your idea</span>
+                <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Give this thought a working title" className={`w-full rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-3.5 text-base text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.title ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />
+                {errors.title && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.title}</span>}
+              </label>
+
+              <label className="block">
+                <span className="mb-2 flex items-center justify-between text-sm font-semibold text-slate-700 dark:text-slate-300">
+                  Describe your idea <span className="font-normal text-slate-400 dark:text-slate-500">{problem.length} characters</span>
+                </span>
+                <textarea value={problem} onChange={(event) => setProblem(event.target.value)} rows={6} placeholder="Describe the problem, the moment you noticed it, or the possibility you can't stop thinking about..." className={`w-full resize-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-4 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.problem ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />
+                {errors.problem && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.problem}</span>}
+              </label>
+
+              <div className="-mt-3 flex flex-wrap items-center gap-1">
+                <ComingSoonButton icon={Mic} label="Voice recording" />
+                <ComingSoonButton icon={WandSparkles} label="AI Copilot" />
+              </div>
+
+              {/* Attachments Section */}
+              <AttachmentUploader
+                attachments={attachments}
+                onChange={setAttachments}
+                maxFiles={5}
+              />
+
+              <label className="block">
+                <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">A possible first solution</span>
+                <textarea value={solution} onChange={(event) => setSolution(event.target.value)} rows={4} placeholder="How could this become useful? Don't worry about getting it right yet." className={`w-full resize-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-4 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.solution ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />
+                {errors.solution && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.solution}</span>}
+              </label>
+
+              <div className="grid gap-5 md:grid-cols-2">
+                <label className="block">
+                  <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Category</span>
+                  <span className="relative block">
+                    <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)} className={`w-full appearance-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-3.5 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.category ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`}>
+                      <option value="">Choose a category</option>
+                      {categories.map((category) => <option key={category.id || category._id} value={category.id || category._id}>{category.icon} {category.name}</option>)}
+                    </select>
+                    <ChevronDown size={17} className="pointer-events-none absolute right-4 top-3.5 text-slate-400 dark:text-slate-500" />
+                  </span>
+                  {errors.category && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.category}</span>}
+                </label>
+                <div>
+                  <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Starting point</span>
+                  <div className="grid grid-cols-3 gap-2">
+                    {["Beginner", "Intermediate", "Advanced"].map((level) => (
+                      <button key={level} type="button" onClick={() => setDifficulty(level)} className={`min-h-[50px] rounded-xl border px-2 text-xs font-semibold transition ${difficulty === level ? "border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" : "border-slate-200 dark:border-white/10 bg-[#fcfcfd] dark:bg-[#1a1625] text-slate-500 dark:text-slate-400 hover:border-indigo-200 dark:hover:border-indigo-500/30"}`}>{level}</button>
+                    ))}
+                  </div>
+                  {errors.difficulty && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.difficulty}</span>}
+                </div>
+              </div>
+
+              <div>
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Focus areas</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-500">Up to 5</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {allTags.map((tag) => {
+                    const id = tag.id || tag._id;
+                    const selected = selectedTags.includes(id);
+                    return <button key={id} type="button" onClick={() => toggleTag(id)} className={`rounded-full border px-3 py-2 text-xs font-medium transition ${selected ? "border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" : "border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] text-slate-500 dark:text-slate-400 hover:border-indigo-200 dark:hover:border-indigo-500/30"}`}>{selected && <Check size={13} className="mr-1 inline" />}{tag.name}</button>;
+                  })}
+                </div>
+                {errors.tags && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.tags}</span>}
+              </div>
+
+              <label className="block">
+                <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">The impact you hope for <span className="font-normal text-slate-400 dark:text-slate-500">optional</span></span>
+                <textarea value={impact} onChange={(event) => setImpact(event.target.value)} rows={2} placeholder="What would a better future look like?" className="w-full resize-none rounded-2xl border border-slate-200 dark:border-white/10 bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-3 text-sm leading-6 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10" />
+              </label>
+            </div>
+
             <div className="mt-8 flex flex-col-reverse gap-3 border-t border-slate-100 dark:border-white/10 pt-6 sm:flex-row sm:justify-between">
               <div className="flex flex-col gap-3 sm:flex-row">
                 <span className="group relative">
@@ -362,12 +418,18 @@ export default function SubmitIdeaPage() {
                       <p className="mt-1.5 text-sm leading-6 text-slate-600 dark:text-slate-300">{techStack}</p>
                     </article>
                   )}
+                  {attachments.length > 0 && (
+                    <article className="rounded-2xl border border-indigo-100 dark:border-indigo-500/20 bg-indigo-50/60 dark:bg-indigo-500/10 p-4">
+                      <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400">Visuals ({attachments.length})</p>
+                      <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-300">{attachments.map((a) => a.name).join(", ")}</p>
+                    </article>
+                  )}
                 </div>
               </div>
             </div>
             <div className="mt-4 flex items-center gap-3 rounded-2xl border border-indigo-100 dark:border-indigo-500/20 bg-indigo-50/60 dark:bg-indigo-500/10 px-4 py-3 text-xs leading-5 text-indigo-800 dark:text-indigo-300">
               <Sparkles size={17} className="shrink-0 text-indigo-600 dark:text-indigo-400" />
-              Focus on writing down the core problem and solution. The community will help iterate on the rest.
+              Focus on capturing raw thoughts and attaching specs. The community will help iterate on the rest.
             </div>
           </aside>
         </div>

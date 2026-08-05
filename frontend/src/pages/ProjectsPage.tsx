@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, ChevronDown, CircleCheck, FolderKanban, GripVertical, Plus, Sparkles, Users } from "lucide-react";
+import { ArrowUpRight, ChevronDown, CircleCheck, Download, FolderKanban, GripVertical, Plus, Sparkles, Users } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import projectService from "../services/projectService";
 
@@ -79,6 +79,35 @@ export default function ProjectsPage() {
     setExpanded("Problem");
   }
 
+  function handleExportCanvas() {
+    const lines = [
+      "# Lean Venture Canvas",
+      "",
+      `*Exported from IdeaForge on ${new Date().toLocaleDateString()}*`,
+      "",
+      "---",
+      "",
+    ];
+
+    canvasBlocks.forEach((block) => {
+      lines.push(`### ${block.title}`);
+      lines.push(`> *${block.prompt}*`);
+      lines.push("");
+      lines.push(notes[block.title]?.trim() || "_No notes recorded yet._");
+      lines.push("");
+      lines.push("---");
+      lines.push("");
+    });
+
+    const blob = new Blob([lines.join("\n")], { type: "text/markdown;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "lean-venture-canvas.md";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent px-5 py-7 sm:px-8 sm:py-10 xl:px-12 transition-colors duration-500">
       <main className="mx-auto max-w-[1440px]">
@@ -88,15 +117,20 @@ export default function ProjectsPage() {
             <h1 className="font-heading mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">Turn possibility into a plan.</h1>
             <p className="mt-3 max-w-2xl text-base leading-7 text-slate-500 dark:text-slate-400">Explore the moving parts of your next venture. Your canvas is saved securely to your IdeaForge account.</p>
           </div>
-          <button onClick={startNewCanvas} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg shadow-indigo-200 dark:shadow-none transition hover:-translate-y-0.5 hover:bg-indigo-700">
-            <Plus size={18} /> New canvas
-          </button>
+          <div className="flex flex-wrap items-center gap-3">
+            <button onClick={handleExportCanvas} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#120F17] px-4 text-sm font-semibold text-slate-700 dark:text-slate-300 shadow-sm transition hover:bg-slate-50 dark:hover:bg-white/5">
+              <Download size={17} /> Export Canvas
+            </button>
+            <button onClick={startNewCanvas} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg shadow-indigo-200 dark:shadow-none transition hover:-translate-y-0.5 hover:bg-indigo-700">
+              <Plus size={18} /> New canvas
+            </button>
+          </div>
         </header>
 
         <section className="mt-8 grid gap-4 md:grid-cols-3">
           <article className="rounded-3xl border border-indigo-100 dark:border-indigo-500/20 bg-gradient-to-br from-indigo-600 to-violet-600 p-6 text-white shadow-lg shadow-indigo-100 dark:shadow-none transition-colors duration-500">
             <span className="grid size-10 place-items-center rounded-2xl bg-white/15"><FolderKanban size={20} /></span>
-            <p className="mt-7 text-sm font-medium text-indigo-100">This device</p>
+            <p className="mt-7 text-sm font-medium text-indigo-100">Live Workspace</p>
             <h2 className="font-heading mt-1 text-xl font-bold">Your venture canvas</h2>
             <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/20"><span className="block h-full rounded-full bg-white transition-[width] duration-300" style={{ width: `${progress}%` }} /></div>
             <p className="mt-2 text-xs text-indigo-100">{completed} of {canvasBlocks.length} sections shaped</p>
@@ -106,7 +140,7 @@ export default function ProjectsPage() {
         </section>
 
         <section className="mt-10 rounded-[30px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-5 shadow-[0_18px_50px_-32px_rgba(15,23,42,.3)] dark:shadow-none sm:p-7 transition-colors duration-500">
-          <div className="flex flex-col gap-4 border-b border-slate-100 dark:border-white/5 pb-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">STARTUP CANVAS</p><h2 className="font-heading mt-1 text-2xl font-bold text-slate-900 dark:text-white">A working model, one block at a time</h2></div><span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400"><CircleCheck size={14} /> Saved on this device</span></div>
+          <div className="flex flex-col gap-4 border-b border-slate-100 dark:border-white/5 pb-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">STARTUP CANVAS</p><h2 className="font-heading mt-1 text-2xl font-bold text-slate-900 dark:text-white">A working model, one block at a time</h2></div><span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 dark:bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400"><CircleCheck size={14} /> Synced to cloud</span></div>
           <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {canvasBlocks.map((block) => {
               const isExpanded = expanded === block.title;

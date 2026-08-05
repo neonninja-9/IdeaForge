@@ -6,13 +6,8 @@ import { useAuth } from "./hooks/useAuth";
 const Navbar = lazy(() => import("./components/Navbar/Navbar"));
 const AppShell = lazy(() => import("./components/AppShell/AppShell"));
 const Footer = lazy(() => import("./components/Footer/Footer"));
-const Hero = lazy(() => import("./components/Hero/Hero"));
-const TrustedBy = lazy(() => import("./components/TrustedBy/TrustedBy"));
-const CoreCapabilities = lazy(() => import("./components/CoreCapabilities/CoreCapabilities"));
-const ThreeStages = lazy(() => import("./components/ThreeStages/ThreeStages"));
-const SocialProof = lazy(() => import("./components/SocialProof/SocialProof"));
-const CTABanner = lazy(() => import("./components/CTABanner/CTABanner"));
 const ClickEffects = lazy(() => import("./components/ClickEffects/ClickEffects"));
+const LandingPageContent = lazy(() => import("./pages/LandingPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
@@ -33,19 +28,10 @@ function LandingPage() {
 
   // The landing experience is public-only. Once signed in, visitors enter the
   // product workspace instead of falling back into marketing content.
-  if (isLoading) return <div className="min-h-screen bg-white" />;
+  if (isLoading) return <div className="min-h-screen bg-[#090a0c]" />;
   if (user) return <Navigate to="/dashboard" replace />;
 
-  return (
-    <main className="min-h-screen bg-white">
-      <Hero />
-      <TrustedBy />
-      <CoreCapabilities />
-      <ThreeStages />
-      <SocialProof />
-      <CTABanner />
-    </main>
-  );
+  return <LandingPageContent />;
 }
 
 /**
@@ -54,7 +40,7 @@ function LandingPage() {
  */
 function LandingLayout() {
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-[#090a0c] flex flex-col">
       <Navbar />
       <div className="flex-1"><Outlet /></div>
       <Footer />

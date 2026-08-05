@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowUp, Bot, Lightbulb, LoaderCircle, MessageSquare, Plus, Send, Sparkles, AlertCircle, ArrowLeft } from "lucide-react";
+import { ArrowUp, Bot, Lightbulb, LoaderCircle, MessageSquare, Plus, Send, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import aiService, { type AiConversation, type AiMessage } from "../services/aiService";
 import { useAuth } from "../hooks/useAuth";

@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import gsap from "gsap";

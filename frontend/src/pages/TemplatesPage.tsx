@@ -1,4 +1,4 @@
-import { ArrowRight, FileText, Lightbulb, Rocket, Sparkles, Users, Bot } from "lucide-react";
+import { ArrowRight, FileText, Lightbulb, Rocket, Users, Bot } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const templates = [

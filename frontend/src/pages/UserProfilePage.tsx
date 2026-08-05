@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Settings, Sparkles } from "lucide-react";
+import { Settings } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import ideaService from "../services/ideaService";
 import type { Idea } from "../types/idea.types";
