@@ -4,6 +4,9 @@ import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bot, ChevronRight, FolderKanban, LayoutGrid, Lightbulb, Search } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+
+const MotionLink = motion.create(Link);
 
 interface SearchResult {
   label: string;
@@ -48,25 +51,25 @@ export function AppleSpotlight({ onSubmitSearch, focusSignal = 0, className }: A
   const shortcuts = [
     { label: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
     { label: 'Ideas', href: '/explore', icon: Lightbulb },
-    { label: 'AI Studio', href: '/ai-studio', icon: Bot },
+    { label: 'AI Studio (Soon)', href: '/ai-studio', icon: Bot },
     { label: 'Projects', href: '/projects', icon: FolderKanban },
   ];
 
   return (
     <div
-      className={cn('relative w-full flex justify-start', className)}
+      className={cn('relative flex justify-start', className)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="flex w-full min-w-0 items-center justify-start gap-2">
-        <div className="relative flex justify-start min-w-0 flex-1">
+      <div className="flex min-w-0 items-center justify-start gap-2">
+        <div className="relative flex justify-start min-w-0">
         <motion.div
           layout
           initial={false}
-          animate={{ width: isActive ? '100%' : '44px' }}
+          animate={{ width: isActive ? 320 : 44 }}
           transition={{ layout: { duration: 0.35, type: 'spring', bounce: 0.15 }, width: { duration: 0.35, type: 'spring', bounce: 0.15 } }}
           className={cn(
-            "overflow-hidden rounded-full border border-slate-200/80 bg-white text-slate-950 shadow-sm transition-colors focus-within:border-indigo-300 focus-within:ring-4 focus-within:ring-indigo-50",
+            "rounded-full border border-slate-200/80 bg-white text-slate-950 shadow-sm transition-colors focus-within:border-indigo-300 focus-within:ring-4 focus-within:ring-indigo-50",
             !isActive && "cursor-pointer hover:bg-slate-50"
           )}
           onClick={() => {
@@ -113,17 +116,14 @@ export function AppleSpotlight({ onSubmitSearch, focusSignal = 0, className }: A
 
           <AnimatePresence initial={false}>
             {isActive && query && (
-              <motion.a
+              <MotionLink
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto', y: 0 }}
                 exit={{ opacity: 0, height: 0, y: -4 }}
-                href={result.href}
+                to={result.href}
                 onMouseEnter={() => setResultHovered(true)}
                 onMouseLeave={() => setResultHovered(false)}
-                onClick={(event) => {
-                  event.preventDefault();
-                  search();
-                }}
+                onClick={search}
                 className="absolute left-0 top-[calc(100%+8px)] z-50 flex w-full items-center gap-3 overflow-hidden rounded-2xl border border-slate-200/80 bg-white px-4 py-2.5 shadow-xl shadow-slate-200/50 hover:bg-slate-50"
               >
                 <span className="grid size-8 place-items-center rounded-lg bg-white text-slate-600 shadow-sm">
@@ -134,31 +134,37 @@ export function AppleSpotlight({ onSubmitSearch, focusSignal = 0, className }: A
                   <span className="block truncate text-xs text-slate-500">{result.description}</span>
                 </span>
                 <ChevronRight className={cn('size-5 text-slate-500 transition-opacity', resultHovered ? 'opacity-100' : 'opacity-0')} aria-hidden="true" />
-              </motion.a>
+              </MotionLink>
             )}
           </AnimatePresence>
         </div>
 
-        <AnimatePresence initial={false}>
-          {isActive && shortcuts.map((shortcut, index) => {
+        <div className="flex items-center">
+          {shortcuts.map((shortcut, index) => {
             const Icon = shortcut.icon;
             return (
-              <motion.a
+              <MotionLink
                 key={shortcut.label}
-                href={shortcut.href}
+                to={shortcut.href}
                 title={shortcut.label}
                 aria-label={shortcut.label}
-                initial={{ opacity: 0, scale: 0.65, x: -18, width: 0, padding: 0 }}
-                animate={{ opacity: 1, scale: 1, x: 0, width: 44, padding: 'auto' }}
-                exit={{ opacity: 0, scale: 0.65, x: -18, width: 0, padding: 0 }}
-                transition={{ type: 'spring', stiffness: 480, damping: 28, delay: index * 0.045 }}
-                className="grid h-11 shrink-0 place-items-center rounded-full bg-white text-slate-500 shadow-sm ring-1 ring-slate-200/80 transition hover:-translate-y-0.5 hover:bg-indigo-600 hover:text-white hover:shadow-md overflow-hidden"
+                initial={false}
+                animate={{
+                  opacity: isActive ? 1 : 0,
+                  scale: isActive ? 1 : 0.65,
+                  x: isActive ? 0 : -18,
+                  width: isActive ? 44 : 0,
+                  marginLeft: isActive && index > 0 ? 8 : 0
+                }}
+                transition={{ type: 'spring', stiffness: 480, damping: 28, delay: isActive ? index * 0.045 : 0 }}
+                className="grid h-11 shrink-0 place-items-center rounded-full bg-white text-slate-500 shadow-sm ring-1 ring-slate-200/80 transition hover:-translate-y-0.5 hover:bg-indigo-600 hover:text-white hover:shadow-md"
+                style={{ pointerEvents: isActive ? 'auto' : 'none' }}
               >
                 <Icon className="size-5 shrink-0" strokeWidth={1.8} aria-hidden="true" />
-              </motion.a>
+              </MotionLink>
             );
           })}
-        </AnimatePresence>
+        </div>
       </div>
     </div>
   );

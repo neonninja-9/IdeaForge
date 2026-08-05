@@ -8,8 +8,10 @@ import { apiFetch } from "./apiClient";
 import type { CategoriesResponse } from "../types/idea.types";
 
 const categoryService = {
-  async getCategories(): Promise<CategoriesResponse> {
-    return apiFetch<CategoriesResponse>("/categories");
+  async getCategories(options: { signal?: AbortSignal } = {}): Promise<CategoriesResponse> {
+    return apiFetch<CategoriesResponse>("/categories", {
+      signal: options.signal,
+    });
   },
 };
 

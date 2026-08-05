@@ -1,94 +1,156 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { CalendarDays, Command, FileText, PanelTop, Search, Users } from "lucide-react";
 
-const features = [
+const productCards = [
   {
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
-    ),
-    title: "Idea Capture Canvas",
-    description: "A distraction-free zone where multi-modal inputs converge into a single source of truth.",
-    accent: "group-hover:bg-vivid",
+    title: "Command center.",
+    body: "Find, sort, and turn raw notes into next actions.",
+    large: false,
+    accent: "iris",
   },
   {
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-      </svg>
-    ),
-    title: "AI Story Scaffold",
-    description: "Automatically generate narrative structures that connect abstract concepts into compelling arcs.",
-    accent: "group-hover:bg-orange-500",
+    title: "Daily plan.",
+    body: "Keep promising ideas attached to time blocks and owners.",
+    large: true,
+    accent: "ember",
   },
   {
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-      </svg>
-    ),
-    title: "Versioned Prototypes",
-    description: "Track every iteration of your thought process with granular snapshots and side-by-side diffs.",
-    accent: "group-hover:bg-teal-500",
+    title: "Knowledge base.",
+    body: "Documents stay connected to projects, tasks, and decisions.",
+    large: false,
+    accent: "iris",
   },
   {
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-      </svg>
-    ),
-    title: "Exportable Pitch Decks",
-    description: "Convert your forge projects into production-ready presentations with a single click.",
-    accent: "group-hover:bg-blue-500",
+    title: "Live inbox.",
+    body: "Mentions, approvals, and idea updates arrive in one calm feed.",
+    large: false,
+    accent: "ember",
   },
 ];
 
-export default function CoreCapabilities() {
-  const [inView, setInView] = useState(false);
-  const ref = useRef<HTMLElement>(null);
+const features = [
+  {
+    icon: PanelTop,
+    title: "Customize workspace",
+    description: "Shape projects, lists, and idea rooms around each team.",
+  },
+  {
+    icon: Users,
+    title: "Collaborate live",
+    description: "Work with founders, designers, and operators in one flow.",
+  },
+  {
+    icon: FileText,
+    title: "Publish assets",
+    description: "Turn structured thinking into docs, decks, and briefs.",
+  },
+];
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setInView(true); },
-      { threshold: 0.05, rootMargin: "50px" }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
+function MiniProductCard({ card }: { card: (typeof productCards)[number] }) {
   return (
-    <section ref={ref} id="capabilities" className="py-20 sm:py-28 lg:py-36 px-5 sm:px-6 lg:px-10 bg-white">
-      <div className="max-w-7xl mx-auto">
-        <div className={`mb-12 sm:mb-20 transition-all duration-700 ${inView ? "translate-y-0" : "translate-y-6"}`}>
-          <p className="text-[10px] font-mono uppercase tracking-[0.3em] text-vivid mb-4">
-            Core Capabilities
-          </p>
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-normal leading-[1.05] text-fg">
-            The architecture
-            <br />
-            of insight.
+    <article
+      className={`relative overflow-hidden rounded-xl border border-[#4a4b50] bg-[#111111] p-5 text-white ${
+        card.large ? "md:col-span-2" : ""
+      }`}
+    >
+      <div
+        className={`absolute -right-16 -top-16 size-48 rounded-full blur-3xl ${
+          card.accent === "iris" ? "bg-[#5683da]/25" : "bg-[#ff8964]/25"
+        }`}
+      />
+      <div className="relative min-h-52">
+        <p className="text-sm leading-6 text-[#a9a9aa]">
+          <span className="font-semibold text-white">{card.title}</span>{" "}
+          {card.body}
+        </p>
+        <div className="mt-8 rounded-xl border border-white/10 bg-[#090a0c]/80 p-4">
+          {card.large ? (
+            <div className="grid gap-3 sm:grid-cols-3">
+              {["Today", "Review", "Ship"].map((column, index) => (
+                <div key={column} className="rounded-lg bg-white/[0.04] p-3">
+                  <div className="mb-3 flex items-center justify-between text-[11px] text-[#95979e]">
+                    <span>{column}</span>
+                    <span>{index + 2}</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-16 rounded-lg bg-white/[0.07]" />
+                    <div className="h-10 rounded-lg bg-white/[0.04]" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {[0, 1, 2].map((row) => (
+                <div key={row} className="flex items-center gap-3 rounded-lg bg-white/[0.05] p-3">
+                  <span className={`size-2 rounded-full ${row === 1 ? "bg-[#ff8964]" : "bg-[#5683da]"}`} />
+                  <span className="h-2 flex-1 rounded-full bg-white/15" />
+                  <span className="h-2 w-10 rounded-full bg-white/10" />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+export default function CoreCapabilities() {
+  return (
+    <section id="product" className="bg-white px-5 py-24 text-[#050506] sm:px-6 sm:py-32 lg:px-10">
+      <div className="mx-auto max-w-[1200px]">
+        <div className="mb-12 max-w-5xl">
+          <h2 className="text-5xl font-black leading-none sm:text-6xl lg:text-[64px]">
+            Unmatched productivity
           </h2>
+          <p className="mt-5 max-w-2xl text-base leading-6 text-[#303236]">
+            IdeaForge is a process, project, and knowledge workspace that gives
+            teams one place to capture signals, structure thinking, and ship the
+            next version.
+          </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-          {features.map((feature, i) => (
-            <div
-              key={i}
-              className={`group relative bg-surface-alt rounded-2xl p-6 sm:p-7 border border-transparent hover:border-edge hover:shadow-xl transition-all duration-500 cursor-default ${
-                inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-              }`}
-              style={{ transitionDelay: inView ? `${200 + i * 120}ms` : "0ms" }}
-            >
-              <div className={`w-12 h-12 rounded-xl bg-edge flex items-center justify-center text-fg-mid mb-6 transition-all duration-500 ${feature.accent} group-hover:text-white group-hover:scale-110`}>
-                {feature.icon}
-              </div>
-              <h3 className="text-lg font-bold mb-2 text-fg">{feature.title}</h3>
-              <p className="text-sm text-fg-mid leading-relaxed">{feature.description}</p>
-              <div className="absolute bottom-0 right-0 w-16 h-16 bg-gradient-to-tl from-vivid/5 to-transparent rounded-br-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="grid gap-4 md:grid-cols-3">
+          {productCards.map((card) => (
+            <MiniProductCard key={card.title} card={card} />
+          ))}
+        </div>
+
+        <div className="mt-24 grid gap-10 md:grid-cols-3">
+          {features.map((feature) => (
+            <div key={feature.title}>
+              <feature.icon className="mb-5 size-8 text-[#5683da]" />
+              <h3 className="text-2xl font-semibold leading-7">{feature.title}</h3>
+              <p className="mt-3 text-sm leading-6 text-[#303236]">{feature.description}</p>
             </div>
           ))}
+        </div>
+
+        <div className="mt-20 grid overflow-hidden rounded-xl border border-[#d1d1d1] bg-[#f6f6f6] md:grid-cols-[0.85fr_1.15fr]">
+          <div className="p-6 sm:p-8">
+            <Command className="mb-8 size-8 text-[#ff8964]" />
+            <h3 className="text-4xl font-black leading-none">Run command.</h3>
+            <p className="mt-4 text-sm leading-6 text-[#303236]">
+              Search every idea, generate a next step, assign the owner, and
+              keep the full context attached.
+            </p>
+          </div>
+          <div className="border-t border-[#d1d1d1] bg-[#111111] p-4 md:border-l md:border-t-0">
+            <div className="rounded-xl border border-white/10 bg-[#090a0c] p-4 text-white">
+              <div className="mb-4 flex items-center gap-3 rounded-lg bg-white/[0.06] px-4 py-3 text-sm text-[#a9a9aa]">
+                <Search className="size-4" />
+                Run command...
+              </div>
+              {["Mark task as done", "Open AI forge", "Switch to timeline view", "Create launch brief"].map((item) => (
+                <div key={item} className="flex items-center justify-between border-t border-white/10 py-3 text-sm">
+                  <span>{item}</span>
+                  <CalendarDays className="size-4 text-[#95979e]" />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

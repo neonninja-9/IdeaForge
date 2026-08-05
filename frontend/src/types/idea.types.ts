@@ -33,6 +33,7 @@ export interface Idea {
   impact?: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
   suggestedTechStack?: string;
+  status: "draft" | "published";
   author: IdeaAuthor;
   category: Category;
   tags: Tag[];
@@ -132,4 +133,5 @@ export interface CreateIdeaPayload {
   category: string;
   tags: string[];
   suggestedTechStack?: string;
+  status?: "draft" | "published";
 }

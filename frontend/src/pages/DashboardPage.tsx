@@ -11,7 +11,9 @@ import {
   MessageCircle,
   Mic,
   Plus,
+  Send,
   Sparkles,
+  Trash2,
   TrendingUp,
   Vote,
 } from "lucide-react";
@@ -55,6 +57,9 @@ export default function DashboardPage() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [loading, setLoading] = useState(true);
   const [capture, setCapture] = useState("");
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isPublishing, setIsPublishing] = useState<string | null>(null);
   const gridRef = useRef<HTMLElement>(null);
   const heroRef = useRef<HTMLElement>(null);
 
@@ -85,11 +90,37 @@ export default function DashboardPage() {
     navigate(trimmed ? `/submit?prompt=${encodeURIComponent(trimmed)}` : "/submit");
   }
 
+  async function handleDeleteIdea(ideaId: string) {
+    setIsDeleting(true);
+    try {
+      await ideaService.deleteIdea(ideaId);
+      setIdeas((current) => current.filter((idea) => (idea.id || idea._id) !== ideaId));
+      setStats((prev) => ({ ...prev, ideasCount: Math.max(0, prev.ideasCount - 1) }));
+    } catch (err) {
+      console.error("Failed to delete idea", err);
+    } finally {
+      setIsDeleting(false);
+      setDeleteConfirmId(null);
+    }
+  }
+
+  async function handlePublishIdea(ideaId: string) {
+    setIsPublishing(ideaId);
+    try {
+      await ideaService.updateIdea(ideaId, { status: "published" });
+      setIdeas((current) => current.map((idea) => (idea.id || idea._id) === ideaId ? { ...idea, status: "published" } : idea));
+    } catch (err) {
+      console.error("Failed to publish idea", err);
+    } finally {
+      setIsPublishing(null);
+    }
+  }
+
   if (authLoading || loading) return <div className="min-h-[calc(100vh-76px)] bg-[var(--background)]"><PageSkeleton variant="dashboard" /></div>;
 
   return (
     <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent transition-colors duration-500">
-      <main className="mx-auto w-full max-w-[1440px] px-6 py-12 sm:px-12 sm:py-20 xl:px-16">
+      <main className="mx-auto w-full max-w-[1440px] px-6 py-8 sm:px-12 sm:py-12 xl:px-16">
         <style>{`
           .card--border-glow::after {
             content: '';
@@ -112,7 +143,7 @@ export default function DashboardPage() {
         <section className="relative overflow-hidden rounded-[28px] bento-section" ref={heroRef}>
           <GlobalSpotlight gridRef={heroRef} enabled={true} spotlightRadius={400} glowColor="132, 0, 255" />
           <ParticleCard
-            className="card card--border-glow rounded-[32px] px-8 py-16 text-white shadow-[0_32px_80px_-24px_rgba(0,0,0,0.6)] sm:px-16 sm:py-24"
+            className="card card--border-glow rounded-[32px] px-8 py-10 text-white shadow-[0_32px_80px_-24px_rgba(0,0,0,0.6)] sm:px-12 sm:py-14"
             style={{
               backgroundColor: "#120F17",
               borderRadius: "28px",
@@ -127,21 +158,21 @@ export default function DashboardPage() {
             <div className="pointer-events-none absolute -right-20 -top-28 size-80 rounded-full bg-purple-500/10 blur-3xl" />
             <div className="pointer-events-none absolute -bottom-36 left-1/3 size-72 rounded-full bg-violet-400/10 blur-3xl" />
             <div className="relative max-w-3xl">
-              <p className="mb-6 flex items-center gap-3 text-sm font-medium tracking-widest text-slate-300 uppercase" style={{ fontFamily: "var(--f-izmir)" }}><span className="size-2 rounded-full bg-vivid animate-pulse" /> Your creative workspace</p>
-              <h1 className="text-5xl font-normal leading-[1.1] tracking-tight sm:text-6xl md:text-[5rem] lg:text-[6rem] uppercase" style={{ fontFamily: "var(--f-regular)" }}>{greeting()},<br /><span className="italic text-slate-400" style={{ fontFamily: "var(--f-edit-italic)", textTransform: "none" }}>{user?.username}.</span></h1>
-              <p className="mt-8 max-w-xl text-xl leading-relaxed text-slate-400 sm:text-2xl font-light" style={{ fontFamily: "var(--f-edit-regular)" }}>Every breakthrough starts as a small thought.</p>
+              <p className="mb-4 flex items-center gap-3 text-sm font-medium tracking-widest text-slate-300 uppercase" style={{ fontFamily: "var(--f-izmir)" }}><span className="size-2 rounded-full bg-vivid animate-pulse" /> Your creative workspace</p>
+              <h1 className="text-3xl font-normal leading-[1.1] tracking-tight sm:text-4xl md:text-5xl uppercase" style={{ fontFamily: "var(--f-regular)" }}>{greeting()},<br /><span className="italic text-slate-400" style={{ fontFamily: "var(--f-edit-italic)", textTransform: "none" }}>{user?.username}.</span></h1>
+              <p className="mt-5 max-w-xl text-lg leading-relaxed text-slate-400 sm:text-xl font-light" style={{ fontFamily: "var(--f-edit-regular)" }}>Every breakthrough starts as a raw thought. Capture and shape it for the community.</p>
 
-              <div className="mt-8 rounded-[22px] border border-white/10 bg-[#1a1625] p-3 shadow-2xl shadow-black/30 sm:p-4">
-                <textarea value={capture} onChange={(event) => setCapture(event.target.value)} rows={3} placeholder="What's on your mind today?" className="min-h-24 w-full resize-none !border-none bg-transparent px-2 py-2 text-base text-slate-200 !outline-none focus:!outline-none focus-visible:!outline-none focus:!border-transparent focus:!ring-0 focus:!shadow-none !shadow-none placeholder:text-slate-500 sm:text-lg" aria-label="Capture an idea" style={{ outline: 'none', boxShadow: 'none', borderColor: 'transparent' }} />
+              <div className="mt-5 rounded-[22px] border border-white/10 bg-[#1a1625] p-3 shadow-2xl shadow-black/30 sm:p-4">
+                <textarea value={capture} onChange={(event) => setCapture(event.target.value)} rows={2} placeholder="What's on your mind today? Jot down any raw thought..." className="min-h-16 w-full resize-none !border-none bg-transparent px-2 py-2 text-base text-slate-200 !outline-none focus:!outline-none focus-visible:!outline-none focus:!border-transparent focus:!ring-0 focus:!shadow-none !shadow-none placeholder:text-slate-500 sm:text-lg" aria-label="Capture an idea" style={{ outline: 'none', boxShadow: 'none', borderColor: 'transparent' }} />
                 <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-3">
                   <div className="flex items-center gap-1">
-                    <button type="button" className="grid size-10 place-items-center rounded-xl text-slate-500 transition hover:bg-white/5 hover:text-purple-400" aria-label="Record voice note"><Mic size={18} /></button>
-                    <button type="button" className="grid size-10 place-items-center rounded-xl text-slate-500 transition hover:bg-white/5 hover:text-purple-400" aria-label="Add camera image"><Camera size={18} /></button>
-                    <button type="button" className="grid size-10 place-items-center rounded-xl text-slate-500 transition hover:bg-white/5 hover:text-purple-400" aria-label="Attach a file"><FileUp size={18} /></button>
-                    <span className="ml-1 hidden text-xs text-slate-500 sm:inline">A thought is all you need to start.</span>
+                    <span className="group relative"><button type="button" disabled className="grid size-10 cursor-not-allowed place-items-center rounded-xl text-slate-600" aria-label="Record voice note — coming soon"><Mic size={18} /></button><span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 shadow-lg transition group-hover:opacity-100">Coming soon</span></span>
+                    <span className="group relative"><button type="button" disabled className="grid size-10 cursor-not-allowed place-items-center rounded-xl text-slate-600" aria-label="Add camera image — coming soon"><Camera size={18} /></button><span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 shadow-lg transition group-hover:opacity-100">Coming soon</span></span>
+                    <span className="group relative"><button type="button" disabled className="grid size-10 cursor-not-allowed place-items-center rounded-xl text-slate-600" aria-label="Attach a file — coming soon"><FileUp size={18} /></button><span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 shadow-lg transition group-hover:opacity-100">Coming soon</span></span>
+                    <span className="ml-1 hidden text-xs text-slate-500 sm:inline">A raw thought is all you need to start.</span>
                   </div>
                   <button type="button" onClick={() => openCapture()} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-purple-600 px-4 text-sm font-semibold text-white shadow-lg shadow-purple-900/30 transition hover:-translate-y-0.5 hover:bg-purple-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600">
-                    <Sparkles size={17} /> Expand with AI <ArrowRight size={16} />
+                    <Plus size={17} /> Capture Idea <ArrowRight size={16} />
                   </button>
                 </div>
               </div>
@@ -191,11 +222,47 @@ export default function DashboardPage() {
               <div className="grid gap-4 md:grid-cols-2">
                 {ideas.slice(0, 4).map((idea) => {
                   const score = potentialScore(idea);
-                  return <article key={idea.id || idea._id} className="group rounded-[32px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-8 shadow-[0_12px_40px_-24px_rgba(0,0,0,0.1)] dark:shadow-none transition duration-500 hover:-translate-y-2 hover:shadow-2xl">
-                    <div className="flex items-start justify-between gap-3"><span className="rounded-full bg-slate-100 dark:bg-white/5 px-4 py-1.5 text-xs font-semibold tracking-wide text-slate-600 dark:text-slate-300 uppercase">{idea.category?.name || "Uncategorized"}</span><button className="grid size-10 place-items-center rounded-full text-slate-300 dark:text-slate-500 transition hover:bg-vivid/10 hover:text-vivid" aria-label={`Favorite ${idea.title}`}><Heart size={18} /></button></div>
-                    <Link to={`/idea/${idea.id || idea._id}`} className="mt-8 block"><h3 className="line-clamp-2 text-2xl font-normal leading-tight text-slate-900 dark:text-white group-hover:text-vivid transition-colors uppercase" style={{ fontFamily: "var(--f-regular)" }}>{idea.title}</h3><p className="mt-4 line-clamp-2 text-lg font-light leading-relaxed text-slate-500 dark:text-slate-400" style={{ fontFamily: "var(--f-edit-regular)" }}>{idea.problem}</p></Link>
+                  const ideaId = idea.id || idea._id;
+                  const isDraft = idea.status === "draft";
+                  return <article key={ideaId} className="group relative rounded-[32px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-8 shadow-[0_12px_40px_-24px_rgba(0,0,0,0.1)] dark:shadow-none transition duration-500 hover:-translate-y-2 hover:shadow-2xl">
+                    {/* Delete confirmation overlay */}
+                    {deleteConfirmId === ideaId && (
+                      <div className="absolute inset-0 z-20 grid place-items-center rounded-[32px] bg-black/50 backdrop-blur-sm">
+                        <div className="rounded-2xl bg-white dark:bg-[#1a1625] p-6 shadow-xl text-center max-w-xs">
+                          <p className="text-sm font-semibold text-slate-800 dark:text-white">Delete this idea?</p>
+                          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">This action cannot be undone. All votes and comments will also be removed.</p>
+                          <div className="mt-4 flex gap-2">
+                            <button onClick={() => setDeleteConfirmId(null)} className="flex-1 rounded-xl border border-slate-200 dark:border-white/10 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-white/5">Cancel</button>
+                            <button onClick={() => handleDeleteIdea(ideaId)} disabled={isDeleting} className="flex-1 rounded-xl bg-rose-600 py-2.5 text-xs font-semibold text-white transition hover:bg-rose-700 disabled:opacity-60">{isDeleting ? "Deleting..." : "Delete"}</button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full bg-slate-100 dark:bg-white/5 px-4 py-1.5 text-xs font-semibold tracking-wide text-slate-600 dark:text-slate-300 uppercase">{idea.category?.name || "Uncategorized"}</span>
+                        {isDraft && <span className="rounded-full bg-amber-50 dark:bg-amber-500/10 px-3 py-1.5 text-[10px] font-bold tracking-wide text-amber-700 dark:text-amber-400 uppercase">Draft</span>}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => setDeleteConfirmId(ideaId)} className="grid size-10 place-items-center rounded-full text-slate-300 dark:text-slate-600 transition hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-500" aria-label={`Delete ${idea.title}`}><Trash2 size={16} /></button>
+                        <button className="grid size-10 place-items-center rounded-full text-slate-300 dark:text-slate-500 transition hover:bg-vivid/10 hover:text-vivid" aria-label={`Favorite ${idea.title}`}><Heart size={18} /></button>
+                      </div>
+                    </div>
+                    <Link to={`/idea/${ideaId}`} className="mt-8 block"><h3 className="line-clamp-2 text-2xl font-normal leading-tight text-slate-900 dark:text-white group-hover:text-vivid transition-colors uppercase" style={{ fontFamily: "var(--f-regular)" }}>{idea.title}</h3><p className="mt-4 line-clamp-2 text-lg font-light leading-relaxed text-slate-500 dark:text-slate-400" style={{ fontFamily: "var(--f-edit-regular)" }}>{idea.problem}</p></Link>
                     <div className="mt-8 flex items-center justify-between border-t border-slate-100 dark:border-white/5 pt-6"><div><p className="text-[11px] font-bold tracking-widest text-slate-400 uppercase" style={{ fontFamily: "var(--f-izmir)" }}>Potential</p><p className="mt-1 text-lg font-bold text-slate-800 dark:text-white">{score}% <span className="font-normal text-slate-400">score</span></p></div><div className="flex items-center gap-4 text-sm text-slate-400"><span className="flex items-center gap-1.5"><Vote size={16} />{idea.voteCount}</span><span className="flex items-center gap-1.5"><MessageCircle size={16} />{idea.commentCount}</span></div></div>
-                    <div className="mt-6 flex gap-3"><Link to={`/idea/${idea.id || idea._id}`} className="flex-1 rounded-2xl bg-slate-50 dark:bg-white/5 py-3.5 text-center text-sm font-semibold text-slate-600 dark:text-slate-300 transition hover:bg-slate-100 dark:hover:bg-white/10">Continue</Link><button onClick={() => openCapture(idea.problem)} className="flex-1 rounded-2xl bg-vivid/5 dark:bg-vivid/10 py-3.5 text-sm font-semibold text-vivid dark:text-vivid-light transition hover:bg-vivid/10 dark:hover:bg-vivid/20">Expand</button></div>
+                    <div className="mt-6 flex gap-3">
+                      {isDraft ? (
+                        <>
+                          <Link to={`/edit-idea/${ideaId}`} className="flex-1 rounded-2xl bg-slate-50 dark:bg-white/5 py-3.5 text-center text-sm font-semibold text-slate-600 dark:text-slate-300 transition hover:bg-slate-100 dark:hover:bg-white/10">Edit</Link>
+                          <button onClick={() => handlePublishIdea(ideaId)} disabled={isPublishing === ideaId} className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 py-3.5 text-sm font-semibold text-emerald-700 dark:text-emerald-400 transition hover:bg-emerald-100 dark:hover:bg-emerald-500/20 disabled:opacity-60"><Send size={14} /> {isPublishing === ideaId ? "Publishing..." : "Publish"}</button>
+                        </>
+                      ) : (
+                        <>
+                          <Link to={`/idea/${ideaId}`} className="flex-1 rounded-2xl bg-slate-50 dark:bg-white/5 py-3.5 text-center text-sm font-semibold text-slate-600 dark:text-slate-300 transition hover:bg-slate-100 dark:hover:bg-white/10">View</Link>
+                          <button onClick={() => openCapture(idea.problem)} className="flex-1 rounded-2xl bg-vivid/5 dark:bg-vivid/10 py-3.5 text-sm font-semibold text-vivid dark:text-vivid-light transition hover:bg-vivid/10 dark:hover:bg-vivid/20">Draft similar</button>
+                        </>
+                      )}
+                    </div>
                   </article>;
                 })}
               </div>

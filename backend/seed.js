@@ -10,6 +10,7 @@
 import connectDB from "./db.js";
 import Category from "./models/category.js";
 import Tag from "./models/tag.js";
+import Template from "./models/template.js";
 
 const categories = [
     { name: "Agriculture", slug: "agriculture", icon: "🌾" },
@@ -52,6 +53,27 @@ const tags = [
     { name: "Automation", slug: "automation" },
 ];
 
+const templates = [
+    {
+        title: "SaaS Product",
+        description: "A subscription-based software template.",
+        fields: {
+            problem: "Small businesses struggle with [specific issue].",
+            solution: "A cloud-based tool that automates [specific task].",
+            impact: "Saves 10 hours a week for the average user."
+        }
+    },
+    {
+        title: "Community Marketplace",
+        description: "Connect buyers and sellers in a niche market.",
+        fields: {
+            problem: "There is no centralized place for [niche] enthusiasts to trade.",
+            solution: "A trusted marketplace with verified users and escrow.",
+            impact: "Increases safe transactions by 50% in the community."
+        }
+    }
+];
+
 async function seed() {
     try {
         await connectDB();
@@ -76,6 +98,16 @@ async function seed() {
             );
         }
         console.log(`✅ Seeded ${tags.length} tags`);
+
+        // Upsert templates
+        for (const template of templates) {
+            await Template.findOneAndUpdate(
+                { title: template.title },
+                template,
+                { upsert: true, new: true }
+            );
+        }
+        console.log(`✅ Seeded ${templates.length} templates`);
 
         console.log("\n🎉 Seed complete!");
         process.exit(0);

@@ -41,6 +41,11 @@ export const createIdeaRules = [
   body("tags.*")
     .isMongoId()
     .withMessage("Invalid tag ID format"),
+
+  body("status")
+    .optional()
+    .isIn(["draft", "published"])
+    .withMessage("Status must be draft or published"),
 ];
 
 export const updateIdeaRules = [
@@ -81,4 +86,9 @@ export const updateIdeaRules = [
     .optional()
     .isMongoId()
     .withMessage("Invalid tag ID format"),
+
+  body("status")
+    .optional()
+    .isIn(["draft", "published"])
+    .withMessage("Status must be draft or published"),
 ];

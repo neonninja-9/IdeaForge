@@ -1,4 +1,4 @@
-import React from 'react';
+import { Link } from "react-router-dom";
 
 export default function IdeaDetailLoadingPage() {
   return (
@@ -8,12 +8,12 @@ export default function IdeaDetailLoadingPage() {
 <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-[#e5e5e0] dark:border-[#333333] shadow-sm">
 <div className="flex justify-between items-center px-8 h-16 max-w-7xl mx-auto">
 <div className="flex items-center gap-8">
-<a className="text-xl font-black text-[#0a0a0a] dark:text-[#ffffff] tracking-tighter hover:opacity-80 transition-all duration-300" href="#">IdeaForge</a>
+<Link className="text-xl font-black text-[#0a0a0a] dark:text-[#ffffff] tracking-tighter hover:opacity-80 transition-all duration-300" to="/">IdeaForge</Link>
 <div className="hidden md:flex gap-6 items-center">
-<a className="text-[#6c3ce0] font-bold border-b-2 border-[#6c3ce0] pb-1 hover:opacity-80 transition-all duration-300" href="#">Explore</a>
-<a className="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 hover:opacity-80 transition-all duration-300" href="#">Submit Idea</a>
-<a className="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 hover:opacity-80 transition-all duration-300" href="#">Dashboard</a>
-<a className="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 hover:opacity-80 transition-all duration-300" href="#">Categories</a>
+<Link className="text-[#6c3ce0] font-bold border-b-2 border-[#6c3ce0] pb-1 hover:opacity-80 transition-all duration-300" to="/explore">Explore</Link>
+<Link className="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 hover:opacity-80 transition-all duration-300" to="/submit">Submit Idea</Link>
+<Link className="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 hover:opacity-80 transition-all duration-300" to="/dashboard">Dashboard</Link>
+<Link className="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 hover:opacity-80 transition-all duration-300" to="/explore">Categories</Link>
 </div>
 </div>
 <div className="flex items-center gap-4">
@@ -25,9 +25,9 @@ export default function IdeaDetailLoadingPage() {
 {/*  Breadcrumb Skeleton  */}
 <div className="flex items-center gap-2 mb-8">
 <div className="skeleton-block w-16 h-4 rounded"></div>
-<span className="text-foreground-muted text-sm material-symbols-outlined" style={{fontSize: '16px'}}>chevron_right</span>
+<span className="text-foreground-muted text-sm" aria-hidden="true">›</span>
 <div className="skeleton-block w-24 h-4 rounded"></div>
-<span className="text-foreground-muted text-sm material-symbols-outlined" style={{fontSize: '16px'}}>chevron_right</span>
+<span className="text-foreground-muted text-sm" aria-hidden="true">›</span>
 <div className="skeleton-block w-32 h-4 rounded"></div>
 </div>
 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">

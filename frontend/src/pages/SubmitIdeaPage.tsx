@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useMemo, useState, useCallback, useRef, type FormEvent } from "react";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
@@ -12,7 +12,9 @@ import {
   LoaderCircle,
   Mic,
   Paperclip,
+  PartyPopper,
   RefreshCw,
+  Save,
   Sparkles,
   WandSparkles,
 } from "lucide-react";
@@ -24,6 +26,11 @@ import aiService from "../services/aiService";
 import type { Category, Tag } from "../types/idea.types";
 import PageSkeleton from "../components/PageSkeleton/PageSkeleton";
 
+/* ─── Constants ─────────────────────────────────────────────────── */
+const DRAFT_STORAGE_KEY = "ideaforge:draft";
+const DRAFT_SAVE_DELAY = 800; // ms debounce
+
+/* ─── Helper: tech-stack suggestion ─────────────────────────────── */
 function generateTechStack(tagNames: string[], difficulty: string): string {
   const lower = tagNames.map((tag) => tag.toLowerCase());
   let frontend = "React + TypeScript";
@@ -35,8 +42,48 @@ function generateTechStack(tagNames: string[], difficulty: string): string {
   return difficulty === "Beginner" ? `A simple start: ${frontend}, Firebase` : `${frontend} · ${backend} · ${database}`;
 }
 
+/* ─── Types ──────────────────────────────────────────────────────── */
 interface FormErrors { title?: string; problem?: string; solution?: string; category?: string; tags?: string; difficulty?: string; }
+interface DraftData { title: string; problem: string; solution: string; impact: string; difficulty: string; selectedCategory: string; selectedTags: string[]; savedAt: number; }
 
+/* ─── Draft persistence helpers ──────────────────────────────────── */
+function loadDraft(): DraftData | null {
+  try {
+    const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+function saveDraft(data: Omit<DraftData, "savedAt">) {
+  try { localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify({ ...data, savedAt: Date.now() })); } catch { /* quota exceeded — silently skip */ }
+}
+function clearDraft() {
+  try { localStorage.removeItem(DRAFT_STORAGE_KEY); } catch { /* ignore */ }
+}
+function formatDraftTime(ts: number): string {
+  const d = new Date(ts);
+  return d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+}
+
+/* ─── "Coming soon" disabled button wrapper ──────────────────────── */
+function ComingSoonButton({ icon: Icon, label }: { icon: React.ComponentType<{ size: number }>; label: string }) {
+  return (
+    <span className="group relative">
+      <button
+        type="button"
+        disabled
+        className="inline-flex min-h-10 cursor-not-allowed items-center gap-2 rounded-xl px-3 text-xs font-medium text-slate-300 dark:text-slate-600"
+        aria-label={`${label} — coming soon`}
+      >
+        <Icon size={16} /> {label}
+      </button>
+      <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 shadow-lg transition group-hover:opacity-100">
+        Coming soon
+      </span>
+    </span>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
 export default function SubmitIdeaPage() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -54,10 +101,21 @@ export default function SubmitIdeaPage() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [serverError, setServerError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
   const [showBlueprint, setShowBlueprint] = useState(false);
   const [aiAdvice, setAiAdvice] = useState("");
 
+  // Draft auto-save state
+  const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
+  const draftTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasHydratedRef = useRef(false);
+
+  // Success modal state
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [createdIdeaId, setCreatedIdeaId] = useState<string | null>(null);
+
+  /* ─── Auth guard & reference data ──────────────────────────────── */
   useEffect(() => { if (!authLoading && !user) navigate("/login"); }, [user, authLoading, navigate]);
   useEffect(() => {
     Promise.all([categoryService.getCategories(), tagService.getTags()])
@@ -67,6 +125,43 @@ export default function SubmitIdeaPage() {
   }, []);
   useEffect(() => { const prompt = searchParams.get("prompt"); if (prompt) setProblem(prompt); }, [searchParams]);
 
+  /* ─── Hydrate from localStorage on first render ────────────────── */
+  useEffect(() => {
+    if (hasHydratedRef.current) return;
+    hasHydratedRef.current = true;
+    const draft = loadDraft();
+    if (draft) {
+      setTitle(draft.title || "");
+      setProblem(draft.problem || "");
+      setSolution(draft.solution || "");
+      setImpact(draft.impact || "");
+      setDifficulty(draft.difficulty || "");
+      setSelectedCategory(draft.selectedCategory || "");
+      setSelectedTags(draft.selectedTags || []);
+      setDraftSavedAt(draft.savedAt);
+    }
+  }, []);
+
+  /* ─── Debounced auto-save ──────────────────────────────────────── */
+  const debouncedSave = useCallback(() => {
+    if (draftTimerRef.current) clearTimeout(draftTimerRef.current);
+    draftTimerRef.current = setTimeout(() => {
+      saveDraft({ title, problem, solution, impact, difficulty, selectedCategory, selectedTags });
+      setDraftSavedAt(Date.now());
+    }, DRAFT_SAVE_DELAY);
+  }, [title, problem, solution, impact, difficulty, selectedCategory, selectedTags]);
+
+  useEffect(() => {
+    // Don't save until hydration is done
+    if (!hasHydratedRef.current) return;
+    // Only save if there's something to save
+    if (title || problem || solution || impact || difficulty || selectedCategory || selectedTags.length) {
+      debouncedSave();
+    }
+    return () => { if (draftTimerRef.current) clearTimeout(draftTimerRef.current); };
+  }, [title, problem, solution, impact, difficulty, selectedCategory, selectedTags, debouncedSave]);
+
+  /* ─── Derived values ───────────────────────────────────────────── */
   const selectedTagNames = allTags.filter((tag) => selectedTags.includes(tag.id || tag._id)).map((tag) => tag.name);
   const techStack = selectedTagNames.length > 0 && difficulty ? generateTechStack(selectedTagNames, difficulty) : "";
   const confidence = Math.min(100, Math.round((title.trim() ? 20 : 0) + Math.min(problem.trim().length, 160) / 160 * 35 + Math.min(solution.trim().length, 160) / 160 * 30 + (selectedTags.length > 0 ? 10 : 0) + (difficulty ? 5 : 0)));
@@ -78,7 +173,9 @@ export default function SubmitIdeaPage() {
     { label: "Unique value", text: impact.trim() || "Make the first outcome feel faster, clearer, or more personal than existing alternatives." },
   ], [problem, solution, impact, activeCategory]);
 
+  /* ─── Actions ──────────────────────────────────────────────────── */
   function toggleTag(tagId: string) { setSelectedTags((current) => current.includes(tagId) ? current.filter((id) => id !== tagId) : current.length < 5 ? [...current, tagId] : current); }
+
   function validate(): FormErrors {
     const next: FormErrors = {};
     if (title.trim().length < 5) next.title = "Give your idea a title of at least 5 characters.";
@@ -89,16 +186,54 @@ export default function SubmitIdeaPage() {
     if (!difficulty) next.difficulty = "Choose a starting level.";
     return next;
   }
-  async function handleSubmit(event: FormEvent) {
-    event.preventDefault(); setServerError("");
-    const nextErrors = validate(); setErrors(nextErrors); if (Object.keys(nextErrors).length) return;
-    setIsSubmitting(true);
+
+  async function handleSubmit(event: FormEvent, status: "published" | "draft" = "published") {
+    event.preventDefault();
+    setServerError("");
+
+    // Drafts skip validation — allow incomplete saves
+    if (status === "published") {
+      const nextErrors = validate();
+      setErrors(nextErrors);
+      if (Object.keys(nextErrors).length) return;
+    }
+
+    if (status === "draft") setIsSavingDraft(true);
+    else setIsSubmitting(true);
+
     try {
-      await ideaService.createIdea({ title: title.trim(), problem: problem.trim(), solution: solution.trim(), impact: impact.trim() || undefined, difficulty: difficulty as "Beginner" | "Intermediate" | "Advanced", category: selectedCategory, tags: selectedTags, suggestedTechStack: techStack || undefined });
-      navigate("/dashboard");
-    } catch (error) { setServerError(error instanceof Error ? error.message : "We couldn't save your idea. Please try again."); }
-    finally { setIsSubmitting(false); }
+      const response = await ideaService.createIdea({
+        title: title.trim(),
+        problem: problem.trim(),
+        solution: solution.trim(),
+        impact: impact.trim() || undefined,
+        difficulty: (difficulty || "Beginner") as "Beginner" | "Intermediate" | "Advanced",
+        category: selectedCategory,
+        tags: selectedTags,
+        suggestedTechStack: techStack || undefined,
+        status,
+      });
+
+      clearDraft();
+
+      if (status === "draft") {
+        // For drafts, navigate to dashboard with a subtle indicator
+        navigate("/dashboard");
+      } else {
+        // Published — show success modal
+        const newIdea = response.data.idea as { _id?: string; id?: string };
+        const newId = newIdea.id || newIdea._id || "";
+        setCreatedIdeaId(newId);
+        setShowSuccessModal(true);
+      }
+    } catch (error) {
+      setServerError(error instanceof Error ? error.message : "We couldn't save your idea. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+      setIsSavingDraft(false);
+    }
   }
+
   async function generateBlueprint() {
     setIsThinking(true);
     try {
@@ -113,32 +248,128 @@ export default function SubmitIdeaPage() {
     }
   }
 
-  if (authLoading || referenceLoading) return <div className="min-h-[calc(100vh-76px)] bg-[var(--color-surface-idea)]"><PageSkeleton variant="form" /></div>;
+  function resetForm() {
+    setTitle(""); setProblem(""); setSolution(""); setImpact(""); setDifficulty(""); setSelectedCategory(""); setSelectedTags([]);
+    setErrors({}); setServerError(""); setShowBlueprint(false); setAiAdvice(""); setDraftSavedAt(null);
+    clearDraft();
+  }
 
+  /* ─── Loading ──────────────────────────────────────────────────── */
+  if (authLoading || referenceLoading) return <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent transition-colors duration-500"><PageSkeleton variant="form" /></div>;
+
+  /* ─── Success Modal ────────────────────────────────────────────── */
+  if (showSuccessModal) {
+    return (
+      <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent transition-colors duration-500">
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/30 dark:bg-black/50 backdrop-blur-sm px-5">
+          <div className="animate-reveal-up w-full max-w-md rounded-[28px] border border-slate-100 dark:border-white/10 bg-white dark:bg-[#1a1625] p-8 shadow-2xl dark:shadow-none text-center">
+            <span className="mx-auto grid size-16 place-items-center rounded-[20px] bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 dark:text-emerald-400">
+              <PartyPopper size={28} />
+            </span>
+            <h2 className="font-heading mt-6 text-2xl font-bold text-slate-900 dark:text-white">Your idea is live!</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-500 dark:text-slate-400">
+              Your idea has been published and is now visible to the community. Watch it grow with votes and feedback.
+            </p>
+            <div className="mt-8 flex flex-col gap-3">
+              <Link
+                to={`/idea/${createdIdeaId}`}
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg shadow-indigo-200 dark:shadow-none transition hover:-translate-y-0.5 hover:bg-indigo-700"
+              >
+                View your idea <ArrowRight size={17} />
+              </Link>
+              <button
+                type="button"
+                onClick={() => { setShowSuccessModal(false); resetForm(); }}
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#120F17] px-5 text-sm font-semibold text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-white/5"
+              >
+                <Sparkles size={16} /> Submit another idea
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ─── Main form ────────────────────────────────────────────────── */
   return (
-    <div className="min-h-[calc(100vh-76px)] bg-[var(--color-surface-idea)] px-5 py-7 sm:px-8 sm:py-10 xl:px-12">
+    <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent px-5 py-7 sm:px-8 sm:py-10 xl:px-12 transition-colors duration-500">
       <div className="mx-auto max-w-[1440px]">
-        <div className="mb-8 flex items-center justify-between gap-4"><button onClick={() => navigate(-1)} className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-500 transition hover:bg-white hover:text-slate-900"><ArrowLeft size={18} /> Back</button><div className="hidden items-center gap-2 text-sm text-slate-400 sm:flex"><span className="size-2 rounded-full bg-emerald-500" /> Draft saved locally</div></div>
-        <div className="mb-8 max-w-3xl"><p className="text-sm font-semibold text-indigo-600">IDEA CAPTURE</p><h1 className="font-heading mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Give your thought room to grow.</h1><p className="mt-3 text-base leading-7 text-slate-500">Start messy. Your AI collaborator will help turn the spark into a clear opportunity.</p></div>
+        <div className="mb-8 flex items-center justify-between gap-4"><button onClick={() => navigate(-1)} className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-500 dark:text-slate-400 transition hover:bg-white dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"><ArrowLeft size={18} /> Back</button><div className="hidden items-center gap-2 text-sm text-slate-400 dark:text-slate-500 sm:flex">{draftSavedAt ? <><span className="size-2 rounded-full bg-emerald-500" /> Draft saved at {formatDraftTime(draftSavedAt)}</> : <><span className="size-2 rounded-full bg-slate-300 dark:bg-slate-600" /> No draft</>}</div></div>
+        <div className="mb-8 max-w-3xl">
+          <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">IDEA CAPTURE</p>
+          <h1 className="font-heading mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">Give your thought room to grow.</h1>
+          <p className="mt-3 text-base leading-7 text-slate-500 dark:text-slate-400">Start messy. Capture your raw thoughts, structure the core opportunity, and present it clearly to the community.</p>
+        </div>
 
         <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_430px]">
-          <form onSubmit={handleSubmit} noValidate className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-[0_18px_50px_-32px_rgba(15,23,42,0.32)] sm:p-8">
-            {serverError && <div className="mb-6 rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-700">{serverError}</div>}
-            <div className="flex items-start justify-between gap-5"><div><p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">The spark</p><h2 className="font-heading mt-1 text-xl font-bold text-slate-900">What are you thinking about?</h2></div><div className="flex items-center gap-3"><div className="hidden text-right sm:block"><p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">Idea clarity</p><p className="mt-1 text-sm font-bold text-indigo-600">{confidence}%</p></div><span className="grid size-11 place-items-center rounded-2xl bg-indigo-50 text-indigo-600"><Lightbulb size={20} /></span></div></div>
+          <form onSubmit={(e) => handleSubmit(e, "published")} noValidate className="rounded-[28px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-5 shadow-[0_18px_50px_-32px_rgba(15,23,42,0.32)] dark:shadow-none sm:p-8 transition-colors duration-500">
+            {serverError && <div className="mb-6 rounded-2xl border border-rose-100 dark:border-rose-500/20 bg-rose-50 dark:bg-rose-500/10 px-4 py-3 text-sm text-rose-700 dark:text-rose-400">{serverError}</div>}
+            <div className="flex items-start justify-between gap-5"><div><p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">The spark</p><h2 className="font-heading mt-1 text-xl font-bold text-slate-900 dark:text-white">What are you thinking about?</h2></div><div className="flex items-center gap-3"><div className="hidden text-right sm:block"><p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Idea clarity</p><p className="mt-1 text-sm font-bold text-indigo-600 dark:text-indigo-400">{confidence}%</p></div><span className="grid size-11 place-items-center rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"><Lightbulb size={20} /></span></div></div>
             <div className="mt-7 space-y-6">
-              <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-700">Name your idea</span><input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Give this thought a working title" className={`w-full rounded-2xl border bg-[#fcfcfd] px-4 py-3.5 text-base text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 ${errors.title ? "border-rose-300" : "border-slate-200"}`} />{errors.title && <span className="mt-1.5 block text-xs text-rose-600">{errors.title}</span>}</label>
-              <label className="block"><span className="mb-2 flex items-center justify-between text-sm font-semibold text-slate-700">Describe your idea <span className="font-normal text-slate-400">{problem.length} characters</span></span><textarea value={problem} onChange={(event) => setProblem(event.target.value)} rows={7} placeholder="Describe the problem, the moment you noticed it, or the possibility you can't stop thinking about..." className={`w-full resize-none rounded-2xl border bg-[#fcfcfd] px-4 py-4 text-base leading-7 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 ${errors.problem ? "border-rose-300" : "border-slate-200"}`} />{errors.problem && <span className="mt-1.5 block text-xs text-rose-600">{errors.problem}</span>}</label>
-              <div className="-mt-3 flex flex-wrap items-center gap-1"><button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-xl px-3 text-xs font-medium text-slate-500 transition hover:bg-indigo-50 hover:text-indigo-600"><Mic size={16} /> Voice</button><button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-xl px-3 text-xs font-medium text-slate-500 transition hover:bg-indigo-50 hover:text-indigo-600"><ImagePlus size={16} /> Image</button><button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-xl px-3 text-xs font-medium text-slate-500 transition hover:bg-indigo-50 hover:text-indigo-600"><Paperclip size={16} /> Attach</button><button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-xl px-3 text-xs font-medium text-slate-500 transition hover:bg-indigo-50 hover:text-indigo-600"><FileText size={16} /> Sketch</button></div>
-              <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-700">A possible first solution</span><textarea value={solution} onChange={(event) => setSolution(event.target.value)} rows={4} placeholder="How could this become useful? Don't worry about getting it right yet." className={`w-full resize-none rounded-2xl border bg-[#fcfcfd] px-4 py-4 text-base leading-7 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 ${errors.solution ? "border-rose-300" : "border-slate-200"}`} />{errors.solution && <span className="mt-1.5 block text-xs text-rose-600">{errors.solution}</span>}</label>
-              <div className="grid gap-5 md:grid-cols-2"><label className="block"><span className="mb-2 block text-sm font-semibold text-slate-700">Category</span><span className="relative block"><select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)} className={`w-full appearance-none rounded-2xl border bg-[#fcfcfd] px-4 py-3.5 text-sm text-slate-700 outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 ${errors.category ? "border-rose-300" : "border-slate-200"}`}><option value="">Choose a category</option>{categories.map((category) => <option key={category.id || category._id} value={category.id || category._id}>{category.icon} {category.name}</option>)}</select><ChevronDown size={17} className="pointer-events-none absolute right-4 top-3.5 text-slate-400" /></span>{errors.category && <span className="mt-1.5 block text-xs text-rose-600">{errors.category}</span>}</label><div><span className="mb-2 block text-sm font-semibold text-slate-700">Starting point</span><div className="grid grid-cols-3 gap-2">{["Beginner", "Intermediate", "Advanced"].map((level) => <button key={level} type="button" onClick={() => setDifficulty(level)} className={`min-h-[50px] rounded-xl border px-2 text-xs font-semibold transition ${difficulty === level ? "border-indigo-200 bg-indigo-50 text-indigo-600" : "border-slate-200 bg-[#fcfcfd] text-slate-500 hover:border-indigo-200"}`}>{level}</button>)}</div>{errors.difficulty && <span className="mt-1.5 block text-xs text-rose-600">{errors.difficulty}</span>}</div></div>
-              <div><div className="mb-2 flex items-center justify-between"><span className="text-sm font-semibold text-slate-700">Focus areas</span><span className="text-xs text-slate-400">Up to 5</span></div><div className="flex flex-wrap gap-2">{allTags.map((tag) => { const id = tag.id || tag._id; const selected = selectedTags.includes(id); return <button key={id} type="button" onClick={() => toggleTag(id)} className={`rounded-full border px-3 py-2 text-xs font-medium transition ${selected ? "border-indigo-200 bg-indigo-50 text-indigo-600" : "border-slate-200 bg-white text-slate-500 hover:border-indigo-200"}`}>{selected && <Check size={13} className="mr-1 inline" />}{tag.name}</button>; })}</div>{errors.tags && <span className="mt-1.5 block text-xs text-rose-600">{errors.tags}</span>}</div>
-              <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-700">The impact you hope for <span className="font-normal text-slate-400">optional</span></span><textarea value={impact} onChange={(event) => setImpact(event.target.value)} rows={2} placeholder="What would a better future look like?" className="w-full resize-none rounded-2xl border border-slate-200 bg-[#fcfcfd] px-4 py-3 text-sm leading-6 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50" /></label>
+              <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Name your idea</span><input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Give this thought a working title" className={`w-full rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-3.5 text-base text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.title ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />{errors.title && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.title}</span>}</label>
+              <label className="block"><span className="mb-2 flex items-center justify-between text-sm font-semibold text-slate-700 dark:text-slate-300">Describe your idea <span className="font-normal text-slate-400 dark:text-slate-500">{problem.length} characters</span></span><textarea value={problem} onChange={(event) => setProblem(event.target.value)} rows={7} placeholder="Describe the problem, the moment you noticed it, or the possibility you can't stop thinking about..." className={`w-full resize-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-4 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.problem ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />{errors.problem && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.problem}</span>}</label>
+              <div className="-mt-3 flex flex-wrap items-center gap-1">
+                <ComingSoonButton icon={Mic} label="Voice" />
+                <ComingSoonButton icon={ImagePlus} label="Image" />
+                <ComingSoonButton icon={Paperclip} label="Attach" />
+                <ComingSoonButton icon={FileText} label="Sketch" />
+              </div>
+              <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">A possible first solution</span><textarea value={solution} onChange={(event) => setSolution(event.target.value)} rows={4} placeholder="How could this become useful? Don't worry about getting it right yet." className={`w-full resize-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-4 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.solution ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />{errors.solution && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.solution}</span>}</label>
+              <div className="grid gap-5 md:grid-cols-2"><label className="block"><span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Category</span><span className="relative block"><select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)} className={`w-full appearance-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-3.5 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.category ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`}><option value="">Choose a category</option>{categories.map((category) => <option key={category.id || category._id} value={category.id || category._id}>{category.icon} {category.name}</option>)}</select><ChevronDown size={17} className="pointer-events-none absolute right-4 top-3.5 text-slate-400 dark:text-slate-500" /></span>{errors.category && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.category}</span>}</label><div><span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Starting point</span><div className="grid grid-cols-3 gap-2">{["Beginner", "Intermediate", "Advanced"].map((level) => <button key={level} type="button" onClick={() => setDifficulty(level)} className={`min-h-[50px] rounded-xl border px-2 text-xs font-semibold transition ${difficulty === level ? "border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" : "border-slate-200 dark:border-white/10 bg-[#fcfcfd] dark:bg-[#1a1625] text-slate-500 dark:text-slate-400 hover:border-indigo-200 dark:hover:border-indigo-500/30"}`}>{level}</button>)}</div>{errors.difficulty && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.difficulty}</span>}</div></div>
+              <div><div className="mb-2 flex items-center justify-between"><span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Focus areas</span><span className="text-xs text-slate-400 dark:text-slate-500">Up to 5</span></div><div className="flex flex-wrap gap-2">{allTags.map((tag) => { const id = tag.id || tag._id; const selected = selectedTags.includes(id); return <button key={id} type="button" onClick={() => toggleTag(id)} className={`rounded-full border px-3 py-2 text-xs font-medium transition ${selected ? "border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" : "border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] text-slate-500 dark:text-slate-400 hover:border-indigo-200 dark:hover:border-indigo-500/30"}`}>{selected && <Check size={13} className="mr-1 inline" />}{tag.name}</button>; })}</div>{errors.tags && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.tags}</span>}</div>
+              <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">The impact you hope for <span className="font-normal text-slate-400 dark:text-slate-500">optional</span></span><textarea value={impact} onChange={(event) => setImpact(event.target.value)} rows={2} placeholder="What would a better future look like?" className="w-full resize-none rounded-2xl border border-slate-200 dark:border-white/10 bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-3 text-sm leading-6 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10" /></label>
             </div>
-            <div className="mt-8 flex flex-col-reverse gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:justify-between"><button type="button" onClick={generateBlueprint} disabled={isThinking} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-indigo-50 px-5 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-100 disabled:opacity-60"><WandSparkles size={18} /> {isThinking ? "Thinking through it..." : "Preview with AI"}</button><button type="submit" disabled={isSubmitting} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:-translate-y-0.5 hover:bg-indigo-700 disabled:opacity-60">{isSubmitting && <LoaderCircle size={17} className="animate-spin" />}{isSubmitting ? "Saving your idea..." : "Save idea"}<ArrowRight size={17} /></button></div>
+            <div className="mt-8 flex flex-col-reverse gap-3 border-t border-slate-100 dark:border-white/10 pt-6 sm:flex-row sm:justify-between">
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <span className="group relative">
+                  <button type="button" disabled className="inline-flex min-h-12 w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-slate-100 dark:bg-white/5 px-5 text-sm font-semibold text-slate-400 dark:text-slate-500 transition">
+                    <WandSparkles size={18} /> Preview with AI
+                  </button>
+                  <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 shadow-lg transition group-hover:opacity-100">AI preview coming soon</span>
+                </span>
+                <button type="button" onClick={(e) => handleSubmit(e, "draft")} disabled={isSavingDraft || !title.trim()} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-5 text-sm font-semibold text-slate-600 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-white/5 disabled:opacity-60"><Save size={17} /> {isSavingDraft ? "Saving draft..." : "Save as draft"}</button>
+              </div>
+              <button type="submit" disabled={isSubmitting} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg shadow-indigo-200 dark:shadow-none transition hover:-translate-y-0.5 hover:bg-indigo-700 disabled:opacity-60">{isSubmitting && <LoaderCircle size={17} className="animate-spin" />}{isSubmitting ? "Publishing your idea..." : "Publish idea"}<ArrowRight size={17} /></button>
+            </div>
           </form>
 
-          <aside className="xl:sticky xl:top-24 xl:h-fit"><div className="overflow-hidden rounded-[28px] border border-indigo-100 bg-gradient-to-b from-indigo-50/80 to-white shadow-[0_18px_50px_-32px_rgba(79,70,229,0.4)]"><div className="border-b border-indigo-100 bg-white/65 p-6"><div className="flex items-center justify-between"><span className="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1.5 text-xs font-semibold text-indigo-700"><Bot size={15} /> AI collaborator</span><span className="flex items-center gap-1 text-xs font-medium text-emerald-600"><span className="size-1.5 rounded-full bg-emerald-500" /> Ready</span></div><h2 className="font-heading mt-5 text-xl font-bold text-slate-900">Your idea, expanded.</h2><p className="mt-2 text-sm leading-6 text-slate-500">A calm first look at the structure emerging from your thought.</p></div><div className="p-5 sm:p-6">{isThinking ? <div className="flex min-h-72 flex-col items-center justify-center text-center"><span className="grid size-14 place-items-center rounded-2xl bg-white text-indigo-600 shadow-sm"><Sparkles size={24} className="animate-pulse" /></span><p className="mt-5 text-sm font-semibold text-slate-700">Looking for the opportunity...</p><p className="mt-1 text-xs text-slate-400">Finding patterns in your idea</p></div> : showBlueprint ? <div className="space-y-3">{blueprint.map((card, index) => <article key={card.label} className="animate-reveal-up rounded-2xl border border-white bg-white/90 p-4 shadow-sm" style={{ animationDelay: `${index * 75}ms` }}><p className="text-xs font-bold text-indigo-600">{card.label}</p><p className="mt-1.5 text-sm leading-6 text-slate-600">{card.text}</p></article>)}{aiAdvice && <article className="rounded-2xl border border-violet-100 bg-violet-50/60 p-4"><p className="text-xs font-bold text-violet-600">AI perspective</p><p className="mt-1.5 text-sm leading-6 text-slate-600">{aiAdvice}</p></article>}{techStack && <article className="rounded-2xl border border-violet-100 bg-violet-50/60 p-4"><p className="text-xs font-bold text-violet-600">Suggested foundation</p><p className="mt-1.5 text-sm leading-6 text-slate-600">{techStack}</p></article>}<button type="button" onClick={generateBlueprint} className="mt-2 inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700"><RefreshCw size={15} /> Regenerate preview</button></div> : <div className="flex min-h-72 flex-col items-center justify-center text-center"><span className="grid size-14 place-items-center rounded-2xl bg-white text-indigo-600 shadow-sm"><Sparkles size={24} /></span><h3 className="font-heading mt-5 text-lg font-bold text-slate-800">A blueprint is waiting.</h3><p className="mt-2 max-w-xs text-sm leading-6 text-slate-500">Share a little about the problem and solution, then ask AI to reveal the first shape of your idea.</p><button type="button" onClick={generateBlueprint} className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700"><Sparkles size={16} /> Create a preview</button></div>}</div></div>
-            <div className="mt-4 flex items-center gap-3 rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-800"><WandSparkles size={17} className="shrink-0" /> This preview is a creative starting point—review and shape it with your own expertise.</div></aside>
+          <aside className="xl:sticky xl:top-24 xl:h-fit">
+            <div className="overflow-hidden rounded-[28px] border border-indigo-100 dark:border-indigo-500/20 bg-gradient-to-b from-indigo-50/80 to-white dark:from-indigo-900/20 dark:to-[#120F17] shadow-[0_18px_50px_-32px_rgba(79,70,229,0.4)] dark:shadow-none transition-colors duration-500">
+              <div className="border-b border-indigo-100 dark:border-indigo-500/20 bg-white/65 dark:bg-[#120F17]/65 p-6">
+                <div className="flex items-center justify-between">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-indigo-100 dark:bg-indigo-500/20 px-3 py-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-400">
+                    <Sparkles size={15} /> Live Blueprint
+                  </span>
+                  <span className="flex items-center gap-1.5 rounded-full bg-amber-100/80 dark:bg-amber-500/10 px-2.5 py-1 text-[11px] font-medium text-amber-700 dark:text-amber-400">
+                    AI Expansion · Soon
+                  </span>
+                </div>
+                <h2 className="font-heading mt-4 text-xl font-bold text-slate-900 dark:text-white">Your idea, taking shape.</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">A live view of how your raw thought will be presented to others.</p>
+              </div>
+              <div className="p-5 sm:p-6">
+                <div className="space-y-3">
+                  {blueprint.map((card) => (
+                    <article key={card.label} className="rounded-2xl border border-white dark:border-white/5 bg-white/90 dark:bg-[#1a1625]/90 p-4 shadow-sm dark:shadow-none transition-colors">
+                      <p className="text-xs font-bold uppercase tracking-wide text-indigo-600 dark:text-indigo-400">{card.label}</p>
+                      <p className="mt-1.5 text-sm leading-6 text-slate-600 dark:text-slate-300">{card.text}</p>
+                    </article>
+                  ))}
+                  {techStack && (
+                    <article className="rounded-2xl border border-violet-100 dark:border-violet-500/20 bg-violet-50/60 dark:bg-violet-500/10 p-4">
+                      <p className="text-xs font-bold text-violet-600 dark:text-violet-400">Suggested foundation</p>
+                      <p className="mt-1.5 text-sm leading-6 text-slate-600 dark:text-slate-300">{techStack}</p>
+                    </article>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 flex items-center gap-3 rounded-2xl border border-indigo-100 dark:border-indigo-500/20 bg-indigo-50/60 dark:bg-indigo-500/10 px-4 py-3 text-xs leading-5 text-indigo-800 dark:text-indigo-300">
+              <Sparkles size={17} className="shrink-0 text-indigo-600 dark:text-indigo-400" />
+              Focus on writing down the core problem and solution. The community will help iterate on the rest.
+            </div>
+          </aside>
         </div>
       </div>
     </div>

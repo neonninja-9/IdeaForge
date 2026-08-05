@@ -33,6 +33,12 @@ const ideaSchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
+    status: {
+        type: String,
+        enum: ["draft", "published"],
+        default: "published",
+        index: true,
+    },
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

@@ -1,4 +1,4 @@
-import React from 'react';
+import { Link } from "react-router-dom";
 
 export default function UserProfileLoadingPage() {
   return (
@@ -10,10 +10,10 @@ export default function UserProfileLoadingPage() {
 <div className="flex items-center gap-8">
 <div className="text-xl font-black text-[#0a0a0a] dark:text-[#ffffff] tracking-tighter">IdeaForge</div>
 <nav className="hidden md:flex gap-6">
-<a className="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 font-label tracking-[0.1em] uppercase text-sm" href="#">Explore</a>
-<a className="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 font-label tracking-[0.1em] uppercase text-sm" href="#">Submit Idea</a>
-<a className="text-[#6c3ce0] font-bold border-b-2 border-[#6c3ce0] pb-1 font-label tracking-[0.1em] uppercase text-sm" href="#">Dashboard</a>
-<a className="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 font-label tracking-[0.1em] uppercase text-sm" href="#">Categories</a>
+<Link className="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 font-label tracking-[0.1em] uppercase text-sm" to="/explore">Explore</Link>
+<Link className="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 font-label tracking-[0.1em] uppercase text-sm" to="/submit">Submit Idea</Link>
+<Link className="text-[#6c3ce0] font-bold border-b-2 border-[#6c3ce0] pb-1 font-label tracking-[0.1em] uppercase text-sm" to="/dashboard">Dashboard</Link>
+<Link className="text-[#555555] dark:text-[#aaaaaa] hover:text-[#6c3ce0] transition-colors duration-300 font-label tracking-[0.1em] uppercase text-sm" to="/explore">Categories</Link>
 </nav>
 </div>
 <div className="flex items-center gap-4">

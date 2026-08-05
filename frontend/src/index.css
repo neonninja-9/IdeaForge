@@ -5,17 +5,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@font-face { font-family: "Juana-Regular"; src: url("/fonts/Juana-Regular.woff2") format("woff2"); font-display: swap; }
-@font-face { font-family: "Juana-Medium"; src: url("/fonts/Juana-Medium.woff2") format("woff2"); font-display: swap; }
-@font-face { font-family: "Juana-Light"; src: url("/fonts/Juana-Light.woff2") format("woff2"); font-display: swap; }
-@font-face { font-family: "Editorialnew-Ultralight"; src: url("/fonts/EditorialNew-Ultralight.woff2") format("woff2"); font-display: swap; }
 @font-face { font-family: "Editorialnew-Regular"; src: url("/fonts/EditorialNew-Regular.woff2") format("woff2"); font-display: swap; }
-@font-face { font-family: "Editorialnew-UltralightItalic"; src: url("/fonts/EditorialNew-UltralightItalic.woff2") format("woff2"); font-style: italic; font-display: swap; }
-@font-face { font-family: "Izmir-Regular"; src: url("/fonts/Izmir-Regular.woff2") format("woff2"); font-display: swap; }
 
 @theme {
-  --font-sans: "Inter", "Geist Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Fraunces", "Poppins", ui-serif, Georgia, serif;
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
 
   /* Surface colors — use as bg-surface-* */
   --color-surface: #fafafa;
@@ -67,22 +61,22 @@ body {
 :root {
   /* Exact Custom Fonts */
   --fsize: 1.04166666667vw;
-  --f-regular: "Fraunces", "Juana-Regular", serif;
-  --f-medium: "Fraunces", "Juana-Medium", serif;
-  --f-light: "Fraunces", "Juana-Light", serif;
-  --f-edit: "Editorialnew-Ultralight", serif;
+  --f-regular: "Fraunces", "Editorialnew-Regular", Georgia, serif;
+  --f-medium: "Fraunces", "Editorialnew-Regular", Georgia, serif;
+  --f-light: "Fraunces", "Editorialnew-Regular", Georgia, serif;
+  --f-edit: "Editorialnew-Regular", Georgia, serif;
   --f-edit-regular: "Editorialnew-Regular", serif;
-  --f-edit-italic: "Editorialnew-UltralightItalic", serif;
-  --f-izmir: "Izmir-Regular", sans-serif;
+  --f-edit-italic: "Fraunces", "Editorialnew-Regular", Georgia, serif;
+  --f-izmir: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
   
-  /* Dark Mode Palette */
-  --color-caviar: #010101;
-  --color-rein-rgb: 49, 46, 46;    /* #312E2E */
-  --color-shadow-rgb: 78, 73, 73;  /* #4E4949 */
-  --color-saddle-rgb: 92, 85, 81;  /* #5C5551 */
-  --color-mustang: #7d7d7d;
+  /* Luxury Dark Mode Palette */
+  --color-caviar: #08070d;
+  --color-rein-rgb: 17, 15, 25;       /* Deep velvet obsidian #110F19 */
+  --color-shadow-rgb: 24, 21, 36;     /* Luxury elevated card surface #181524 */
+  --color-saddle-rgb: 31, 27, 46;     /* Tertiary dark surface / inputs #1F1B2E */
+  --color-mustang: #94a3b8;           /* Platinum slate text */
   
-  --color-dark-text-primary: #e5e5e5;
+  --color-dark-text-primary: #f8fafc;
 }
 
 .dark body {
@@ -110,43 +104,73 @@ html.dark,
 .dark .bg-white\/80,
 .dark .bg-white\/85,
 .dark .bg-white\/95 {
-  background-color: rgba(var(--color-rein-rgb), 0.88);
+  background-color: rgba(var(--color-rein-rgb), 0.95);
 }
 
 .dark .bg-slate-50,
 .dark .bg-slate-100 {
-  background-color: rgba(var(--color-shadow-rgb), 0.82);
+  background-color: rgba(var(--color-shadow-rgb), 0.85);
 }
 
 .dark .bg-slate-200 {
-  background-color: rgba(var(--color-saddle-rgb), 0.8);
+  background-color: rgba(var(--color-saddle-rgb), 0.9);
 }
 
 .dark .bg-indigo-50,
 .dark .bg-violet-50 {
-  background-color: rgba(var(--color-shadow-rgb), 0.38);
+  background-color: rgba(99, 102, 241, 0.12);
 }
 
 .dark .bg-emerald-50 {
-  background-color: rgba(var(--color-saddle-rgb), 0.38);
+  background-color: rgba(16, 185, 129, 0.12);
+}
+
+.dark .bg-amber-50 {
+  background-color: rgba(245, 158, 11, 0.12);
+}
+
+.dark .bg-rose-50 {
+  background-color: rgba(244, 63, 94, 0.12);
 }
 
 .dark .text-slate-950,
 .dark .text-slate-900,
-.dark .text-slate-800,
-.dark .text-slate-700 {
+.dark .text-slate-800 {
   color: var(--color-dark-text-primary);
 }
 
+.dark .text-slate-700 {
+  color: #e2e8f0;
+}
+
 .dark .text-slate-600,
-.dark .text-slate-500,
-.dark .text-slate-400 {
+.dark .text-slate-500 {
   color: var(--color-mustang);
+}
+
+.dark .text-slate-400 {
+  color: #64748b;
 }
 
 .dark .text-indigo-600,
 .dark .text-indigo-700 {
-  color: var(--color-mustang);
+  color: #818cf8;
+}
+
+.dark .text-violet-600,
+.dark .text-violet-700 {
+  color: #a78bfa;
+}
+
+.dark .text-emerald-600,
+.dark .text-emerald-700 {
+  color: #34d399;
+}
+
+.dark .text-amber-600,
+.dark .text-amber-700,
+.dark .text-amber-800 {
+  color: #fbbf24;
 }
 
 .dark .border-white,
@@ -155,7 +179,7 @@ html.dark,
 .dark .border-slate-200,
 .dark .border-indigo-100,
 .dark .border-indigo-100\/70 {
-  border-color: rgba(var(--color-saddle-rgb), 0.4);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .dark .shadow-indigo-100,
@@ -166,18 +190,20 @@ html.dark,
 .dark .shadow-slate-200\/50,
 .dark .shadow-slate-200\/70,
 .dark .shadow-indigo-950\/15 {
-  --tw-shadow-color: rgba(0, 0, 0, 0.75) !important;
+  --tw-shadow-color: rgba(0, 0, 0, 0.8) !important;
 }
 
 .dark input,
 .dark textarea,
 .dark select {
   color: var(--color-dark-text-primary);
+  background-color: rgba(var(--color-saddle-rgb), 0.95);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .dark input::placeholder,
 .dark textarea::placeholder {
-  color: var(--color-mustang);
+  color: #64748b;
 }
 
 

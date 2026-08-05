@@ -36,13 +36,13 @@ const primaryNavigation: NavigationItem[] = [
   { label: "Projects", to: "/projects", icon: FolderKanban },
   { label: "Templates", to: "/templates", icon: Sparkles },
   { label: "Favorites", to: "/favorites", icon: Heart },
-  { label: "AI Studio", to: "/ai-studio", icon: Bot },
+  { label: "AI Studio (Soon)", to: "/ai-studio", icon: Bot, match: (path) => path === "/ai-studio" },
 ];
 
 const bottomNavigation: NavigationItem[] = [
   { label: "Home", to: "/dashboard", icon: Home },
   { label: "Ideas", to: "/explore", icon: Lightbulb, match: (path) => path === "/explore" || path.startsWith("/idea/") },
-  { label: "AI Studio", to: "/ai-studio", icon: Sparkles },
+  { label: "AI Studio (Soon)", to: "/ai-studio", icon: Sparkles },
   { label: "Projects", to: "/projects", icon: FolderKanban },
   { label: "Profile", to: "/profile", icon: UserRound },
 ];
@@ -64,12 +64,38 @@ export default function AppShell() {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [mobileSearchQuery, setMobileSearchQuery] = useState("");
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const notificationCloseTimerRef = useRef<number | null>(null);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem("ideaforge-theme") === "dark");
   const { user } = useAuth();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const activeWheelIndex = Math.max(0, wheelNavigation.findIndex((item) => isCurrent(item, pathname)));
+
+  const handleNotificationEnter = () => {
+    if (notificationCloseTimerRef.current) {
+      window.clearTimeout(notificationCloseTimerRef.current);
+      notificationCloseTimerRef.current = null;
+    }
+    setNotificationsOpen(true);
+  };
+
+  const handleNotificationLeave = () => {
+    if (notificationCloseTimerRef.current) {
+      window.clearTimeout(notificationCloseTimerRef.current);
+    }
+    notificationCloseTimerRef.current = window.setTimeout(() => {
+      setNotificationsOpen(false);
+    }, 220);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (notificationCloseTimerRef.current) {
+        window.clearTimeout(notificationCloseTimerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -112,8 +138,8 @@ export default function AppShell() {
   }
 
   return (
-    <div className="relative isolate min-h-screen bg-[var(--background)] text-[var(--foreground)] transition-colors dark:text-slate-100" style={darkMode ? { backgroundColor: "#010101" } : undefined}>
-      {darkMode && <DotField dotRadius={1} dotSpacing={11} gradientFrom="rgba(78, 73, 73, 0.45)" gradientTo="rgba(92, 85, 81, 0.35)" className="pointer-events-none fixed inset-0 z-0 bg-[#010101] opacity-80" />}
+    <div className="relative isolate min-h-screen bg-[var(--background)] text-[var(--foreground)] transition-colors dark:text-slate-100" style={darkMode ? { backgroundColor: "#08070d" } : undefined}>
+      {darkMode && <DotField dotRadius={1} dotSpacing={11} gradientFrom="rgba(33, 28, 48, 0.45)" gradientTo="rgba(24, 21, 36, 0.35)" className="pointer-events-none fixed inset-0 z-0 bg-[#08070d] opacity-80" />}
       {/* Wheel overlay — transparent, floats over the page with gradient blur */}
       <aside className="ow-overlay group fixed inset-y-0 left-0 z-50 hidden w-[320px] -translate-x-[296px] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:translate-x-0 focus-within:translate-x-0 lg:block" aria-label="Main navigation">
         {/* Invisible hit-area so cursor can trigger the slide-in */}
@@ -154,9 +180,9 @@ export default function AppShell() {
         >
           {/* Header background with gradient and mask for smooth blur fade */}
           <div 
-            className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[var(--background)] to-[var(--background)]/0 backdrop-blur-xl [mask-image:linear-gradient(to_bottom,black_20%,transparent)] dark:from-[#312E2E] dark:to-transparent" 
+            className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[var(--background)] to-[var(--background)]/0 backdrop-blur-xl [mask-image:linear-gradient(to_bottom,black_20%,transparent)] dark:from-[#08070d] dark:to-transparent" 
             style={darkMode ? { 
-              background: "linear-gradient(to bottom, rgba(49, 46, 46, 0.95), transparent)",
+              background: "linear-gradient(to bottom, rgba(8, 7, 13, 0.95), transparent)",
               WebkitMaskImage: "linear-gradient(to bottom, black 20%, transparent)"
             } : undefined} 
           />
@@ -179,12 +205,68 @@ export default function AppShell() {
             <button onClick={() => { setMobileSearchOpen(true); window.setTimeout(() => searchInputRef.current?.focus(), 0); }} className="grid size-11 place-items-center rounded-full text-slate-500 transition hover:bg-white hover:text-vivid sm:hidden" aria-label="Search community ideas">
               <Search size={20} />
             </button>
-            <div className="relative">
-            <button onClick={() => setNotificationsOpen((open) => !open)} className="relative grid size-11 place-items-center rounded-full text-slate-500 transition hover:bg-white hover:text-vivid dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white" aria-label="Notifications" aria-expanded={notificationsOpen} aria-haspopup="dialog">
-              <Bell size={20} />
-              <span className="absolute right-2.5 top-2.5 size-1.5 rounded-full bg-vivid" />
-            </button>
-            {notificationsOpen && <div role="dialog" aria-label="Notifications" className="absolute right-0 top-13 w-80 rounded-2xl border border-slate-100 bg-white p-5 shadow-xl shadow-slate-200/70"><div className="flex items-center justify-between"><h2 className="font-heading text-base font-bold text-slate-900">Notifications</h2><span className="rounded-full bg-slate-50 px-2 py-1 text-[10px] font-semibold text-slate-500">Prototype</span></div><div className="mt-4 rounded-xl bg-slate-50 p-4 text-sm leading-6 text-slate-500">Notifications will appear here when activity and notification APIs are connected. There are no server-backed notifications yet.</div></div>}
+            <div 
+              className="relative"
+              onMouseEnter={handleNotificationEnter}
+              onMouseLeave={handleNotificationLeave}
+            >
+              <button 
+                onClick={() => setNotificationsOpen((open) => !open)} 
+                className="relative grid size-11 place-items-center rounded-full text-slate-500 transition hover:bg-white hover:text-vivid dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white" 
+                aria-label="Notifications" 
+                aria-expanded={notificationsOpen} 
+                aria-haspopup="dialog"
+              >
+                <Bell size={20} />
+                <span className="absolute right-2.5 top-2.5 size-2 rounded-full bg-vivid ring-2 ring-white dark:ring-[#08070d]" />
+              </button>
+
+              {notificationsOpen && (
+                <div 
+                  role="dialog" 
+                  aria-label="Notifications" 
+                  className="absolute right-0 top-12 z-50 w-80 sm:w-96 rounded-2xl border border-slate-100 dark:border-white/10 bg-white/95 dark:bg-[#120F17]/95 p-5 shadow-2xl shadow-slate-900/15 dark:shadow-black/80 backdrop-blur-xl transition-all"
+                >
+                  <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-3">
+                    <div className="flex items-center gap-2">
+                      <h2 className="font-heading text-base font-bold text-slate-900 dark:text-white">Notifications</h2>
+                      <span className="rounded-full bg-vivid/10 dark:bg-vivid/20 px-2 py-0.5 text-[10px] font-bold text-vivid dark:text-vivid-light">3 new</span>
+                    </div>
+                    <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 cursor-pointer">
+                      Mark all read
+                    </span>
+                  </div>
+
+                  <div className="mt-3 divide-y divide-slate-100 dark:divide-white/5">
+                    <div className="py-2.5 first:pt-0 last:pb-0 flex items-start gap-3">
+                      <span className="mt-1.5 size-2 rounded-full bg-vivid shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">Welcome to IdeaForge!</p>
+                        <p className="mt-0.5 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">Start capturing and presenting your raw venture ideas.</p>
+                        <span className="mt-1 block text-[10px] text-slate-400 dark:text-slate-500">Just now</span>
+                      </div>
+                    </div>
+
+                    <div className="py-2.5 first:pt-0 last:pb-0 flex items-start gap-3">
+                      <span className="mt-1.5 size-2 rounded-full bg-indigo-500 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">Trending in Community</p>
+                        <p className="mt-0.5 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">Explore new developer tools and health tech ideas.</p>
+                        <span className="mt-1 block text-[10px] text-slate-400 dark:text-slate-500">2h ago</span>
+                      </div>
+                    </div>
+
+                    <div className="py-2.5 first:pt-0 last:pb-0 flex items-start gap-3">
+                      <span className="mt-1.5 size-2 rounded-full bg-emerald-500 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">Raw Idea Capture</p>
+                        <p className="mt-0.5 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">Your ideas auto-save locally while typing.</p>
+                        <span className="mt-1 block text-[10px] text-slate-400 dark:text-slate-500">1d ago</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             <Link to="/profile" className="grid size-10 place-items-center rounded-full bg-slate-100 dark:bg-white/10 text-sm font-bold text-slate-900 dark:text-white transition hover:bg-vivid hover:text-white" aria-label="Open profile">
               {user?.username?.slice(0, 1).toUpperCase() || "U"}

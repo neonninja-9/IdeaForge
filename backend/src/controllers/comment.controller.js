@@ -55,6 +55,19 @@ const commentController = {
                 text: text.trim(),
             });
 
+            // Generate notification for idea owner
+            const Idea = (await import("../../models/idea.js")).default;
+            const ideaObj = await Idea.findById(ideaId).lean();
+            if (ideaObj && ideaObj.author.toString() !== req.user.id) {
+                const Notification = (await import("../../models/notification.js")).default;
+                await Notification.create({
+                    recipient: ideaObj.author,
+                    actor: req.user.id,
+                    type: "comment",
+                    idea: ideaObj._id
+                });
+            }
+
             // Populate user for the response
             await comment.populate("user", "username");
 

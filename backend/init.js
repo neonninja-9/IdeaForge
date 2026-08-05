@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 import connectDB from "./db.js";
 import User from "./models/user.js";
 import Idea from "./models/idea.js";
+import Category from "./models/category.js";
 import {sampleUsers , sampleIdeas} from "./data/sampleData.js";
-
 
 try{
     await connectDB();
@@ -11,15 +11,21 @@ try{
     await Idea.deleteMany({});
     const createdUsers = await User.insertMany(sampleUsers);
 
+    let defaultCategory = await Category.findOne();
+    if (!defaultCategory) {
+        defaultCategory = await Category.create({ name: "General", slug: "general", icon: "📌" });
+    }
+
     const ideasToInsert = sampleIdeas.map((idea, index) => ({
         ...idea,
-        userid: createdUsers[index % createdUsers.length]._id
+        author: createdUsers[index % createdUsers.length]._id,
+        category: defaultCategory._id
     }));
 
     await Idea.insertMany(ideasToInsert);
     console.log("database populated with sample data");
 }catch(error){
-    console.log(error);
+    console.error(error);
 }finally {
     await mongoose.disconnect();
     console.log("Database connection closed.");

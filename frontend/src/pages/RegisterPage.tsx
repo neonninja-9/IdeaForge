@@ -18,7 +18,8 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import AuthDoodles from "../components/AuthDoodles/AuthDoodles";
-import { InteractiveParticles } from "../components/ui/interactive-particles/interactive-particles";
+import AuthBrandVisual from "../components/AuthBrandVisual/AuthBrandVisual";
+import AuthSwitch from "../components/ui/auth-switch";
 
 interface FormErrors {
   username?: string;
@@ -144,19 +145,7 @@ export default function RegisterPage() {
 
         {/* Branding */}
         <div className="relative z-10 text-center px-12 flex flex-col items-center gap-10 w-full">
-          <div className="w-full">
-            <div className="h-[250px] w-full mb-5 -mt-10">
-              <InteractiveParticles 
-                src="/ideaforge-text.svg" 
-                background="transparent" 
-                color="#6c3ce0" 
-                allowUpload={false} 
-              />
-            </div>
-            <p className="text-fg-mid text-lg max-w-md mx-auto leading-relaxed -mt-12">
-              Turn scattered thoughts into structured brilliance. Start forging your ideas today.
-            </p>
-          </div>
+          <AuthBrandVisual caption="Turn scattered thoughts into structured brilliance. Start forging your ideas today." />
         </div>
       </div>
 
@@ -177,17 +166,7 @@ export default function RegisterPage() {
 
           {/* ── Card ── */}
           <div className="bg-white/80 backdrop-blur-xl border border-edge rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.06)] p-8 sm:p-10">
-            <div className="mb-8">
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-fg mb-2">
-                Create account
-              </h1>
-              <p className="text-sm text-fg-mid">
-                Already have an account?{" "}
-                <Link to="/login" className="text-vivid font-semibold hover:text-vivid-hover transition-colors">
-                  Sign in
-                </Link>
-              </p>
-            </div>
+            <AuthSwitch mode="register" className="mb-8" />
 
             {/* Server error banner */}
             {serverError && (

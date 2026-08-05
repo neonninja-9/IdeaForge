@@ -22,7 +22,7 @@ const ideaService = {
     sort?: string;
     page?: number;
     limit?: number;
-  } = {}): Promise<IdeasListResponse> {
+  } = {}, options: { signal?: AbortSignal } = {}): Promise<IdeasListResponse> {
     const searchParams = new URLSearchParams();
     if (params.q) searchParams.set("q", params.q);
     if (params.category) searchParams.set("category", params.category);
@@ -33,7 +33,9 @@ const ideaService = {
     if (params.limit) searchParams.set("limit", String(params.limit));
 
     const qs = searchParams.toString();
-    return apiFetch<IdeasListResponse>(`/ideas${qs ? `?${qs}` : ""}`);
+    return apiFetch<IdeasListResponse>(`/ideas${qs ? `?${qs}` : ""}`, {
+      signal: options.signal,
+    });
   },
 
   async getIdeaById(id: string): Promise<IdeaDetailResponse> {

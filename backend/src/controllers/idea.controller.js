@@ -55,7 +55,7 @@ const ideaController = {
      */
     async create(req, res, next) {
         try {
-            const { title, problem, solution, impact, difficulty, category, tags, suggestedTechStack } = req.body;
+            const { title, problem, solution, impact, difficulty, category, tags, suggestedTechStack, status } = req.body;
 
             const idea = await ideaService.create({
                 title,
@@ -66,6 +66,7 @@ const ideaController = {
                 category,
                 tags,
                 suggestedTechStack,
+                status,
                 author: req.user.id,
             });
 
@@ -84,7 +85,7 @@ const ideaController = {
     async update(req, res, next) {
         try {
             // Pick only allowed fields
-            const { title, problem, solution, impact, difficulty, category, tags, suggestedTechStack } = req.body;
+            const { title, problem, solution, impact, difficulty, category, tags, suggestedTechStack, status } = req.body;
             
             // Basic body validation
             if (Object.keys(req.body).length === 0) {
@@ -100,6 +101,7 @@ const ideaController = {
             if (category !== undefined) data.category = category;
             if (tags !== undefined) data.tags = tags;
             if (suggestedTechStack !== undefined) data.suggestedTechStack = suggestedTechStack;
+            if (status !== undefined) data.status = status;
 
             const idea = await ideaService.update(req.params.id, req.user.id, data);
 
