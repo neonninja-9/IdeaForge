@@ -63,7 +63,7 @@ function VelocityBand() {
    ═══════════════════════════════════════════════════════════════════════════ */
 function CinematicReveal() {
   return (
-    <section className="relative bg-[#090a0c] h-screen">
+    <section className="relative bg-[#090a0c] w-full">
       <ScrollExpand
         src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=1920&q=80"
         mediaType="image"
@@ -79,6 +79,7 @@ function CinematicReveal() {
         holdDistance={0.35}
         smoothing={0.1}
         overlayScrim={0.5}
+        useWindowScroll={true}
       >
         <div className="flex flex-col items-center gap-6">
           <p className="text-white/80 text-lg sm:text-xl max-w-lg font-medium">
