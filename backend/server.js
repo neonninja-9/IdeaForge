@@ -83,6 +83,11 @@ app.use((err, req, res, _next) => {
     });
 });
 
-app.listen(PORT, () => {
-    logger.info(`Server is listening on port ${PORT}`);
-});
+// Only start the server if we're not running in a serverless environment (like Vercel)
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+        logger.info(`Server is listening on port ${PORT}`);
+    });
+}
+
+export default app;
