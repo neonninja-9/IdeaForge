@@ -108,13 +108,14 @@ export default function IdeasFeedPage() {
           <div className="flex flex-col md:flex-row gap-4 items-center mb-4">
             {/* Search */}
             <div className="relative w-full md:w-1/3">
-              <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
               <input
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 className="w-full min-h-12 rounded-xl border border-slate-200 dark:border-white/10 bg-[#fcfcfd] dark:bg-[#1a1625] py-2.5 pl-10 pr-4 text-sm text-slate-800 dark:text-slate-200 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500/30"
                 placeholder="Search ideas..."
+                aria-label="Search ideas"
               />
             </div>
 
@@ -123,6 +124,7 @@ export default function IdeasFeedPage() {
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="min-h-12 w-full cursor-pointer rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500/30 md:w-48"
+              aria-label="Filter by category"
             >
               <option value="">All Categories</option>
               {categories.map((cat) => (
@@ -135,6 +137,7 @@ export default function IdeasFeedPage() {
               value={selectedDifficulty}
               onChange={(e) => setSelectedDifficulty(e.target.value)}
               className="min-h-12 w-full cursor-pointer rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500/30 md:w-40"
+              aria-label="Filter by difficulty"
             >
               <option value="">All Levels</option>
               <option value="Beginner">Beginner</option>
@@ -147,6 +150,7 @@ export default function IdeasFeedPage() {
               value={sort}
               onChange={(e) => setSort(e.target.value)}
               className="min-h-12 w-full cursor-pointer rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500/30 md:ml-auto md:w-40"
+              aria-label="Sort ideas"
             >
               <option value="newest">Newest</option>
               <option value="top">Most Voted</option>
