@@ -64,9 +64,9 @@ export default function Footer() {
             <h4 className="text-[11px] font-mono uppercase text-[#95979e] mb-5">Newsletter</h4>
             <p className="text-sm text-[#a9a9aa] mb-5 leading-relaxed">Stay ahead of the curve with our weekly editorial on idea architecture.</p>
             <div className="flex flex-col gap-2 min-[420px]:flex-row">
-              <input type="email" placeholder="Email" className="min-h-11 flex-1 px-4 py-2.5 text-sm bg-[#111111] border border-[#4a4b50] rounded text-white placeholder:text-[#95979e] focus:outline-none focus:border-[#5683da] transition-colors" />
+              <input type="email" placeholder="Email" aria-label="Email address for newsletter" className="min-h-11 flex-1 px-4 py-2.5 text-sm bg-[#111111] border border-[#4a4b50] rounded text-white placeholder:text-[#95979e] focus:outline-none focus:border-[#5683da] transition-colors" />
               <button className="min-h-11 px-4 py-2.5 bg-[#5683da] hover:bg-[#6f98ee] rounded-full text-white transition-colors duration-300 cursor-pointer flex items-center justify-center" aria-label="Subscribe">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                <svg aria-hidden="true" className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
               </button>
             </div>
           </div>
