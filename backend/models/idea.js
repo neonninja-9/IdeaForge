@@ -9,15 +9,15 @@ const ideaSchema = new mongoose.Schema({
     },
     problem: {
         type: String,
-        required: true,
         trim: true,
         maxlength: 2000,
+        default: "",
     },
     solution: {
         type: String,
-        required: true,
         trim: true,
         maxlength: 2000,
+        default: "",
     },
     impact: {
         type: String,
@@ -26,13 +26,25 @@ const ideaSchema = new mongoose.Schema({
     },
     difficulty: {
         type: String,
-        required: true,
         enum: ["Beginner", "Intermediate", "Advanced"],
+        default: "Beginner",
     },
     suggestedTechStack: {
         type: String,
         trim: true,
     },
+    status: {
+        type: String,
+        enum: ["draft", "published"],
+        default: "published",
+        index: true,
+    },
+    attachments: [{
+        name: { type: String, required: true },
+        url: { type: String, required: true },
+        type: { type: String, default: "image" },
+        size: { type: Number, default: 0 },
+    }],
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -42,7 +54,7 @@ const ideaSchema = new mongoose.Schema({
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
-        required: true,
+        required: false,
         index: true,
     },
     tags: [{

@@ -1,4 +1,4 @@
-import React from 'react';
+import { Link } from "react-router-dom";
 
 export default function IdeasFeedLoadingPage() {
   return (
@@ -9,10 +9,10 @@ export default function IdeasFeedLoadingPage() {
 <div className="flex justify-between items-center px-8 h-16 max-w-7xl mx-auto">
 <div className="text-xl font-black text-[#0a0a0a] tracking-tighter font-headline">IdeaForge</div>
 <div className="hidden md:flex space-x-8 items-center h-full">
-<a className="h-full flex items-center text-[#6c3ce0] font-bold border-b-2 border-[#6c3ce0] font-headline tracking-tight" href="#">Explore</a>
-<a className="h-full flex items-center text-[#555555] hover:text-[#6c3ce0] transition-colors duration-300 font-headline tracking-tight" href="#">Submit Idea</a>
-<a className="h-full flex items-center text-[#555555] hover:text-[#6c3ce0] transition-colors duration-300 font-headline tracking-tight" href="#">Dashboard</a>
-<a className="h-full flex items-center text-[#555555] hover:text-[#6c3ce0] transition-colors duration-300 font-headline tracking-tight" href="#">Categories</a>
+<Link className="h-full flex items-center text-[#6c3ce0] font-bold border-b-2 border-[#6c3ce0] font-headline tracking-tight" to="/explore">Explore</Link>
+<Link className="h-full flex items-center text-[#555555] hover:text-[#6c3ce0] transition-colors duration-300 font-headline tracking-tight" to="/submit">Submit Idea</Link>
+<Link className="h-full flex items-center text-[#555555] hover:text-[#6c3ce0] transition-colors duration-300 font-headline tracking-tight" to="/dashboard">Dashboard</Link>
+<Link className="h-full flex items-center text-[#555555] hover:text-[#6c3ce0] transition-colors duration-300 font-headline tracking-tight" to="/explore">Categories</Link>
 </div>
 <button className="bg-[#0a0a0a] text-white hover:bg-[#6c3ce0] transition-colors duration-300 rounded-full px-5 py-2.5 font-label uppercase tracking-[0.15em] text-xs font-bold hover:scale-95 transform">
                 Get Started

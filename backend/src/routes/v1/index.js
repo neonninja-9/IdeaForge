@@ -16,6 +16,9 @@ import projectRoutes from "./project.routes.js";
 import userRoutes from "./user.routes.js";
 import aiRoutes from "./ai.routes.js";
 import favoriteRoutes from "./favorite.routes.js";
+import notificationRoutes from "./notification.routes.js";
+import templateRoutes from "./template.routes.js";
+import uploadRoutes from "./upload.routes.js";
 
 const router = Router();
 
@@ -29,5 +32,8 @@ router.use("/projects", projectRoutes);
 router.use("/users", userRoutes);
 router.use("/ai", aiRoutes);
 router.use("/favorites", favoriteRoutes);
+router.use("/notifications", notificationRoutes);
+router.use("/templates", templateRoutes);
+router.use("/upload", uploadRoutes);
 
 export default router;

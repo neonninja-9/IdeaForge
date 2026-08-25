@@ -38,6 +38,19 @@ const voteController = {
             await Vote.create({ idea: ideaId, user: req.user.id });
             const newCount = await Vote.countDocuments({ idea: ideaId });
 
+            // Generate notification for idea owner
+            const Idea = (await import("../../models/idea.js")).default;
+            const idea = await Idea.findById(ideaId).lean();
+            if (idea && idea.author.toString() !== req.user.id) {
+                const Notification = (await import("../../models/notification.js")).default;
+                await Notification.create({
+                    recipient: idea.author,
+                    actor: req.user.id,
+                    type: "vote",
+                    idea: idea._id
+                });
+            }
+
             return res.status(201).json({
                 status: "success",
                 data: { voted: true, voteCount: newCount },

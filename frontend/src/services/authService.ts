@@ -16,7 +16,7 @@ import type {
   LoginPayload,
 } from "../types/auth.types";
 
-const API_BASE = "http://localhost:8080/api/v1/auth";
+const API_BASE = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/auth` : "/api/v1/auth";
 
 /**
  * Generic fetch wrapper that handles JSON parsing and error extraction.

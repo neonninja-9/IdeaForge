@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Menu, Sparkles, Star, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+
 import { useAuth } from "../../hooks/useAuth";
 
 const navLinks = [
-  { label: "Explore", to: "/explore" },
-  { label: "Submit idea", to: "/submit" },
-  { label: "Dashboard", to: "/dashboard" },
+  { label: "Product", to: "/#product" },
+  { label: "Workflow", to: "/#workflow" },
+  { label: "MetaBrain", to: "/#metabrain" },
 ];
 
 export default function Navbar() {
@@ -18,8 +20,9 @@ export default function Navbar() {
   const location = useLocation();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => setScrolled(window.scrollY > 36);
     window.addEventListener("scroll", onScroll);
+    onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -31,105 +34,127 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 border-b transition-all duration-300 ${
         scrolled
-          ? "bg-white/95 backdrop-blur-xl border-edge shadow-[0_1px_0_rgba(0,0,0,0.06)]"
-          : "bg-white/90 backdrop-blur-xl border-edge/80"
+          ? "border-white/10 bg-[#090a0c]/88 backdrop-blur-xl"
+          : "border-transparent bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <Link to="/" className="text-xl font-black tracking-tight text-fg">
-          IdeaForge
+      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-5 sm:px-6 lg:px-0">
+        <Link to="/" className="flex items-center gap-2 text-white">
+          <span className="grid size-8 place-items-center rounded-lg bg-white text-[#090a0c]">
+            <Sparkles className="size-4" />
+          </span>
+          <span className="text-lg font-black">IdeaForge</span>
         </Link>
 
-        <div className="hidden md:flex items-center gap-10">
+        <div className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
-            <NavLink
+            <a
               key={link.label}
-              to={link.to}
-              className={({ isActive }) => {
-                const active = isActive || (link.to === "/explore" && location.pathname.startsWith("/idea/"));
-                return `text-[11px] font-semibold uppercase tracking-[0.15em] transition-colors duration-200 ${active ? "text-vivid" : "text-fg-mid hover:text-fg"}`;
-              }}
+              href={link.to}
+              className="text-sm font-medium text-[#d1d1d1] transition hover:text-white"
             >
               {link.label}
-            </NavLink>
+            </a>
           ))}
+          <NavLink
+            to="/explore"
+            className={({ isActive }) =>
+              `text-sm font-medium transition ${
+                isActive || location.pathname.startsWith("/idea/")
+                  ? "text-white"
+                  : "text-[#d1d1d1] hover:text-white"
+              }`
+            }
+          >
+            Explore
+          </NavLink>
         </div>
 
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden items-center gap-3 md:flex">
+          <a
+            href="https://github.com"
+            className="inline-flex items-center gap-2 text-sm font-medium text-[#d1d1d1] transition hover:text-white"
+          >
+            <Star className="size-4" />
+            Star Us
+          </a>
           {!isLoading && user ? (
             <>
               <Link
                 to="/profile"
-                className="text-[11px] font-semibold uppercase tracking-[0.15em] text-fg-mid hover:text-fg transition-colors duration-300"
+                className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
               >
                 {user.username}
               </Link>
               <button
                 onClick={handleLogout}
-                className="px-6 py-2.5 text-[13px] font-semibold uppercase tracking-[0.1em] rounded-full border border-edge text-fg-mid hover:text-red-500 hover:border-red-300 transition-all duration-300 cursor-pointer"
+                className="rounded-full bg-[#5683da] px-5 py-2 text-sm font-medium text-white transition hover:bg-[#6f98ee]"
               >
                 Logout
               </button>
             </>
           ) : (
-            <Link to="/login" className="px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] rounded-full bg-fg text-fg-on-dark hover:bg-vivid transition-all duration-300 cursor-pointer inline-block">
-              Get Started
-            </Link>
+            <>
+              <Link
+                to="/login"
+                className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/register"
+                className="rounded-full bg-[#5683da] px-5 py-2 text-sm font-medium text-white transition hover:bg-[#6f98ee]"
+              >
+                Sign Up
+              </Link>
+            </>
           )}
         </div>
 
         <button
-          className="md:hidden min-h-11 min-w-11 rounded-full text-fg flex items-center justify-center hover:bg-surface-alt"
+          className="grid min-h-11 min-w-11 place-items-center rounded-full border border-white/15 text-white md:hidden"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            {mobileOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
+          {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
       </div>
 
-      <div
-        className={`md:hidden overflow-hidden transition-all duration-500 ${
-          mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-        }`}
-      >
-        <div className="bg-white border-t border-edge px-5 py-5 space-y-3 shadow-xl">
+      <div className={`md:hidden ${mobileOpen ? "block" : "hidden"}`}>
+        <div className="border-t border-white/10 bg-[#090a0c] px-5 py-5">
           {navLinks.map((link) => (
-            <Link
+            <a
               key={link.label}
-              to={link.to}
-              className="block rounded-lg px-2 py-3 text-sm font-medium uppercase tracking-widest text-fg-mid hover:bg-surface-alt hover:text-fg transition-colors"
+              href={link.to}
+              className="block rounded-xl px-3 py-3 text-sm font-medium text-[#d1d1d1] hover:bg-white/10 hover:text-white"
               onClick={() => setMobileOpen(false)}
             >
               {link.label}
-            </Link>
+            </a>
           ))}
+          <Link
+            to="/explore"
+            className="block rounded-xl px-3 py-3 text-sm font-medium text-[#d1d1d1] hover:bg-white/10 hover:text-white"
+            onClick={() => setMobileOpen(false)}
+          >
+            Explore
+          </Link>
           {!isLoading && user ? (
-            <>
-              <Link
-                to="/profile"
-                className="block rounded-lg px-2 py-3 text-sm font-medium uppercase tracking-widest text-fg-mid hover:bg-surface-alt hover:text-fg transition-colors"
-                onClick={() => setMobileOpen(false)}
-              >
-                Profile
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="w-full mt-3 min-h-11 px-5 py-2.5 text-sm font-semibold rounded-full border border-edge text-fg-mid hover:text-red-500 hover:border-red-300 transition-colors cursor-pointer"
-              >
-                Logout
-              </button>
-            </>
+            <button
+              onClick={handleLogout}
+              className="mt-3 min-h-11 w-full rounded-full bg-[#5683da] px-5 text-sm font-medium text-white"
+            >
+              Logout
+            </button>
           ) : (
-            <Link to="/login" className="w-full mt-3 min-h-11 px-5 py-2.5 text-sm font-semibold rounded-full bg-fg text-fg-on-dark block text-center" onClick={() => setMobileOpen(false)}>
-              Get Started
+            <Link
+              to="/register"
+              className="mt-3 block min-h-11 rounded-full bg-[#5683da] px-5 py-3 text-center text-sm font-medium text-white"
+              onClick={() => setMobileOpen(false)}
+            >
+              Sign Up
             </Link>
           )}
         </div>

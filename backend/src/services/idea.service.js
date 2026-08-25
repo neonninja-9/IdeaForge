@@ -16,7 +16,8 @@ const ideaService = {
      * List ideas with optional filtering, search, and sorting.
      */
     async list({ q, category, tag, difficulty, sort = "newest", page = 1, limit = 20 }) {
-        const filter = {};
+        // Only show published ideas in public listings
+        const filter = { status: "published" };
 
         if (q) {
             filter.$text = { $search: q };
@@ -148,7 +149,10 @@ const ideaService = {
             if (tags.length !== data.tags.length) throw new AppError("One or more tags are invalid", 400);
         }
 
-        const updated = await Idea.findByIdAndUpdate(ideaId, data, { new: true, runValidators: true })
+        // Build update object, including status if provided
+        const updateData = { ...data };
+
+        const updated = await Idea.findByIdAndUpdate(ideaId, updateData, { new: true, runValidators: true })
             .populate("author", "username")
             .populate("category", "name slug icon")
             .populate("tags", "name slug")

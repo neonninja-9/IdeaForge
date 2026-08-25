@@ -26,12 +26,12 @@ These work in the interface but do not persist to the IdeaForge API/database.
 | Feature | Current behavior | Backend work needed |
 | --- | --- | --- |
 | Favorites | Stored in the browser using `localStorage`; the Favorites page filters ideas by those IDs. | Add a `Favorite` model and protected `GET /favorites`, `POST /favorites/:ideaId`, and `DELETE /favorites/:ideaId` endpoints. Replace the local-storage helper. |
-| Templates | Static frontend template cards that prefill the idea form. | Optional: add a `Template` model plus public `GET /templates` and admin CRUD if templates should be managed without a deploy. |
+| Templates | Static frontend template cards that prefill the idea form. | Implemented: `Template` model and `GET /templates` endpoint added. Seedable via `npm run seed`. |
 | AI Studio history | Messages disappear on refresh and are not shared across devices. | Add `AiConversation` and `AiMessage` models; implement `GET/POST /ai/conversations`, `GET /ai/conversations/:id/messages`, and `POST /ai/conversations/:id/messages`. |
 | AI quality | The API responds with fixed, deterministic guidance. | Integrate an AI provider in `ai.controller.js`, keep the same `/ai/assist` response contract, add request limits, usage logging, and safe failure handling. |
 | Idea attachments | Voice, image, file, and sketch controls are visual only. | Add object storage and an `Attachment` model; implement signed upload flow and `POST/DELETE /ideas/:id/attachments`. |
 | Share action | The idea-detail Share button has no behavior. | Frontend-only: Web Share API/copy-link is sufficient. Add sharing analytics only if needed. |
-| Notifications | The shell explicitly labels notifications as a prototype. | Add `Notification` model and protected list/read endpoints; generate events for votes and comments. |
+| Notifications | The shell explicitly labels notifications as a prototype. | Implemented: `Notification` model, protected endpoints, and events for votes/comments. |
 
 ## Important API gaps to implement next
 
@@ -48,8 +48,8 @@ Prioritized by product impact.
 
 | Item | Why it matters |
 | --- | --- |
-| Request validation for ideas, comments, votes, canvas, and user updates | Authentication currently has validator middleware, but most non-auth payloads are manually checked only. Add reusable `express-validator` rules. |
-| MongoDB ObjectId validation | Invalid IDs can surface as Mongoose cast errors. Convert them to consistent `400` responses. |
+| Request validation for ideas, comments, votes, canvas, and user updates | Implemented: Added reusable `express-validator` rules across all routes. |
+| MongoDB ObjectId validation | Implemented: Added `validateObjectId` middleware. |
 | Automated API tests | Add integration tests for auth, ownership checks, request validation, and vote/favorite uniqueness before expanding features. |
 | Configuration | Move the port and client origin to environment variables; the server currently uses port `8080` directly and permissive reflected CORS. |
 | Rate limiting and security headers | Especially required before a real AI provider, public deployment, or credential abuse protection. |

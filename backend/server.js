@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import connectDB from "./db.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -16,8 +17,12 @@ const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN ? process.env.CLIENT_ORIGIN.spli
 app.use(morganSuccessHandler);
 app.use(morganErrorHandler);
 app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
-app.use(express.json());
+app.use(express.json({ limit: "25mb" }));
+app.use(express.urlencoded({ extended: true, limit: "25mb" }));
 app.use(cookieParser());
+
+// ─── Static Uploads ────────────────────────────────────────────
+app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads")));
 
 // ─── Database Connection ───────────────────────────────────────
 try {
@@ -78,6 +83,11 @@ app.use((err, req, res, _next) => {
     });
 });
 
-app.listen(PORT, () => {
-    logger.info(`Server is listening on port ${PORT}`);
-});
+// Only start the server if we're not running in a serverless environment (like Vercel)
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+        logger.info(`Server is listening on port ${PORT}`);
+    });
+}
+
+export default app;
