@@ -116,6 +116,18 @@ export default function IdeasFeedPage() {
                 className="w-full min-h-12 rounded-xl border border-slate-200 dark:border-white/10 bg-[#fcfcfd] dark:bg-[#1a1625] py-2.5 pl-10 pr-4 text-sm text-slate-800 dark:text-slate-200 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500/30"
                 placeholder="Search ideas..."
               />
+              {searchInput && (
+                <button
+                  type="button"
+                  onClick={() => setSearchInput("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-200 rounded-full p-0.5 transition-colors cursor-pointer"
+                  aria-label="Clear search"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
             </div>
 
             {/* Category Dropdown */}
