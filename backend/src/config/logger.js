@@ -13,14 +13,10 @@ const logFormat = printf(({ level, message, timestamp, stack }) => {
   return `${timestamp} [${level}]: ${stack || message}`;
 });
 
-const logger = winston.createLogger({
-  level: process.env.NODE_ENV === "production" ? "info" : "debug",
-  format: combine(
-    timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    errors({ stack: true }), // Ensures errors log their stack trace
-    logFormat
-  ),
-  transports: [
+// File-based transports — only when NOT running on Vercel (read-only filesystem)
+const fileTransports = [];
+if (!process.env.VERCEL) {
+  fileTransports.push(
     new DailyRotateFile({
       filename: path.join(logDir, "error-%DATE%.log"),
       datePattern: "YYYY-MM-DD",
@@ -33,8 +29,18 @@ const logger = winston.createLogger({
       datePattern: "YYYY-MM-DD",
       maxSize: "20m",
       maxFiles: "14d",
-    }),
-  ],
+    })
+  );
+}
+
+const logger = winston.createLogger({
+  level: process.env.NODE_ENV === "production" ? "info" : "debug",
+  format: combine(
+    timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+    errors({ stack: true }), // Ensures errors log their stack trace
+    logFormat
+  ),
+  transports: fileTransports,
 });
 
 // Always log to the console (for Dev & Prod console output)

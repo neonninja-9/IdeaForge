@@ -15,7 +15,7 @@
  * plain data and returns plain data (or throws).
  */
 
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import userRepository from "../repositories/user.repository.js";
 import tokenConfig from "../config/token.config.js";
