@@ -109,20 +109,22 @@ export default function SettingsPage() {
           {isEditingProfile ? (
             <form onSubmit={handleSaveProfile} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Username</label>
+                <label htmlFor="settings-username" className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1 cursor-pointer">Username</label>
                 <input
+                  id="settings-username"
                   value={usernameInput}
                   onChange={(e) => setUsernameInput(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-200 outline-none focus:border-indigo-500"
+                  className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-200 outline-none transition-all focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Email</label>
+                <label htmlFor="settings-email" className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1 cursor-pointer">Email</label>
                 <input
+                  id="settings-email"
                   type="email"
                   value={emailInput}
                   onChange={(e) => setEmailInput(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-200 outline-none focus:border-indigo-500"
+                  className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-200 outline-none transition-all focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10"
                 />
               </div>
               <button
