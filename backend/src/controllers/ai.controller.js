@@ -25,6 +25,51 @@ const aiController = {
         }
     },
 
+    /** POST /api/v1/ai/structure-idea */
+    async structureIdea(req, res, next) {
+        try {
+            const { rawText } = req.body;
+            if (typeof rawText !== "string" || !rawText.trim()) {
+                throw new AppError("rawText is required", 400);
+            }
+
+            const structuredIdea = await aiService.structureIdea(rawText.trim());
+
+            return res.status(200).json({
+                status: "success",
+                data: structuredIdea,
+            });
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    /** POST /api/v1/ai/categorize */
+    async categorizeIdea(req, res, next) {
+        try {
+            const { title, problem, solution, impact } = req.body;
+            
+            // Basic validation
+            if (!title || !problem || !solution) {
+                throw new AppError("title, problem, and solution are required", 400);
+            }
+
+            const categorized = await aiService.categorizeIdea(
+                title.trim(),
+                problem.trim(),
+                solution.trim(),
+                impact ? impact.trim() : ""
+            );
+
+            return res.status(200).json({
+                status: "success",
+                data: categorized,
+            });
+        } catch (err) {
+            next(err);
+        }
+    },
+
     /** GET /api/v1/ai/conversations */
     async getConversations(req, res, next) {
         try {
