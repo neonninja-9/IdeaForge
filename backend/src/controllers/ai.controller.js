@@ -1,33 +1,7 @@
 import AiConversation from "../../models/aiConversation.js";
 import AiMessage from "../../models/aiMessage.js";
 import AppError from "../utils/AppError.js";
-
-async function generateAiResponse(promptText, focus = "") {
-    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    if (GEMINI_API_KEY) {
-        try {
-            const systemInstruction = `You are a helpful AI assistant for IdeaForge. Help the user shape their ideas. Keep responses insightful yet concise.`;
-            const userMessage = `${promptText}${focus}`;
-            
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    system_instruction: { parts: { text: systemInstruction } },
-                    contents: [{ parts: [{ text: userMessage }] }]
-                })
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
-            }
-        } catch (e) {
-            console.error("Gemini API call failed:", e);
-        }
-    }
-    return `A useful next move${focus} is to narrow “${promptText}” into one specific user, one recurring moment, and one measurable outcome. Turn that into a lightweight experiment before expanding the solution.`;
-}
+import aiService from "../services/ai.service.js";
 
 const aiController = {
     /** POST /api/v1/ai/assist */
@@ -42,7 +16,7 @@ const aiController = {
                 ? ` for “${context.ideaTitle.trim().slice(0, 120)}”`
                 : "";
 
-            const responseText = await generateAiResponse(promptText, focus);
+            const responseText = await aiService.generateAiResponse(promptText, focus);
             const provider = process.env.GEMINI_API_KEY ? "gemini" : "built-in";
 
             return res.status(200).json({ status: "success", data: { message: responseText, provider } });
@@ -140,7 +114,7 @@ const aiController = {
                 await conversation.save();
             }
 
-            const aiText = await generateAiResponse(text.trim());
+            const aiText = await aiService.generateAiResponse(text.trim());
 
             const assistantMsg = await AiMessage.create({
                 conversation: id,

@@ -10,6 +10,7 @@ import Comment from "../../models/comment.js";
 import Category from "../../models/category.js";
 import Tag from "../../models/tag.js";
 import AppError from "../utils/AppError.js";
+import aiService from "./ai.service.js";
 
 const ideaService = {
     /**
@@ -124,6 +125,13 @@ const ideaService = {
      * Create a new idea.
      */
     async create(data) {
+        // AI Category Assignment
+        // Always let AI choose the category, override any user input
+        const aiCategoryId = await aiService.classifyCategory(data.title || "", data.problem || "");
+        if (aiCategoryId) {
+            data.category = aiCategoryId;
+        }
+
         const idea = await Idea.create(data);
         return idea;
     },
