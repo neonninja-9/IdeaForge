@@ -4,3 +4,4 @@
 
 **Learning:** Adding a visible clear button for search inputs significantly improves micro-UX and search usability.
 **Action:** When working with search inputs, add a clear (X) button conditionally if the user has entered text, and ensure the button is accessible via keyboard and screen readers.
+## 2026-08-29 - Added aria-label to nested select elements\n**Learning:** While `<select>` elements nested within `<label>` tags might receive implicit accessible names, explicitly adding an `aria-label` (or matching `id` and `htmlFor`) guarantees that older or less compliant screen readers announce the form control correctly without relying solely on heuristic parsing.\n**Action:** When inspecting form controls nested within text tags (like `<span>` inside `<label>`), always provide an explicit `aria-label` or `id` binding if missing, even if the visual context suggests a relationship.
