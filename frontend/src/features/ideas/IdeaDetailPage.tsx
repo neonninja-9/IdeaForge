@@ -121,6 +121,7 @@ export default function IdeaDetailPage() {
   }
 
   async function handleDeleteComment(commentId: string) {
+    if (!window.confirm("Are you sure you want to delete this comment?")) return;
     try {
       await commentService.deleteComment(commentId);
       setComments((current) => current.filter((comment) => (comment.id || comment._id) !== commentId));
@@ -466,7 +467,7 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
                           <p className="text-xs text-slate-400 dark:text-slate-500">{date(comment.createdAt)}</p>
                         </div>
                         {isMyComment && (
-                          <button onClick={() => handleDeleteComment(comment.id || comment._id)} className="ml-auto text-xs font-medium text-rose-500 hover:text-rose-600">Delete</button>
+                          <button onClick={() => handleDeleteComment(comment.id || comment._id)} aria-label="Delete comment" className="ml-auto text-xs font-medium text-rose-500 hover:text-rose-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 rounded px-1">Delete</button>
                         )}
                       </div>
                       <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">{comment.text}</p>
