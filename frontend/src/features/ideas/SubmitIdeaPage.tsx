@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useCallback, useRef, type FormEvent } from "react";
-import { useNavigate, useLocation, useSearchParams, Link } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
   ArrowRight,
@@ -8,7 +8,6 @@ import {
   Lightbulb,
   LoaderCircle,
   Mic,
-  PartyPopper,
   Save,
   Sparkles,
   WandSparkles,
@@ -22,6 +21,8 @@ import aiService from "../../services/aiService";
 import type { Category, Tag, Attachment } from "../../types/idea.types";
 import PageSkeleton from "../../components/PageSkeleton/PageSkeleton";
 import AttachmentUploader from "../../components/AttachmentUploader/AttachmentUploader";
+import { cleanAiDescription } from "../../utils/textCleaner";
+import IdeaSimulationModal from "../../components/IdeaSimulation/IdeaSimulationModal";
 
 /* ─── Constants ─────────────────────────────────────────────────── */
 const DRAFT_STORAGE_KEY = "ideaforge:draft";
@@ -219,9 +220,16 @@ export default function SubmitIdeaPage() {
   const draftTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasHydratedRef = useRef(false);
 
-  // Success modal state
+  // Success & Simulation modal state
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [createdIdeaId, setCreatedIdeaId] = useState<string | null>(null);
+  const [submittedIdeaData, setSubmittedIdeaData] = useState<{
+    title: string;
+    problem: string;
+    solution: string;
+    tags?: string[];
+    category?: string;
+  } | null>(null);
 
   /* ─── Auth guard & reference data ──────────────────────────────── */
   useEffect(() => { if (!authLoading && !user) navigate("/login"); }, [user, authLoading, navigate]);
@@ -318,11 +326,12 @@ export default function SubmitIdeaPage() {
     try {
       const context = title.trim() ? { ideaTitle: title.trim() } : undefined;
       const prompt = field === "problem"
-        ? `Refine and expand this problem description for a project idea submission. Make it clearer, more specific, and more compelling while keeping the original intent. Keep it concise (2-4 sentences). Problem: "${text.trim()}"`
-        : `Refine and expand this solution description for a project idea. Make it more concrete, actionable, and compelling while keeping the original intent. Keep it concise (2-4 sentences). Solution: "${text.trim()}"`;
+        ? `Refine and expand this problem description for a project idea. Make it clearer, more specific, and compelling (2-4 sentences). Output ONLY the direct refined description without any introductory phrase, title, headers, or quotes. Problem: "${text.trim()}"`
+        : `Refine and expand this solution description for a project idea. Make it more concrete, actionable, and compelling (2-4 sentences). Output ONLY the direct refined description without any introductory phrase, title, headers, or quotes. Solution: "${text.trim()}"`;
 
       const res = await aiService.assist(prompt, context);
-      setSuggestion(res.data.message);
+      const cleaned = cleanAiDescription(res.data.message);
+      setSuggestion(cleaned);
     } catch (err) {
       console.error(`AI refine ${field} failed`, err);
       setSuggestion(null);
@@ -333,11 +342,11 @@ export default function SubmitIdeaPage() {
 
   function acceptSuggestion(field: "problem" | "solution") {
     if (field === "problem" && problemSuggestion) {
-      setProblem(problemSuggestion);
+      setProblem(cleanAiDescription(problemSuggestion));
       setProblemSuggestion(null);
     }
     if (field === "solution" && solutionSuggestion) {
-      setSolution(solutionSuggestion);
+      setSolution(cleanAiDescription(solutionSuggestion));
       setSolutionSuggestion(null);
     }
   }
@@ -436,11 +445,16 @@ export default function SubmitIdeaPage() {
     else setIsSubmitting(true);
 
     try {
+      const cleanTitle = cleanAiDescription(title.trim());
+      const cleanProb = cleanAiDescription(problem.trim());
+      const cleanSol = cleanAiDescription(solution.trim());
+      const cleanImp = impact.trim() ? cleanAiDescription(impact.trim()) : undefined;
+
       const response = await ideaService.createIdea({
-        title: title.trim(),
-        problem: problem.trim(),
-        solution: solution.trim(),
-        impact: impact.trim() || undefined,
+        title: cleanTitle,
+        problem: cleanProb,
+        solution: cleanSol,
+        impact: cleanImp,
         difficulty: (difficulty || "Beginner") as "Beginner" | "Intermediate" | "Advanced",
         category: selectedCategory || undefined,
         tags: selectedTags,
@@ -457,6 +471,13 @@ export default function SubmitIdeaPage() {
         const newIdea = response.data.idea as { _id?: string; id?: string };
         const newId = newIdea.id || newIdea._id || "";
         setCreatedIdeaId(newId);
+        setSubmittedIdeaData({
+          title: cleanTitle,
+          problem: cleanProb,
+          solution: cleanSol,
+          tags: selectedTagNames,
+          category: activeCategory,
+        });
         setShowSuccessModal(true);
       }
     } catch (error) {
@@ -470,43 +491,26 @@ export default function SubmitIdeaPage() {
   function resetForm() {
     setTitle(""); setProblem(""); setSolution(""); setImpact(""); setDifficulty(""); setSelectedCategory(""); setSelectedTags([]); setAttachments([]);
     setErrors({}); setServerError(""); setDraftSavedAt(null); setCurrentStep(1);
-    setAiSuggestedStep3(false); setProblemSuggestion(null); setSolutionSuggestion(null);
+    setAiSuggestedStep3(false); setProblemSuggestion(null); setSolutionSuggestion(null); setSubmittedIdeaData(null);
     clearDraft();
   }
 
   /* ─── Loading ──────────────────────────────────────────────────── */
   if (authLoading || referenceLoading) return <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent transition-colors duration-500"><PageSkeleton variant="form" /></div>;
 
-  /* ─── Success Modal ────────────────────────────────────────────── */
-  if (showSuccessModal) {
+  /* ─── Success & Similarity Simulation Modal ────────────────────── */
+  if (showSuccessModal && submittedIdeaData && createdIdeaId) {
     return (
       <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent transition-colors duration-500">
-        <div className="fixed inset-0 z-50 grid place-items-center bg-black/30 dark:bg-black/50 backdrop-blur-sm px-5">
-          <div className="animate-reveal-up w-full max-w-md rounded-[28px] border border-slate-100 dark:border-white/10 bg-white dark:bg-[#1a1625] p-8 shadow-2xl dark:shadow-none text-center">
-            <span className="mx-auto grid size-16 place-items-center rounded-[20px] bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 dark:text-emerald-400">
-              <PartyPopper size={28} />
-            </span>
-            <h2 className="font-heading mt-6 text-2xl font-bold text-slate-900 dark:text-white">Your idea is live!</h2>
-            <p className="mt-3 text-sm leading-6 text-slate-500 dark:text-slate-400">
-              Your idea has been published and is now visible to the community. Watch it grow with votes and feedback.
-            </p>
-            <div className="mt-8 flex flex-col gap-3">
-              <Link
-                to={`/idea/${createdIdeaId}`}
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg shadow-indigo-200 dark:shadow-none transition hover:-translate-y-0.5 hover:bg-indigo-700"
-              >
-                View your idea <ArrowRight size={17} />
-              </Link>
-              <button
-                type="button"
-                onClick={() => { setShowSuccessModal(false); resetForm(); }}
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#120F17] px-5 text-sm font-semibold text-slate-700 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-white/5"
-              >
-                <Sparkles size={16} /> Submit another idea
-              </button>
-            </div>
-          </div>
-        </div>
+        <IdeaSimulationModal
+          isOpen={showSuccessModal}
+          onClose={() => {
+            setShowSuccessModal(false);
+            resetForm();
+          }}
+          ideaData={submittedIdeaData}
+          createdIdeaId={createdIdeaId}
+        />
       </div>
     );
   }

@@ -8,40 +8,74 @@ import Category from "../../models/category.js";
 import Tag from "../../models/tag.js";
 import Idea from "../../models/idea.js";
 import AppError from "../utils/AppError.js";
+import { cleanAiDescription, cleanStructuredIdea } from "../utils/aiTextCleaner.js";
 
 const CATEGORY_LIMIT = 30;
+const GEMINI_MODELS = ["gemini-3.6-flash", "gemini-flash-lite-latest", "gemini-3-flash-preview"];
+const GEMINI_MODEL = GEMINI_MODELS[0];
+
+/**
+ * Executes a Gemini generateContent request with automatic fallback across available models.
+ */
+async function callGeminiCascade(payload, apiKey) {
+    for (const model of GEMINI_MODELS) {
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+                signal: AbortSignal.timeout(6000)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                return data;
+            } else if (response.status === 429 || response.status === 404 || response.status === 503) {
+                console.warn(`[AI Service] Model ${model} returned ${response.status}. Cascading to next model...`);
+            } else {
+                console.error(`[AI Service] Model ${model} error:`, await response.text());
+            }
+        } catch (e) {
+            console.warn(`[AI Service] Model ${model} request failed: ${e.message || e}`);
+        }
+    }
+    return null;
+}
 
 const aiService = {
     /**
-     * General text generation using Gemini.
+     * General text generation using Gemini with multi-model cascade.
      */
     async generateAiResponse(promptText, focus = "") {
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
         if (GEMINI_API_KEY) {
-            try {
-                const systemInstruction = `You are a helpful AI assistant for IdeaForge. Help the user shape their ideas. Keep responses insightful yet concise.`;
-                const userMessage = `${promptText}${focus}`;
-                
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        system_instruction: { parts: { text: systemInstruction } },
-                        contents: [{ parts: [{ text: userMessage }] }]
-                    })
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
-                } else {
-                    console.error("Gemini API Error:", await response.text());
+            const systemInstruction = `You are an expert AI assistant for IdeaForge. Help users refine, articulate, and shape high-impact project ideas.
+CRITICAL INSTRUCTION: When asked to refine, rewrite, or expand a problem statement, solution, or description, provide ONLY the direct refined content in 2-3 concise, high-impact sentences. Do NOT include introductory phrases (e.g., 'Here is a refined version:'), conversational pleasantries, markdown titles/headers, or surrounding quotation marks.`;
+            const userMessage = `${promptText}${focus}`;
+
+            const payload = {
+                system_instruction: { parts: { text: systemInstruction } },
+                contents: [{ parts: [{ text: userMessage }] }],
+                generationConfig: {
+                    maxOutputTokens: 350,
+                    temperature: 0.2,
+                    topP: 0.85
                 }
-            } catch (e) {
-                console.error("Gemini API call failed:", e);
+            };
+
+            const data = await callGeminiCascade(payload, GEMINI_API_KEY);
+            if (data) {
+                const rawResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                if (rawResponse) {
+                    return cleanAiDescription(rawResponse);
+                }
             }
         }
-        return `A useful next move${focus} is to narrow “${promptText}” into one specific user, one recurring moment, and one measurable outcome. Turn that into a lightweight experiment before expanding the solution.`;
+
+        // Fast, intelligent fallback if all models are exhausted
+        const inputMatch = promptText.match(/(?:Problem|Solution|Description):\s*["“]?([^"”]+)["”]?/i);
+        const fallbackText = inputMatch ? inputMatch[1].trim() : promptText;
+        return cleanAiDescription(fallbackText);
     },
 
     /**
@@ -73,22 +107,18 @@ ${canCreateNew ?
         const promptText = `Title: ${title}\nProblem: ${problem}\n\nRespond with ONLY the slug of the existing category, OR the CREATE_NEW format. No other text.`;
 
         try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    system_instruction: { parts: { text: systemInstruction } },
-                    contents: [{ parts: [{ text: promptText }] }],
-                    generationConfig: {
-                        temperature: 0.1, // Low temp for deterministic classification
-                    }
-                })
-            });
+            const payload = {
+                system_instruction: { parts: { text: systemInstruction } },
+                contents: [{ parts: [{ text: promptText }] }],
+                generationConfig: {
+                    temperature: 0.1,
+                    maxOutputTokens: 80,
+                }
+            };
 
-            if (response.ok) {
-                const data = await response.json();
+            const data = await callGeminiCascade(payload, GEMINI_API_KEY);
+            if (data) {
                 const aiResult = (data.candidates?.[0]?.content?.parts?.[0]?.text || "").trim();
-                
                 if (!aiResult) return generalCategory?._id || null;
 
                 if (aiResult.startsWith("CREATE_NEW:") && canCreateNew) {
@@ -103,7 +133,6 @@ ${canCreateNew ?
                             return newCat._id;
                         } catch (err) {
                             console.error("Failed to create new category from AI:", err);
-                            // Fallback to general
                             return generalCategory?._id || null;
                         }
                     }
@@ -114,11 +143,9 @@ ${canCreateNew ?
                 if (matchedCategory) {
                     return matchedCategory._id;
                 }
-            } else {
-                console.error("Gemini Classification Error:", await response.text());
             }
         } catch (e) {
-            console.error("Gemini Classification failed:", e);
+            console.error("Gemini Classification failed:", e.message || e);
         }
 
         return generalCategory?._id || null;
@@ -140,55 +167,61 @@ You MUST respond with valid JSON ONLY. No markdown formatting, no backticks, jus
 The JSON MUST match this exact schema:
 {
   "title": "A catchy, concise title (max 50 chars)",
-  "problem": "A clear description of the problem this solves",
-  "solution": "How this project solves the problem",
+  "problem": "A clear description of the problem this solves (2-3 sentences)",
+  "solution": "How this project solves the problem (2-3 sentences)",
   "impact": "The potential impact or value created",
   "difficulty": "Beginner" | "Intermediate" | "Advanced",
   "suggestedTechStack": "A recommended tech stack string (e.g. 'React, Node, MongoDB')"
 }`;
 
         try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    system_instruction: { parts: { text: systemInstruction } },
-                    contents: [{ parts: [{ text: rawText }] }],
-                    generationConfig: {
-                        temperature: 0.7,
-                        responseMimeType: "application/json"
-                    }
-                })
-            });
+            const payload = {
+                system_instruction: { parts: { text: systemInstruction } },
+                contents: [{ parts: [{ text: rawText }] }],
+                generationConfig: {
+                    temperature: 0.3,
+                    maxOutputTokens: 500,
+                    responseMimeType: "application/json"
+                }
+            };
 
-            if (response.ok) {
-                const data = await response.json();
+            const data = await callGeminiCascade(payload, GEMINI_API_KEY);
+            if (data) {
                 let aiResult = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-                
                 try {
-                    const parsed = JSON.parse(aiResult);
-                    
+                    const parsed = cleanStructuredIdea(JSON.parse(aiResult));
+
                     try {
-                        const catRes = await aiService.categorizeIdea(parsed.title, parsed.problem, parsed.solution, parsed.impact || "");
+                        const catRes = await aiService.categorizeIdea(
+                            parsed.title,
+                            parsed.problem,
+                            parsed.solution,
+                            parsed.impact || ""
+                        );
                         parsed.categoryId = catRes.categoryId;
                         parsed.tagIds = catRes.tagIds;
                     } catch (e) {
                         console.error("Failed to categorize within structureIdea", e);
                     }
-                    
+
                     return parsed;
                 } catch (parseError) {
                     console.error("Failed to parse AI structure JSON:", aiResult);
-                    throw new AppError("AI returned invalid structure", 500);
                 }
-            } else {
-                console.error("Gemini Structure Error:", await response.text());
-                throw new AppError("Failed to structure idea with AI", 500);
             }
         } catch (e) {
-            console.error("Gemini Structure failed:", e);
-            throw new AppError("AI Service error", 500);
+            console.error("Gemini Structure failed:", e.message || e);
         }
+
+        // Fallback lightweight structure so the user is never blocked
+        return {
+            title: rawText.slice(0, 45).trim() || "New Project Idea",
+            problem: rawText.trim(),
+            solution: "A digital solution and automated workflow to resolve this problem.",
+            impact: "Improves efficiency and user outcomes.",
+            difficulty: "Beginner",
+            suggestedTechStack: "React, Node.js, MongoDB"
+        };
     },
 
     /**
@@ -220,16 +253,17 @@ Generate 5-8 technical tags relevant to the idea.`;
         const promptText = `Title: ${title}\nProblem: ${problem}\nSolution: ${solution}\nImpact: ${impact}`;
 
         try {
-            const { GoogleGenerativeAI } = await import("@google/generative-ai");
-            const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-            const model = genAI.getGenerativeModel({ 
-                model: "gemini-1.5-flash", 
-                systemInstruction,
-                generationConfig: { responseMimeType: "application/json", temperature: 0.2 }
-            });
+            const payload = {
+                system_instruction: { parts: { text: systemInstruction } },
+                contents: [{ parts: [{ text: promptText }] }],
+                generationConfig: { responseMimeType: "application/json", temperature: 0.2, maxOutputTokens: 250 }
+            };
 
-            const result = await model.generateContent(promptText);
-            const data = JSON.parse(result.response.text());
+            const responseData = await callGeminiCascade(payload, GEMINI_API_KEY);
+            if (!responseData) throw new Error("Gemini cascade failed");
+
+            const rawText = responseData.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+            const data = JSON.parse(rawText);
 
             let finalCategoryId = null;
             if (data.category) {
@@ -273,8 +307,13 @@ Generate 5-8 technical tags relevant to the idea.`;
                 tagIds: finalTagIds
             };
         } catch (e) {
-            console.error("AI Engine Categorize failed:", e);
-            throw new AppError("AI Service error", 500);
+            console.error("AI Engine Categorize failed:", e.message || e);
+            const gen = categories.find(c => c.slug === "general");
+            return {
+                categoryId: gen ? gen._id : (categories[0]?._id || null),
+                difficulty: "Beginner",
+                tagIds: []
+            };
         }
     },
 
@@ -305,7 +344,7 @@ Respond in JSON with exactly:
   "estimatedTime": "E.g., 4 - 6 weeks",
   "difficulty": "Beginner" or "Intermediate" or "Advanced"
 }`;
-            const solModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash", systemInstruction: solSystemInstruction, generationConfig: { responseMimeType: "application/json", temperature: 0.4 } });
+            const solModel = genAI.getGenerativeModel({ model: GEMINI_MODEL, systemInstruction: solSystemInstruction, generationConfig: { responseMimeType: "application/json", temperature: 0.3, maxOutputTokens: 300 } });
             const solResult = await solModel.generateContent(promptText);
             const solData = JSON.parse(solResult.response.text());
 
@@ -337,7 +376,7 @@ Respond in JSON with exactly:
     }
   ]
 }`;
-            const rmModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash", systemInstruction: roadmapSystemInstruction, generationConfig: { responseMimeType: "application/json", temperature: 0.4 } });
+            const rmModel = genAI.getGenerativeModel({ model: GEMINI_MODEL, systemInstruction: roadmapSystemInstruction, generationConfig: { responseMimeType: "application/json", temperature: 0.3, maxOutputTokens: 600 } });
             const rmResult = await rmModel.generateContent(promptText);
             const rmData = JSON.parse(rmResult.response.text());
 

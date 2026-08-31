@@ -11,6 +11,7 @@ import Category from "../../models/category.js";
 import Tag from "../../models/tag.js";
 import AppError from "../utils/AppError.js";
 import aiService from "./ai.service.js";
+import { cleanAiDescription } from "../utils/aiTextCleaner.js";
 
 
 const ideaService = {
@@ -126,6 +127,12 @@ const ideaService = {
      * Create a new idea.
      */
     async create(data) {
+        // Sanitize textual fields to ensure no AI preamble or boilerplate is persisted
+        if (data.title) data.title = cleanAiDescription(data.title);
+        if (data.problem) data.problem = cleanAiDescription(data.problem);
+        if (data.solution) data.solution = cleanAiDescription(data.solution);
+        if (data.impact) data.impact = cleanAiDescription(data.impact);
+
         // If no category was provided (e.g. AI categorization was skipped on the frontend),
         // fall back to the "general" category instead of calling the AI classifier again.
         // The frontend's /ai/categorize endpoint handles the primary AI categorization
@@ -172,6 +179,10 @@ const ideaService = {
 
         // Build update object, including status if provided
         const updateData = { ...data };
+        if (updateData.title) updateData.title = cleanAiDescription(updateData.title);
+        if (updateData.problem) updateData.problem = cleanAiDescription(updateData.problem);
+        if (updateData.solution) updateData.solution = cleanAiDescription(updateData.solution);
+        if (updateData.impact) updateData.impact = cleanAiDescription(updateData.impact);
 
         const updated = await Idea.findByIdAndUpdate(ideaId, updateData, { new: true, runValidators: true })
             .populate("author", "username")
