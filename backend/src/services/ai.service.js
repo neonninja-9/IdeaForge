@@ -186,26 +186,41 @@ The JSON MUST match this exact schema:
      * Auto-categorizes an idea based on its title, problem, and solution.
      */
     async categorizeIdea(title, problem, solution, impact) {
+        const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+        if (!GEMINI_API_KEY) {
+            console.error("GEMINI_API_KEY is missing");
+            return { categoryId: null, difficulty: "Beginner", tagIds: [] };
+        }
+
+        const categories = await Category.find({}).lean();
+        const tags = await Tag.find({}).lean();
+        const categoryListText = categories.map(c => `- ${c.name} (${c.slug})`).join("\n");
+        const canCreateCategories = categories.length < CATEGORY_LIMIT;
+
+        const systemInstruction = `You are an expert startup AI Classifier.
+Analyze the idea and respond with JSON containing exactly:
+{
+  "category": "The best matching category name",
+  "tags": ["Tag1", "Tag2", "Tag3", "Tag4", "Tag5"]
+}
+Existing categories to choose from:
+${categoryListText}
+${canCreateCategories ? "If none fit well, you may suggest a new category name." : "You MUST choose an existing category name."}
+Generate 5-8 technical tags relevant to the idea.`;
+
+        const promptText = `Title: ${title}\nProblem: ${problem}\nSolution: ${solution}\nImpact: ${impact}`;
+
         try {
-            const response = await fetch("http://localhost:8000/api/category/classify", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    title: title || "Untitled",
-                    description: `${problem}\n\nSolution: ${solution}\n\nImpact: ${impact}`
-                })
+            const { GoogleGenerativeAI } = await import("@google/generative-ai");
+            const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+            const model = genAI.getGenerativeModel({ 
+                model: "gemini-3.1-pro", 
+                systemInstruction,
+                generationConfig: { responseMimeType: "application/json", temperature: 0.2 }
             });
 
-            if (!response.ok) {
-                console.error("AI Engine Categorize Error:", await response.text());
-                throw new AppError("Failed to categorize idea with AI engine", 500);
-            }
-
-            const data = await response.json();
-            
-            const categories = await Category.find({}).lean();
-            const tags = await Tag.find({}).lean();
-            const canCreateCategories = categories.length < CATEGORY_LIMIT;
+            const result = await model.generateContent(promptText);
+            const data = JSON.parse(result.response.text());
 
             let finalCategoryId = null;
             if (data.category) {
@@ -260,28 +275,69 @@ The JSON MUST match this exact schema:
     async processIdeaBackground(ideaId, title, problem, solution, impact) {
         try {
             console.log(`[AI Engine] Starting background processing for Idea ${ideaId}...`);
-            const response = await fetch("http://localhost:8000/api/process", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    title: title || "Untitled",
-                    description: `${problem}\n\nSolution: ${solution}\n\nImpact: ${impact}`
-                })
-            });
-
-            if (!response.ok) {
-                console.error("[AI Engine] Background process error:", await response.text());
+            const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+            const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+            
+            if (!GEMINI_API_KEY) {
+                console.error("[AI Engine] GEMINI_API_KEY missing for background processing.");
                 return;
             }
 
-            const data = await response.json();
-            
+            const { GoogleGenerativeAI } = await import("@google/generative-ai");
+            const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+
+            const promptText = `Title: ${title}\nProblem: ${problem}\nSolution: ${solution}\nImpact: ${impact}`;
+
+            // Phase 2: Solution, Tech Stack, Estimated Time, Difficulty
+            const solSystemInstruction = `You are a Principal Software Architect. Given the user's idea, propose a technical architecture.
+Respond in JSON with exactly:
+{
+  "techStack": ["Array", "of", "Technologies"],
+  "estimatedTime": "E.g., 4 - 6 weeks",
+  "difficulty": "Beginner" or "Intermediate" or "Advanced"
+}`;
+            const solModel = genAI.getGenerativeModel({ model: "gemini-3.1-pro", systemInstruction: solSystemInstruction, generationConfig: { responseMimeType: "application/json", temperature: 0.4 } });
+            const solResult = await solModel.generateContent(promptText);
+            const solData = JSON.parse(solResult.response.text());
+
+            // Phase 3: Embeddings
+            let embedding = [];
+            if (OPENAI_API_KEY) {
+                try {
+                    const { OpenAI } = await import("openai");
+                    const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+                    const embResponse = await openai.embeddings.create({
+                        model: "text-embedding-3-small",
+                        input: `${title}. ${problem}`,
+                        encoding_format: "float",
+                    });
+                    embedding = embResponse.data[0].embedding;
+                } catch (embErr) {
+                    console.error("[AI Engine] Embeddings failed:", embErr);
+                }
+            }
+
+            // Phase 4: Roadmap
+            const roadmapSystemInstruction = `You are a Technical Project Manager. Generate a 9-phase software engineering roadmap for this idea.
+Respond in JSON with exactly:
+{
+  "roadmap": [
+    {
+      "phase": "Phase Name (e.g. Planning, Research, MVP)",
+      "tasks": ["Task 1", "Task 2"]
+    }
+  ]
+}`;
+            const rmModel = genAI.getGenerativeModel({ model: "gemini-3.1-pro", systemInstruction: roadmapSystemInstruction, generationConfig: { responseMimeType: "application/json", temperature: 0.4 } });
+            const rmResult = await rmModel.generateContent(promptText);
+            const rmData = JSON.parse(rmResult.response.text());
+
             await Idea.findByIdAndUpdate(ideaId, {
-                techStack: data.techStack || [],
-                estimatedTime: data.estimatedTime || "",
-                difficulty: data.difficulty || "Beginner",
-                embedding: data.embedding || [],
-                roadmap: data.roadmap || []
+                techStack: solData.techStack || [],
+                estimatedTime: solData.estimatedTime || "",
+                difficulty: solData.difficulty || "Beginner",
+                embedding: embedding,
+                roadmap: rmData.roadmap || []
             });
             console.log(`[AI Engine] Successfully enriched Idea ${ideaId} with full roadmap and embeddings.`);
         } catch (err) {
