@@ -241,7 +241,7 @@ export default function AppShell() {
       </aside>
 
       <div className="relative z-10 min-h-screen transition-colors" style={darkMode ? { backgroundColor: "transparent" } : undefined}>
-        <header className="sticky top-0 z-40 flex h-[88px] items-center gap-6 px-6 sm:px-12">
+        <header className="sticky top-0 z-40 flex h-[88px] items-center gap-2 sm:gap-6 px-4 sm:px-12">
           <div 
             className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-[var(--background)] to-[var(--background)]/0 backdrop-blur-xl [mask-image:linear-gradient(to_bottom,black_20%,transparent)] dark:from-[#08070d] dark:to-transparent" 
             style={darkMode ? { 
@@ -249,7 +249,7 @@ export default function AppShell() {
               WebkitMaskImage: "linear-gradient(to bottom, black 20%, transparent)"
             } : undefined} 
           />
-          <button onClick={() => setMobileOpen(true)} className="grid size-11 place-items-center rounded-xl text-slate-600 hover:bg-white lg:hidden" aria-label="Open navigation">
+          <button onClick={() => setMobileOpen(true)} className="grid size-9 sm:size-11 place-items-center rounded-xl text-slate-600 hover:bg-white lg:hidden" aria-label="Open navigation">
             <Menu size={21} />
           </button>
           <Link to="/dashboard" className="flex min-w-0 items-center gap-3 text-slate-950 dark:text-white">
@@ -261,11 +261,11 @@ export default function AppShell() {
           <div className="hidden max-w-2xl flex-1 sm:flex justify-start">
             <AppleSpotlight onSubmitSearch={submitSearch} focusSignal={appleSpotlightFocusSignal} />
           </div>
-          <div className="ml-auto flex items-center gap-3 sm:gap-4">
-            <button onClick={() => setDarkMode((enabled) => !enabled)} className="grid size-11 place-items-center rounded-full text-slate-500 transition hover:bg-white hover:text-vivid dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white" aria-label={darkMode ? "Use light theme" : "Use dark theme"} title={darkMode ? "Use light theme" : "Use dark theme"}>
+          <div className="ml-auto flex items-center gap-1 sm:gap-4">
+            <button onClick={() => setDarkMode((enabled) => !enabled)} className="grid size-9 sm:size-11 place-items-center rounded-full text-slate-500 transition hover:bg-white hover:text-vivid dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white" aria-label={darkMode ? "Use light theme" : "Use dark theme"} title={darkMode ? "Use light theme" : "Use dark theme"}>
               {darkMode ? <Sun size={19} /> : <Moon size={19} />}
             </button>
-            <button onClick={() => { setMobileSearchOpen(true); window.setTimeout(() => searchInputRef.current?.focus(), 0); }} className="grid size-11 place-items-center rounded-full text-slate-500 transition hover:bg-white hover:text-vivid sm:hidden" aria-label="Search community ideas">
+            <button onClick={() => { setMobileSearchOpen(true); window.setTimeout(() => searchInputRef.current?.focus(), 0); }} className="grid size-9 sm:size-11 place-items-center rounded-full text-slate-500 transition hover:bg-white hover:text-vivid sm:hidden" aria-label="Search community ideas">
               <Search size={20} />
             </button>
             
@@ -277,7 +277,7 @@ export default function AppShell() {
             >
               <button 
                 onClick={() => setNotificationsOpen((open) => !open)} 
-                className="relative grid size-11 place-items-center rounded-full text-slate-500 transition hover:bg-white hover:text-vivid dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white" 
+                className="relative grid size-9 sm:size-11 place-items-center rounded-full text-slate-500 transition hover:bg-white hover:text-vivid dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white" 
                 aria-label="Notifications" 
                 aria-expanded={notificationsOpen} 
                 aria-haspopup="dialog"

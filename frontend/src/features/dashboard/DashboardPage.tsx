@@ -105,7 +105,7 @@ export default function DashboardPage() {
         <section className="relative overflow-hidden rounded-[28px] bento-section" ref={heroRef}>
           <GlobalSpotlight gridRef={heroRef} enabled={true} spotlightRadius={400} glowColor="132, 0, 255" />
           <ParticleCard
-            className="card card--border-glow rounded-[32px] px-8 py-10 text-white shadow-[0_32px_80px_-24px_rgba(0,0,0,0.6)] sm:px-12 sm:py-14"
+            className="card card--border-glow rounded-[32px] px-5 py-8 text-white shadow-[0_32px_80px_-24px_rgba(0,0,0,0.6)] sm:px-12 sm:py-14"
             style={{
               backgroundColor: "#120F17",
               borderRadius: "28px",
@@ -121,7 +121,7 @@ export default function DashboardPage() {
             <div className="pointer-events-none absolute -bottom-36 left-1/3 size-72 rounded-full bg-violet-400/10 blur-3xl" />
             <div className="relative max-w-3xl">
               <p className="mb-4 flex items-center gap-3 text-sm font-medium tracking-widest text-slate-300 uppercase" style={{ fontFamily: "var(--f-izmir)" }}><span className="size-2 rounded-full bg-vivid animate-pulse" /> Your creative workspace</p>
-              <h1 className="text-3xl font-normal leading-[1.1] tracking-tight sm:text-4xl md:text-5xl uppercase" style={{ fontFamily: "var(--f-regular)" }}>{greeting()},<br /><span className="italic text-slate-400" style={{ fontFamily: "var(--f-edit-italic)", textTransform: "none" }}>{user?.username}.</span></h1>
+              <h1 className="text-2xl font-normal leading-[1.1] tracking-tight sm:text-4xl md:text-5xl uppercase" style={{ fontFamily: "var(--f-regular)" }}>{greeting()},<br /><span className="italic text-slate-400" style={{ fontFamily: "var(--f-edit-italic)", textTransform: "none" }}>{user?.username}.</span></h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-slate-400 sm:text-xl font-light" style={{ fontFamily: "var(--f-edit-regular)" }}>Every breakthrough starts as a raw thought. Capture and shape it for the community.</p>
               <QuickCapture capture={capture} setCapture={setCapture} onManualEntry={() => openCapture()} />
             </div>

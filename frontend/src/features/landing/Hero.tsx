@@ -2,7 +2,7 @@
 
 import { ArrowRight, Bot, CircleDot, GitBranch, Lightbulb, MessageSquare, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
-import LaserFlow from "../../../@/components/LaserFlow";
+import LaserFlow from "../../components/LaserFlow";
 import BlurText from "./effects/blurText";
 import Shuffle from "./effects/suffle-text";
 import SpecularButton from "./effects/specularButton";

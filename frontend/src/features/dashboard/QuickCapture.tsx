@@ -45,11 +45,11 @@ export default function QuickCapture({ capture, setCapture, onManualEntry }: Qui
           <span className="group relative"><button type="button" disabled className="grid size-10 cursor-not-allowed place-items-center rounded-xl text-slate-600" aria-label="Attach a file — coming soon"><FileUp size={18} /></button><span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 shadow-lg transition group-hover:opacity-100">Coming soon</span></span>
           <span className="ml-1 hidden text-xs text-slate-500 sm:inline">A raw thought is all you need to start.</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex w-full sm:w-auto items-center justify-between sm:justify-start gap-2">
           <button
             type="button"
             onClick={onManualEntry}
-            className="inline-flex min-h-11 items-center justify-center rounded-xl bg-white/5 px-4 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/20"
+            className="inline-flex min-h-11 flex-1 sm:flex-none items-center justify-center rounded-xl bg-white/5 px-4 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/20"
           >
             Manual Entry
           </button>
@@ -57,7 +57,7 @@ export default function QuickCapture({ capture, setCapture, onManualEntry }: Qui
             type="button"
             onClick={handleMagicStructure}
             disabled={isStructuring || !capture.trim()}
-            className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 px-4 text-sm font-semibold text-white shadow-lg shadow-purple-900/30 transition hover:-translate-y-0.5 hover:from-purple-400 hover:to-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+            className="inline-flex min-h-11 flex-1 sm:flex-none items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 to-indigo-500 px-4 text-sm font-semibold text-white shadow-lg shadow-purple-900/30 transition hover:-translate-y-0.5 hover:from-purple-400 hover:to-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
           >
             {isStructuring ? <LoaderCircle className="animate-spin" size={17} /> : <WandSparkles size={17} />}
             {isStructuring ? "Forging..." : "Magic Structure"}
