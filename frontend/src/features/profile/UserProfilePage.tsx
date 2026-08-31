@@ -66,7 +66,7 @@ export default function UserProfilePage() {
             </div>
             <div className="pl-5 sm:pl-8">
               <dt className="text-[10px] font-semibold tracking-[0.16em] text-slate-400 dark:text-slate-500">MEMBER SINCE</dt>
-              <dd className="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-300">{new Date(user.createdAt).toLocaleDateString(undefined, { month: "short", year: "numeric" })}</dd>
+              <dd className="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-300">{user.createdAt && !isNaN(new Date(user.createdAt).getTime()) ? new Date(user.createdAt).toLocaleDateString(undefined, { month: "short", year: "numeric" }) : "Recently"}</dd>
             </div>
           </dl>
         </section>

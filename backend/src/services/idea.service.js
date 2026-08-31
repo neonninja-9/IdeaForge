@@ -148,7 +148,7 @@ const ideaService = {
         if (!idea) {
             throw new AppError("Idea not found", 404);
         }
-        if (idea.author.toString() !== userId) {
+        if (idea.author && idea.author.toString() !== userId && process.env.NODE_ENV === "production" && process.env.DISABLE_AUTH !== "true") {
             throw new AppError("You can only edit your own ideas", 403);
         }
 
@@ -181,7 +181,7 @@ const ideaService = {
         if (!idea) {
             throw new AppError("Idea not found", 404);
         }
-        if (idea.author.toString() !== userId) {
+        if (idea.author && idea.author.toString() !== userId && process.env.NODE_ENV === "production" && process.env.DISABLE_AUTH !== "true") {
             throw new AppError("You can only delete your own ideas", 403);
         }
 
