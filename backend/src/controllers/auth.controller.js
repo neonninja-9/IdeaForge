@@ -12,11 +12,9 @@
  * via `next(err)`.
  */
 
-import mongoose from "mongoose";
 import authService from "../services/auth.service.js";
 import tokenConfig from "../config/token.config.js";
 import { toAuthResponse, toPublicUser } from "../transformers/user.transformer.js";
-import { getOrCreateDevUser, isDevAuthEnabled } from "../utils/devUser.js";
 
 const authController = {
   /**
@@ -87,17 +85,6 @@ const authController = {
       const refreshToken = req.cookies?.[tokenConfig.refresh.cookie.name];
 
       if (!refreshToken) {
-        if (isDevAuthEnabled()) {
-          const devUser = await getOrCreateDevUser();
-          return res.status(200).json({
-            status: "success",
-            data: {
-              accessToken: "dev-access-token",
-              user: toPublicUser(devUser),
-            },
-          });
-        }
-
         return res.status(401).json({
           status: "fail",
           message: "No refresh token provided",
@@ -114,16 +101,6 @@ const authController = {
         },
       });
     } catch (err) {
-      if (isDevAuthEnabled()) {
-        const devUser = await getOrCreateDevUser();
-        return res.status(200).json({
-          status: "success",
-          data: {
-            accessToken: "dev-access-token",
-            user: toPublicUser(devUser),
-          },
-        });
-      }
       next(err);
     }
   },
@@ -156,26 +133,7 @@ const authController = {
    */
   async getMe(req, res, next) {
     try {
-      let user = null;
-      if (req.user?.id && mongoose.connection.readyState === 1) {
-        try {
-          user = await authService.getProfile(req.user.id);
-        } catch {
-          if (isDevAuthEnabled()) {
-            user = await getOrCreateDevUser();
-          }
-        }
-      } else if (isDevAuthEnabled()) {
-        user = await getOrCreateDevUser();
-      }
-
-      if (!user) {
-        return res.status(404).json({
-          status: "fail",
-          message: "User not found",
-        });
-      }
-
+      const user = await authService.getProfile(req.user.id);
       return res.status(200).json({
         status: "success",
         data: { user: toPublicUser(user) },

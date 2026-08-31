@@ -94,7 +94,7 @@ const commentController = {
             if (!comment) {
                 throw new AppError("Comment not found", 404);
             }
-            if (comment.user && comment.user.toString() !== req.user.id && process.env.NODE_ENV === "production" && process.env.DISABLE_AUTH !== "true") {
+            if (comment.user.toString() !== req.user.id) {
                 throw new AppError("You can only delete your own comments", 403);
             }
 

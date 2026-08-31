@@ -11,60 +11,42 @@
 
 import jwt from "jsonwebtoken";
 import tokenConfig from "../config/token.config.js";
-import { getOrCreateDevUser, isDevAuthEnabled } from "../utils/devUser.js";
 
-async function authenticate(req, res, next) {
+function authenticate(req, res, next) {
+  // 1 — Extract the token from the Authorization header
   const authHeader = req.headers.authorization;
-  const isDev = isDevAuthEnabled();
-
-  // 1 — If a Bearer token is provided, try to verify it
-  if (authHeader && authHeader.startsWith("Bearer ")) {
-    const token = authHeader.split(" ")[1];
-
-    if (token && token !== "dev-access-token") {
-      try {
-        const decoded = jwt.verify(token, tokenConfig.access.secret);
-
-        // Attach user object for downstream handlers
-        req.user = {
-          id: decoded.id,
-          email: decoded.email,
-          role: decoded.role,
-        };
-
-        return next();
-      } catch (err) {
-        if (!isDev) {
-          const message =
-            err.name === "TokenExpiredError"
-              ? "Access token has expired"
-              : "Invalid access token";
-
-          return res.status(401).json({
-            status: "fail",
-            message,
-          });
-        }
-      }
-    }
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+      status: "fail",
+      message: "Authentication required — no token provided",
+    });
   }
 
-  // 2 — In development environment, automatically authenticate as dev user
-  if (isDev) {
-    const devUser = await getOrCreateDevUser();
+  const token = authHeader.split(" ")[1];
+
+  // 2 — Verify the JWT
+  try {
+    const decoded = jwt.verify(token, tokenConfig.access.secret);
+
+    // Attach a lightweight user object for downstream handlers
     req.user = {
-      id: (devUser._id || devUser.id || "").toString(),
-      email: devUser.email,
-      role: devUser.role || "admin",
+      id: decoded.id,
+      email: decoded.email,
+      role: decoded.role,
     };
-    return next();
-  }
 
-  // 3 — In production without a token, reject
-  return res.status(401).json({
-    status: "fail",
-    message: "Authentication required — no token provided",
-  });
+    next();
+  } catch (err) {
+    const message =
+      err.name === "TokenExpiredError"
+        ? "Access token has expired"
+        : "Invalid access token";
+
+    return res.status(401).json({
+      status: "fail",
+      message,
+    });
+  }
 }
 
 export default authenticate;

@@ -12,17 +12,12 @@
  * @returns {{ id: string, username: string, email: string, role: string, createdAt: string }}
  */
 export function toPublicUser(userDoc) {
-  if (!userDoc) return null;
   return {
-    id: (userDoc._id || userDoc.id || "").toString(),
+    id: userDoc._id.toString(),
     username: userDoc.username,
     email: userDoc.email,
-    role: userDoc.role || "user",
-    createdAt: userDoc.createdAt
-      ? typeof userDoc.createdAt.toISOString === "function"
-        ? userDoc.createdAt.toISOString()
-        : userDoc.createdAt
-      : new Date().toISOString(),
+    role: userDoc.role,
+    createdAt: userDoc.createdAt,
   };
 }
 
