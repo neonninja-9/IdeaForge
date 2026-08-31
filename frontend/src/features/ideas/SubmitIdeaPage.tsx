@@ -12,6 +12,7 @@ import {
   Save,
   Sparkles,
   WandSparkles,
+  X,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import ideaService from "../../services/ideaService";
@@ -25,6 +26,13 @@ import AttachmentUploader from "../../components/AttachmentUploader/AttachmentUp
 /* ─── Constants ─────────────────────────────────────────────────── */
 const DRAFT_STORAGE_KEY = "ideaforge:draft";
 const DRAFT_SAVE_DELAY = 800; // ms debounce
+
+/* ─── Step metadata ─────────────────────────────────────────────── */
+const STEPS = [
+  { num: 1, title: "The Spark", subtitle: "What are you thinking about?", description: "Name your idea and describe the problem." },
+  { num: 2, title: "The Solution", subtitle: "How could this be solved?", description: "Propose a solution and its impact." },
+  { num: 3, title: "Categorization", subtitle: "Where does this fit in?", description: "AI-assisted tagging & classification." },
+] as const;
 
 /* ─── Helper: tech-stack suggestion ─────────────────────────────── */
 function generateTechStack(tagNames: string[], difficulty: string): string {
@@ -79,6 +87,99 @@ function ComingSoonButton({ icon: Icon, label }: { icon: React.ComponentType<{ s
   );
 }
 
+/* ─── AI Suggestion Card ─────────────────────────────────────────── */
+function AiSuggestionCard({
+  suggestion,
+  isLoading,
+  onAccept,
+  onDismiss,
+  label,
+}: {
+  suggestion: string | null;
+  isLoading: boolean;
+  onAccept: () => void;
+  onDismiss: () => void;
+  label: string;
+}) {
+  if (!isLoading && !suggestion) return null;
+
+  return (
+    <div className="animate-reveal-up rounded-2xl border border-violet-200 dark:border-violet-500/20 bg-gradient-to-br from-violet-50 to-indigo-50 dark:from-violet-950/30 dark:to-indigo-950/20 p-4 shadow-sm dark:shadow-none">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="grid size-7 place-items-center rounded-lg bg-violet-100 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400">
+          {isLoading ? <LoaderCircle size={14} className="animate-spin" /> : <Sparkles size={14} />}
+        </span>
+        <span className="text-xs font-semibold text-violet-700 dark:text-violet-300">
+          {isLoading ? `AI is refining your ${label}…` : `✨ AI-refined ${label}`}
+        </span>
+      </div>
+      {isLoading ? (
+        <div className="space-y-2">
+          <div className="h-3 w-full animate-pulse rounded-full bg-violet-200/60 dark:bg-violet-500/20" />
+          <div className="h-3 w-4/5 animate-pulse rounded-full bg-violet-200/60 dark:bg-violet-500/20" />
+          <div className="h-3 w-3/5 animate-pulse rounded-full bg-violet-200/60 dark:bg-violet-500/20" />
+        </div>
+      ) : (
+        <>
+          <p className="text-sm leading-6 text-slate-700 dark:text-slate-200 whitespace-pre-line">{suggestion}</p>
+          <div className="mt-3 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onAccept}
+              className="inline-flex min-h-8 items-center gap-1.5 rounded-lg bg-violet-600 px-3 text-xs font-semibold text-white shadow-sm transition hover:bg-violet-700"
+            >
+              <Check size={13} /> Accept
+            </button>
+            <button
+              type="button"
+              onClick={onDismiss}
+              className="inline-flex min-h-8 items-center gap-1.5 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-[#120F17] px-3 text-xs font-medium text-slate-600 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-white/5"
+            >
+              <X size={13} /> Dismiss
+            </button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+/* ─── Categorization Loading Overlay ─────────────────────────────── */
+function CategorizationOverlay() {
+  return (
+    <div className="animate-reveal-up space-y-6">
+      <div className="flex flex-col items-center text-center py-8">
+        <span className="relative grid size-16 place-items-center rounded-[20px] bg-gradient-to-br from-violet-100 to-indigo-100 dark:from-violet-500/20 dark:to-indigo-500/20 text-violet-600 dark:text-violet-400 shadow-lg shadow-violet-200/50 dark:shadow-none">
+          <Sparkles size={28} className="animate-pulse" />
+          <span className="absolute -right-1 -top-1 size-4 animate-ping rounded-full bg-violet-400/60" />
+        </span>
+        <h3 className="font-heading mt-5 text-lg font-bold text-slate-900 dark:text-white">Analyzing your idea with AI…</h3>
+        <p className="mt-2 max-w-sm text-sm text-slate-500 dark:text-slate-400">We're reading your problem and solution to suggest the best category, focus areas, and difficulty level.</p>
+      </div>
+      <div className="grid gap-5 md:grid-cols-2">
+        <div className="rounded-2xl border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/[0.03] p-4 space-y-3">
+          <div className="h-3 w-20 animate-pulse rounded-full bg-slate-200 dark:bg-white/10" />
+          <div className="h-10 animate-pulse rounded-xl bg-slate-200 dark:bg-white/10" />
+        </div>
+        <div className="rounded-2xl border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/[0.03] p-4 space-y-3">
+          <div className="h-3 w-24 animate-pulse rounded-full bg-slate-200 dark:bg-white/10" />
+          <div className="grid grid-cols-3 gap-2">
+            <div className="h-10 animate-pulse rounded-xl bg-slate-200 dark:bg-white/10" />
+            <div className="h-10 animate-pulse rounded-xl bg-slate-200 dark:bg-white/10" />
+            <div className="h-10 animate-pulse rounded-xl bg-slate-200 dark:bg-white/10" />
+          </div>
+        </div>
+      </div>
+      <div className="rounded-2xl border border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/[0.03] p-4 space-y-3">
+        <div className="h-3 w-20 animate-pulse rounded-full bg-slate-200 dark:bg-white/10" />
+        <div className="flex flex-wrap gap-2">
+          {[1, 2, 3, 4].map(i => <div key={i} className="h-8 w-20 animate-pulse rounded-full bg-slate-200 dark:bg-white/10" />)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════════ */
 export default function SubmitIdeaPage() {
   const { user, isLoading: authLoading } = useAuth();
@@ -102,6 +203,16 @@ export default function SubmitIdeaPage() {
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [isCategorizing, setIsCategorizing] = useState(false);
+  const [aiSuggestedStep3, setAiSuggestedStep3] = useState(false);
+
+  // AI Refine state
+  const [isRefiningProblem, setIsRefiningProblem] = useState(false);
+  const [problemSuggestion, setProblemSuggestion] = useState<string | null>(null);
+  const [isRefiningSolution, setIsRefiningSolution] = useState(false);
+  const [solutionSuggestion, setSolutionSuggestion] = useState<string | null>(null);
+
+  // Step transition animation
+  const [stepAnimating, setStepAnimating] = useState(false);
 
   // Draft auto-save state
   const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
@@ -183,6 +294,49 @@ export default function SubmitIdeaPage() {
     { label: "Unique value", text: impact.trim() || "Make the first outcome feel faster, clearer, or more personal than existing alternatives." },
   ], [problem, solution, impact, activeCategory]);
 
+  /* ─── AI Refine Handlers ───────────────────────────────────────── */
+  async function handleRefine(field: "problem" | "solution") {
+    const text = field === "problem" ? problem : solution;
+    if (!text.trim() || text.trim().length < 10) return;
+
+    const setLoading = field === "problem" ? setIsRefiningProblem : setIsRefiningSolution;
+    const setSuggestion = field === "problem" ? setProblemSuggestion : setSolutionSuggestion;
+
+    setLoading(true);
+    setSuggestion(null);
+
+    try {
+      const context = title.trim() ? { ideaTitle: title.trim() } : undefined;
+      const prompt = field === "problem"
+        ? `Refine and expand this problem description for a project idea submission. Make it clearer, more specific, and more compelling while keeping the original intent. Keep it concise (2-4 sentences). Problem: "${text.trim()}"`
+        : `Refine and expand this solution description for a project idea. Make it more concrete, actionable, and compelling while keeping the original intent. Keep it concise (2-4 sentences). Solution: "${text.trim()}"`;
+
+      const res = await aiService.assist(prompt, context);
+      setSuggestion(res.data.message);
+    } catch (err) {
+      console.error(`AI refine ${field} failed`, err);
+      setSuggestion(null);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function acceptSuggestion(field: "problem" | "solution") {
+    if (field === "problem" && problemSuggestion) {
+      setProblem(problemSuggestion);
+      setProblemSuggestion(null);
+    }
+    if (field === "solution" && solutionSuggestion) {
+      setSolution(solutionSuggestion);
+      setSolutionSuggestion(null);
+    }
+  }
+
+  function dismissSuggestion(field: "problem" | "solution") {
+    if (field === "problem") setProblemSuggestion(null);
+    if (field === "solution") setSolutionSuggestion(null);
+  }
+
   /* ─── Actions ──────────────────────────────────────────────────── */
   function toggleTag(tagId: string) { setSelectedTags((current) => current.includes(tagId) ? current.filter((id) => id !== tagId) : current.length < 5 ? [...current, tagId] : current); }
 
@@ -203,18 +357,33 @@ export default function SubmitIdeaPage() {
     return next;
   }
 
+  function animateStep(cb: () => void) {
+    setStepAnimating(true);
+    setTimeout(() => {
+      cb();
+      // Re-trigger animation for the incoming step
+      requestAnimationFrame(() => setStepAnimating(false));
+    }, 150);
+  }
+
   async function handleNextStep() {
     const nextErrors = validateStep(currentStep);
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length === 0) {
       if (currentStep === 2) {
-        setIsCategorizing(true);
+        // Animate into categorization loading state, then run AI
+        animateStep(() => {
+          setIsCategorizing(true);
+          setCurrentStep(3);
+        });
+
         try {
           const res = await aiService.categorizeIdea(title, problem, solution, impact);
           if (res.data) {
             if (res.data.categoryId) setSelectedCategory(res.data.categoryId);
             if (res.data.difficulty) setDifficulty(res.data.difficulty);
             if (res.data.tagIds) setSelectedTags(res.data.tagIds);
+            setAiSuggestedStep3(true);
 
             // Re-fetch categories and tags in case AI created new ones
             const [categoryResponse, tagResponse] = await Promise.all([
@@ -228,16 +397,15 @@ export default function SubmitIdeaPage() {
           console.error("Auto-categorization failed", e);
         } finally {
           setIsCategorizing(false);
-          setCurrentStep(3);
         }
       } else {
-        setCurrentStep(s => Math.min(3, s + 1));
+        animateStep(() => setCurrentStep(s => Math.min(3, s + 1)));
       }
     }
   }
 
   function handlePrevStep() {
-    setCurrentStep(s => Math.max(1, s - 1));
+    animateStep(() => setCurrentStep(s => Math.max(1, s - 1)));
   }
 
   function validateAll(): FormErrors {
@@ -292,6 +460,7 @@ export default function SubmitIdeaPage() {
   function resetForm() {
     setTitle(""); setProblem(""); setSolution(""); setImpact(""); setDifficulty(""); setSelectedCategory(""); setSelectedTags([]); setAttachments([]);
     setErrors({}); setServerError(""); setDraftSavedAt(null); setCurrentStep(1);
+    setAiSuggestedStep3(false); setProblemSuggestion(null); setSolutionSuggestion(null);
     clearDraft();
   }
 
@@ -332,6 +501,9 @@ export default function SubmitIdeaPage() {
     );
   }
 
+  /* ─── Current step info ────────────────────────────────────────── */
+  const stepInfo = STEPS[currentStep - 1];
+
   /* ─── Main form ────────────────────────────────────────────────── */
   return (
     <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent px-5 py-7 sm:px-8 sm:py-10 xl:px-12 transition-colors duration-500">
@@ -350,30 +522,65 @@ export default function SubmitIdeaPage() {
           <form onSubmit={(e) => handleSubmit(e, "published")} noValidate className="rounded-[28px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-5 shadow-[0_18px_50px_-32px_rgba(15,23,42,0.32)] dark:shadow-none sm:p-8 transition-colors duration-500">
             {serverError && <div className="mb-6 rounded-2xl border border-rose-100 dark:border-rose-500/20 bg-rose-50 dark:bg-rose-500/10 px-4 py-3 text-sm text-rose-700 dark:text-rose-400">{serverError}</div>}
             
-            <div className="flex items-start justify-between gap-5">
-              <div>
-                <div className="mb-4 flex items-center gap-2">
-                  <div className={`h-1.5 w-12 rounded-full ${currentStep >= 1 ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-slate-200 dark:bg-slate-800'}`} />
-                  <div className={`h-1.5 w-12 rounded-full ${currentStep >= 2 ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-slate-200 dark:bg-slate-800'}`} />
-                  <div className={`h-1.5 w-12 rounded-full ${currentStep >= 3 ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-slate-200 dark:bg-slate-800'}`} />
-                </div>
-                <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">
-                  {currentStep === 1 ? "Step 1: The Spark" : currentStep === 2 ? "Step 2: The Solution" : "Step 3: Categorization"}
-                </p>
-                <h2 className="font-heading mt-1 text-xl font-bold text-slate-900 dark:text-white">
-                  {currentStep === 1 ? "What are you thinking about?" : currentStep === 2 ? "How could this be solved?" : "Where does this fit in?"}
-                </h2>
+            {/* ─── Step Indicators ─────────────────────────────── */}
+            <div className="mb-7">
+              <div className="flex items-center gap-1.5 mb-5">
+                {STEPS.map((step) => {
+                  const isActive = currentStep === step.num;
+                  const isComplete = currentStep > step.num;
+                  return (
+                    <button
+                      key={step.num}
+                      type="button"
+                      onClick={() => {
+                        if (isComplete) animateStep(() => setCurrentStep(step.num));
+                      }}
+                      disabled={!isComplete}
+                      className={`group flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold transition-all ${
+                        isActive
+                          ? "bg-indigo-600 text-white shadow-md shadow-indigo-200 dark:shadow-none"
+                          : isComplete
+                          ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 cursor-pointer hover:bg-indigo-100 dark:hover:bg-indigo-500/20"
+                          : "bg-slate-100 dark:bg-white/5 text-slate-400 dark:text-slate-500 cursor-default"
+                      }`}
+                    >
+                      <span className={`grid size-5 place-items-center rounded-full text-[10px] font-bold ${
+                        isActive
+                          ? "bg-white/20 text-white"
+                          : isComplete
+                          ? "bg-indigo-600 text-white"
+                          : "bg-slate-200 dark:bg-white/10 text-slate-400 dark:text-slate-500"
+                      }`}>
+                        {isComplete ? <Check size={10} /> : step.num}
+                      </span>
+                      <span className="hidden sm:inline">{step.title}</span>
+                    </button>
+                  );
+                })}
               </div>
-              <div className="flex items-center gap-3">
-                <div className="hidden text-right sm:block">
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Idea clarity</p>
-                  <p className="mt-1 text-sm font-bold text-indigo-600 dark:text-indigo-400">{confidence}%</p>
+
+              <div className="flex items-start justify-between gap-5">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">
+                    Step {stepInfo.num}: {stepInfo.title}
+                  </p>
+                  <h2 className="font-heading mt-1 text-xl font-bold text-slate-900 dark:text-white">
+                    {stepInfo.subtitle}
+                  </h2>
+                  <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">{stepInfo.description}</p>
                 </div>
-                <span className="grid size-11 place-items-center rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"><Lightbulb size={20} /></span>
+                <div className="flex items-center gap-3">
+                  <div className="hidden text-right sm:block">
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">Idea clarity</p>
+                    <p className="mt-1 text-sm font-bold text-indigo-600 dark:text-indigo-400">{confidence}%</p>
+                  </div>
+                  <span className="grid size-11 place-items-center rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"><Lightbulb size={20} /></span>
+                </div>
               </div>
             </div>
 
-            <div className="mt-7 space-y-6">
+            {/* ─── Step Content (animated) ─────────────────────── */}
+            <div className={`space-y-6 transition-all duration-200 ${stepAnimating ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}`}>
               {currentStep === 1 && (
                 <>
                   <label className="block">
@@ -382,17 +589,44 @@ export default function SubmitIdeaPage() {
                     {errors.title && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.title}</span>}
                   </label>
 
+                  {/* ─── Contextual tip for title ─── */}
+                  {!title.trim() && (
+                    <div className="flex items-start gap-3 rounded-xl border border-amber-100 dark:border-amber-500/20 bg-amber-50/60 dark:bg-amber-500/5 px-4 py-3">
+                      <Lightbulb size={16} className="mt-0.5 shrink-0 text-amber-500 dark:text-amber-400" />
+                      <p className="text-xs leading-5 text-amber-800 dark:text-amber-300">
+                        <span className="font-semibold">Tip:</span> A good title is specific. Instead of "better app", try "AI-powered recipe planner for college students".
+                      </p>
+                    </div>
+                  )}
+
                   <label className="block">
                     <span className="mb-2 flex items-center justify-between text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Describe your idea <span className="font-normal text-slate-400 dark:text-slate-500">{problem.length} characters</span>
                     </span>
-                    <textarea value={problem} onChange={(event) => setProblem(event.target.value)} rows={6} placeholder="Describe the problem, the moment you noticed it, or the possibility you can't stop thinking about..." className={`w-full resize-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-4 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.problem ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />
+                    <textarea value={problem} onChange={(event) => { setProblem(event.target.value); setProblemSuggestion(null); }} rows={6} placeholder="Describe the problem, the moment you noticed it, or the possibility you can't stop thinking about..." className={`w-full resize-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-4 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.problem ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />
                     {errors.problem && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.problem}</span>}
                   </label>
 
+                  {/* ─── AI Suggestion Card for Problem ─── */}
+                  <AiSuggestionCard
+                    suggestion={problemSuggestion}
+                    isLoading={isRefiningProblem}
+                    onAccept={() => acceptSuggestion("problem")}
+                    onDismiss={() => dismissSuggestion("problem")}
+                    label="problem description"
+                  />
+
                   <div className="-mt-3 flex flex-wrap items-center gap-1">
                     <ComingSoonButton icon={Mic} label="Voice recording" />
-                    <ComingSoonButton icon={WandSparkles} label="AI Copilot" />
+                    <button
+                      type="button"
+                      onClick={() => handleRefine("problem")}
+                      disabled={isRefiningProblem || problem.trim().length < 10}
+                      className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-violet-600 dark:text-violet-400 transition hover:bg-violet-50 dark:hover:bg-violet-500/10 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+                    >
+                      {isRefiningProblem ? <LoaderCircle size={15} className="animate-spin" /> : <WandSparkles size={15} />}
+                      {isRefiningProblem ? "Refining…" : "Refine with AI"}
+                    </button>
                   </div>
 
                   <AttachmentUploader
@@ -407,9 +641,41 @@ export default function SubmitIdeaPage() {
                 <>
                   <label className="block">
                     <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">A possible first solution</span>
-                    <textarea value={solution} onChange={(event) => setSolution(event.target.value)} rows={4} placeholder="How could this become useful? Don't worry about getting it right yet." className={`w-full resize-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-4 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.solution ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />
+                    <textarea value={solution} onChange={(event) => { setSolution(event.target.value); setSolutionSuggestion(null); }} rows={4} placeholder="How could this become useful? Don't worry about getting it right yet." className={`w-full resize-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-4 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.solution ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />
                     {errors.solution && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.solution}</span>}
                   </label>
+
+                  {/* ─── AI Suggestion Card for Solution ─── */}
+                  <AiSuggestionCard
+                    suggestion={solutionSuggestion}
+                    isLoading={isRefiningSolution}
+                    onAccept={() => acceptSuggestion("solution")}
+                    onDismiss={() => dismissSuggestion("solution")}
+                    label="solution"
+                  />
+
+                  {/* ─── Refine button for solution ─── */}
+                  <div className="-mt-3">
+                    <button
+                      type="button"
+                      onClick={() => handleRefine("solution")}
+                      disabled={isRefiningSolution || solution.trim().length < 10}
+                      className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-violet-600 dark:text-violet-400 transition hover:bg-violet-50 dark:hover:bg-violet-500/10 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+                    >
+                      {isRefiningSolution ? <LoaderCircle size={15} className="animate-spin" /> : <WandSparkles size={15} />}
+                      {isRefiningSolution ? "Refining…" : "Refine with AI"}
+                    </button>
+                  </div>
+
+                  {/* ─── Contextual hint based on problem ─── */}
+                  {problem.trim().length > 20 && !solution.trim() && (
+                    <div className="flex items-start gap-3 rounded-xl border border-indigo-100 dark:border-indigo-500/20 bg-indigo-50/60 dark:bg-indigo-500/5 px-4 py-3">
+                      <Sparkles size={16} className="mt-0.5 shrink-0 text-indigo-500 dark:text-indigo-400" />
+                      <p className="text-xs leading-5 text-indigo-800 dark:text-indigo-300">
+                        <span className="font-semibold">Based on your problem:</span> Think about the simplest version of a tool or experience that would eliminate the friction you described. What would the user see first?
+                      </p>
+                    </div>
+                  )}
 
                   <label className="block">
                     <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">The impact you hope for <span className="font-normal text-slate-400 dark:text-slate-500">optional</span></span>
@@ -418,11 +684,29 @@ export default function SubmitIdeaPage() {
                 </>
               )}
 
-              {currentStep === 3 && (
+              {currentStep === 3 && isCategorizing && (
+                <CategorizationOverlay />
+              )}
+
+              {currentStep === 3 && !isCategorizing && (
                 <>
+                  {/* ─── AI-suggested banner ─── */}
+                  {aiSuggestedStep3 && (
+                    <div className="flex items-start gap-3 rounded-xl border border-violet-200 dark:border-violet-500/20 bg-gradient-to-r from-violet-50 to-indigo-50 dark:from-violet-950/20 dark:to-indigo-950/20 px-4 py-3">
+                      <Sparkles size={16} className="mt-0.5 shrink-0 text-violet-600 dark:text-violet-400" />
+                      <div>
+                        <p className="text-xs font-semibold text-violet-700 dark:text-violet-300">✨ AI analyzed your idea</p>
+                        <p className="mt-0.5 text-xs text-violet-600/80 dark:text-violet-400/80">We've suggested a category, focus areas, and difficulty level based on your description. Feel free to adjust anything.</p>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="grid gap-5 md:grid-cols-2">
                     <label className="block">
-                      <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Category</span>
+                      <span className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        Category
+                        {aiSuggestedStep3 && selectedCategory && <span className="rounded-full bg-violet-100 dark:bg-violet-500/20 px-2 py-0.5 text-[10px] font-semibold text-violet-600 dark:text-violet-400">AI suggested</span>}
+                      </span>
                       <span className="relative block">
                         <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)} className={`w-full appearance-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-3.5 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.category ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`}>
                           <option value="">Choose a category</option>
@@ -433,7 +717,10 @@ export default function SubmitIdeaPage() {
                       {errors.category && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.category}</span>}
                     </label>
                     <div>
-                      <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Starting point</span>
+                      <span className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        Starting point
+                        {aiSuggestedStep3 && difficulty && <span className="rounded-full bg-violet-100 dark:bg-violet-500/20 px-2 py-0.5 text-[10px] font-semibold text-violet-600 dark:text-violet-400">AI suggested</span>}
+                      </span>
                       <div className="grid grid-cols-3 gap-2">
                         {["Beginner", "Intermediate", "Advanced"].map((level) => (
                           <button key={level} type="button" onClick={() => setDifficulty(level)} className={`min-h-[50px] rounded-xl border px-2 text-xs font-semibold transition ${difficulty === level ? "border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" : "border-slate-200 dark:border-white/10 bg-[#fcfcfd] dark:bg-[#1a1625] text-slate-500 dark:text-slate-400 hover:border-indigo-200 dark:hover:border-indigo-500/30"}`}>{level}</button>
@@ -445,7 +732,10 @@ export default function SubmitIdeaPage() {
 
                   <div>
                     <div className="mb-2 flex items-center justify-between">
-                      <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Focus areas</span>
+                      <span className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                        Focus areas
+                        {aiSuggestedStep3 && selectedTags.length > 0 && <span className="rounded-full bg-violet-100 dark:bg-violet-500/20 px-2 py-0.5 text-[10px] font-semibold text-violet-600 dark:text-violet-400">AI suggested</span>}
+                      </span>
                       <span className="text-xs text-slate-400 dark:text-slate-500">Up to 5</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -471,10 +761,10 @@ export default function SubmitIdeaPage() {
               
               {currentStep < 3 ? (
                 <button type="button" onClick={handleNextStep} disabled={isCategorizing} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg shadow-indigo-200 dark:shadow-none transition hover:-translate-y-0.5 hover:bg-indigo-700 disabled:opacity-50 disabled:hover:translate-y-0">
-                  {isCategorizing ? <><LoaderCircle className="animate-spin" size={17} /> Categorizing...</> : <>Next Step <ArrowRight size={17} /></>}
+                  Next Step <ArrowRight size={17} />
                 </button>
               ) : (
-                <button type="submit" disabled={isSubmitting} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg shadow-indigo-200 dark:shadow-none transition hover:-translate-y-0.5 hover:bg-indigo-700 disabled:opacity-60">{isSubmitting && <LoaderCircle size={17} className="animate-spin" />}{isSubmitting ? "Publishing..." : "Publish idea"}<ArrowRight size={17} /></button>
+                <button type="submit" disabled={isSubmitting || isCategorizing} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg shadow-indigo-200 dark:shadow-none transition hover:-translate-y-0.5 hover:bg-indigo-700 disabled:opacity-60">{isSubmitting && <LoaderCircle size={17} className="animate-spin" />}{isSubmitting ? "Publishing..." : "Publish idea"}<ArrowRight size={17} /></button>
               )}
             </div>
           </form>
@@ -486,8 +776,8 @@ export default function SubmitIdeaPage() {
                   <span className="inline-flex items-center gap-2 rounded-full bg-indigo-100 dark:bg-indigo-500/20 px-3 py-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-400">
                     <Sparkles size={15} /> Live Blueprint
                   </span>
-                  <span className="flex items-center gap-1.5 rounded-full bg-amber-100/80 dark:bg-amber-500/10 px-2.5 py-1 text-[11px] font-medium text-amber-700 dark:text-amber-400">
-                    AI Expansion · Soon
+                  <span className="flex items-center gap-1.5 rounded-full bg-emerald-100/80 dark:bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-400">
+                    <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" /> AI-powered
                   </span>
                 </div>
                 <h2 className="font-heading mt-4 text-xl font-bold text-slate-900 dark:text-white">Your idea, taking shape.</h2>

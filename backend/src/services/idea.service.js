@@ -10,7 +10,7 @@ import Comment from "../../models/comment.js";
 import Category from "../../models/category.js";
 import Tag from "../../models/tag.js";
 import AppError from "../utils/AppError.js";
-import aiService from "./ai.service.js";
+
 
 const ideaService = {
     /**
@@ -125,11 +125,15 @@ const ideaService = {
      * Create a new idea.
      */
     async create(data) {
-        // AI Category Assignment
-        // Always let AI choose the category, override any user input
-        const aiCategoryId = await aiService.classifyCategory(data.title || "", data.problem || "");
-        if (aiCategoryId) {
-            data.category = aiCategoryId;
+        // If no category was provided (e.g. AI categorization was skipped on the frontend),
+        // fall back to the "general" category instead of calling the AI classifier again.
+        // The frontend's /ai/categorize endpoint handles the primary AI categorization
+        // with tags + difficulty included, so we don't override that here.
+        if (!data.category) {
+            const general = await Category.findOne({ slug: "general" }).lean();
+            if (general) {
+                data.category = general._id;
+            }
         }
 
         const idea = await Idea.create(data);
