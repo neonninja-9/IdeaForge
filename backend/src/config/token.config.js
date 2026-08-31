@@ -7,11 +7,11 @@
 
 const tokenConfig = Object.freeze({
   access: {
-    secret: process.env.JWT_ACCESS_SECRET || "ideaforge_dev_jwt_access_secret_1234567890",
+    secret: process.env.JWT_ACCESS_SECRET,
     expiresIn: "15m",
   },
   refresh: {
-    secret: process.env.JWT_REFRESH_SECRET || "ideaforge_dev_jwt_refresh_secret_1234567890",
+    secret: process.env.JWT_REFRESH_SECRET,
     expiresIn: "7d",
     cookie: {
       name: "refreshToken",
