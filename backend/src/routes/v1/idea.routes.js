@@ -37,11 +37,14 @@ router.patch("/:id", authenticate, validateObjectId("id"), updateIdeaRules, vali
 router.delete("/:id", authenticate, validateObjectId("id"), ideaController.delete);
 
 /**
- * Optional auth — doesn't reject if no token, but attaches req.user if present.
+ * Optional auth — doesn't reject if no token, but attaches req.user if present or in dev mode.
  */
 function optionalAuth(req, res, next) {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        if (process.env.NODE_ENV !== "production" || process.env.DISABLE_AUTH === "true") {
+            return authenticate(req, res, next);
+        }
         return next();
     }
 
