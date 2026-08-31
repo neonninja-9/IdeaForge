@@ -246,6 +246,16 @@ export default function SubmitIdeaPage() {
       setSolution(prefill.solution || "");
       setImpact(prefill.impact || "");
       setDifficulty(prefill.difficulty || "");
+      
+      if (prefill.categoryId) {
+        setSelectedCategory(prefill.categoryId);
+        setAiSuggestedStep3(true);
+      }
+      if (prefill.tagIds && prefill.tagIds.length > 0) {
+        setSelectedTags(prefill.tagIds);
+        setAiSuggestedStep3(true);
+      }
+      
       // Clear navigation state so a refresh doesn't overwrite a draft again
       window.history.replaceState({}, document.title);
       return;

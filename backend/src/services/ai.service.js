@@ -22,7 +22,7 @@ const aiService = {
                 const systemInstruction = `You are a helpful AI assistant for IdeaForge. Help the user shape their ideas. Keep responses insightful yet concise.`;
                 const userMessage = `${promptText}${focus}`;
                 
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -73,7 +73,7 @@ ${canCreateNew ?
         const promptText = `Title: ${title}\nProblem: ${problem}\n\nRespond with ONLY the slug of the existing category, OR the CREATE_NEW format. No other text.`;
 
         try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${GEMINI_API_KEY}`, {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -148,7 +148,7 @@ The JSON MUST match this exact schema:
 }`;
 
         try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${GEMINI_API_KEY}`, {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -167,6 +167,15 @@ The JSON MUST match this exact schema:
                 
                 try {
                     const parsed = JSON.parse(aiResult);
+                    
+                    try {
+                        const catRes = await aiService.categorizeIdea(parsed.title, parsed.problem, parsed.solution, parsed.impact || "");
+                        parsed.categoryId = catRes.categoryId;
+                        parsed.tagIds = catRes.tagIds;
+                    } catch (e) {
+                        console.error("Failed to categorize within structureIdea", e);
+                    }
+                    
                     return parsed;
                 } catch (parseError) {
                     console.error("Failed to parse AI structure JSON:", aiResult);
@@ -214,7 +223,7 @@ Generate 5-8 technical tags relevant to the idea.`;
             const { GoogleGenerativeAI } = await import("@google/generative-ai");
             const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
             const model = genAI.getGenerativeModel({ 
-                model: "gemini-3.1-pro", 
+                model: "gemini-1.5-flash", 
                 systemInstruction,
                 generationConfig: { responseMimeType: "application/json", temperature: 0.2 }
             });
@@ -296,7 +305,7 @@ Respond in JSON with exactly:
   "estimatedTime": "E.g., 4 - 6 weeks",
   "difficulty": "Beginner" or "Intermediate" or "Advanced"
 }`;
-            const solModel = genAI.getGenerativeModel({ model: "gemini-3.1-pro", systemInstruction: solSystemInstruction, generationConfig: { responseMimeType: "application/json", temperature: 0.4 } });
+            const solModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash", systemInstruction: solSystemInstruction, generationConfig: { responseMimeType: "application/json", temperature: 0.4 } });
             const solResult = await solModel.generateContent(promptText);
             const solData = JSON.parse(solResult.response.text());
 
@@ -328,7 +337,7 @@ Respond in JSON with exactly:
     }
   ]
 }`;
-            const rmModel = genAI.getGenerativeModel({ model: "gemini-3.1-pro", systemInstruction: roadmapSystemInstruction, generationConfig: { responseMimeType: "application/json", temperature: 0.4 } });
+            const rmModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash", systemInstruction: roadmapSystemInstruction, generationConfig: { responseMimeType: "application/json", temperature: 0.4 } });
             const rmResult = await rmModel.generateContent(promptText);
             const rmData = JSON.parse(rmResult.response.text());
 
