@@ -6,6 +6,7 @@
 
 import Category from "../../models/category.js";
 import Tag from "../../models/tag.js";
+import Idea from "../../models/idea.js";
 import AppError from "../utils/AppError.js";
 
 const CATEGORY_LIMIT = 30;
@@ -185,79 +186,36 @@ The JSON MUST match this exact schema:
      * Auto-categorizes an idea based on its title, problem, and solution.
      */
     async categorizeIdea(title, problem, solution, impact) {
-        const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-        if (!GEMINI_API_KEY) {
-            throw new AppError("GEMINI_API_KEY is missing", 500);
-        }
-
-        const categories = await Category.find({}).lean();
-        const tags = await Tag.find({}).lean();
-
-        const canCreateCategories = categories.length < CATEGORY_LIMIT;
-        
-        const categoryListText = categories.map(c => `- ${c.name} (slug: ${c.slug})`).join("\n");
-        const tagListText = tags.map(t => `- ${t.name} (slug: ${t.slug})`).join("\n");
-
-        const systemInstruction = `You are an expert AI Classifier for a project idea platform. 
-Your task is to analyze the user's idea and determine the best Category, Difficulty, and Focus Areas (Tags).
-
-Existing Categories:
-${categoryListText}
-
-Existing Tags:
-${tagListText}
-
-You MUST respond with valid JSON ONLY.
-Schema:
-{
-  "category": { "name": "...", "slug": "...", "icon": "..." },
-  "tags": [ { "name": "...", "slug": "..." } ],
-  "difficulty": "Beginner" | "Intermediate" | "Advanced"
-}
-
-Rules:
-1. Choose ONE Category. ${canCreateCategories ? "If none match perfectly, you can invent a new one (provide name, slug, icon)." : "You MUST choose from the existing categories."}
-2. Choose up to 5 Tags. You can invent new tags if existing ones don't cover the specific technologies or focus areas (provide name, slug).
-3. Determine difficulty based on technical requirements (Beginner, Intermediate, or Advanced).`;
-
-        const userMessage = `Title: ${title}\nProblem: ${problem}\nSolution: ${solution}\nImpact: ${impact}`;
-
         try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${GEMINI_API_KEY}`, {
+            const response = await fetch("http://localhost:8000/api/category/classify", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    system_instruction: { parts: { text: systemInstruction } },
-                    contents: [{ parts: [{ text: userMessage }] }],
-                    generationConfig: {
-                        temperature: 0.2,
-                        responseMimeType: "application/json"
-                    }
+                    title: title || "Untitled",
+                    description: `${problem}\n\nSolution: ${solution}\n\nImpact: ${impact}`
                 })
             });
 
             if (!response.ok) {
-                console.error("Gemini Categorize Error:", await response.text());
-                throw new AppError("Failed to categorize idea with AI", 500);
+                console.error("AI Engine Categorize Error:", await response.text());
+                throw new AppError("Failed to categorize idea with AI engine", 500);
             }
 
             const data = await response.json();
-            const aiResult = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-            const parsed = JSON.parse(aiResult);
+            
+            const categories = await Category.find({}).lean();
+            const tags = await Tag.find({}).lean();
+            const canCreateCategories = categories.length < CATEGORY_LIMIT;
 
-            // Process Category
             let finalCategoryId = null;
-            if (parsed.category && parsed.category.slug) {
-                let matchedCategory = categories.find(c => c.slug === parsed.category.slug);
+            if (data.category) {
+                let matchedCategory = categories.find(c => c.name.toLowerCase() === data.category.toLowerCase());
                 if (matchedCategory) {
                     finalCategoryId = matchedCategory._id;
                 } else if (canCreateCategories) {
+                    const slug = data.category.toLowerCase().replace(/[^a-z0-9-]/g, "-");
                     try {
-                        const newCat = await Category.create({ 
-                            name: parsed.category.name, 
-                            slug: parsed.category.slug, 
-                            icon: parsed.category.icon || "📌" 
-                        });
+                        const newCat = await Category.create({ name: data.category, slug, icon: "📌" });
                         finalCategoryId = newCat._id;
                     } catch (e) { console.error("Failed to create AI category", e); }
                 }
@@ -267,32 +225,67 @@ Rules:
                 finalCategoryId = gen ? gen._id : null;
             }
 
-            // Process Tags
             const finalTagIds = [];
-            if (Array.isArray(parsed.tags)) {
-                for (const t of parsed.tags) {
-                    if (!t.slug) continue;
-                    let matchedTag = tags.find(existing => existing.slug === t.slug);
+            if (Array.isArray(data.tags)) {
+                for (const t of data.tags) {
+                    const tagName = t;
+                    const slug = tagName.toLowerCase().replace(/[^a-z0-9-]/g, "-");
+                    let matchedTag = tags.find(existing => existing.slug === slug);
                     if (matchedTag) {
                         finalTagIds.push(matchedTag._id);
                     } else {
                         try {
-                            const newTag = await Tag.create({ name: t.name, slug: t.slug });
+                            const newTag = await Tag.create({ name: tagName, slug });
                             finalTagIds.push(newTag._id);
                         } catch (e) { console.error("Failed to create AI tag", e); }
                     }
-                    if (finalTagIds.length >= 5) break;
+                    if (finalTagIds.length >= 8) break;
                 }
             }
 
             return {
                 categoryId: finalCategoryId,
-                difficulty: parsed.difficulty || "Beginner",
+                difficulty: "Beginner", // Let user adjust or rely on background pipeline
                 tagIds: finalTagIds
             };
         } catch (e) {
-            console.error("Gemini Categorize failed:", e);
+            console.error("AI Engine Categorize failed:", e);
             throw new AppError("AI Service error", 500);
+        }
+    },
+
+    /**
+     * Runs the heavy 4-phase AI pipeline in the background and saves it to the database.
+     */
+    async processIdeaBackground(ideaId, title, problem, solution, impact) {
+        try {
+            console.log(`[AI Engine] Starting background processing for Idea ${ideaId}...`);
+            const response = await fetch("http://localhost:8000/api/process", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    title: title || "Untitled",
+                    description: `${problem}\n\nSolution: ${solution}\n\nImpact: ${impact}`
+                })
+            });
+
+            if (!response.ok) {
+                console.error("[AI Engine] Background process error:", await response.text());
+                return;
+            }
+
+            const data = await response.json();
+            
+            await Idea.findByIdAndUpdate(ideaId, {
+                techStack: data.techStack || [],
+                estimatedTime: data.estimatedTime || "",
+                difficulty: data.difficulty || "Beginner",
+                embedding: data.embedding || [],
+                roadmap: data.roadmap || []
+            });
+            console.log(`[AI Engine] Successfully enriched Idea ${ideaId} with full roadmap and embeddings.`);
+        } catch (err) {
+            console.error("[AI Engine] Background process failed:", err);
         }
     }
 };

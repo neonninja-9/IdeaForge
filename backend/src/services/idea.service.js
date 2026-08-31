@@ -10,6 +10,7 @@ import Comment from "../../models/comment.js";
 import Category from "../../models/category.js";
 import Tag from "../../models/tag.js";
 import AppError from "../utils/AppError.js";
+import aiService from "./ai.service.js";
 
 
 const ideaService = {
@@ -137,6 +138,14 @@ const ideaService = {
         }
 
         const idea = await Idea.create(data);
+        
+        // Trigger background AI enrichment (fire-and-forget)
+        if (idea.status === "published") {
+            aiService.processIdeaBackground(idea._id, idea.title, idea.problem, idea.solution, idea.impact).catch(err => {
+                console.error("[IdeaService] Background AI process trigger failed:", err);
+            });
+        }
+        
         return idea;
     },
 

@@ -182,7 +182,7 @@ ${idea.problem || "N/A"}
 ${idea.solution || "N/A"}
 
 ${idea.impact ? `## 3. Anticipated Impact\n${idea.impact}\n` : ""}
-${idea.suggestedTechStack ? `## 4. Suggested Foundation & Tech Stack\n${idea.suggestedTechStack}\n` : ""}
+${idea.techStack && idea.techStack.length > 0 ? `## 4. Suggested Tech Stack\n${idea.techStack.join(", ")}\n` : idea.suggestedTechStack ? `## 4. Suggested Foundation & Tech Stack\n${idea.suggestedTechStack}\n` : ""}
 
 ## 5. Focus Areas
 ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
@@ -204,12 +204,18 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
   if (error || !idea) return <div className="min-h-screen bg-[var(--background)] dark:bg-transparent grid place-items-center px-5 transition-colors duration-500"><div className="text-center"><CircleAlert className="mx-auto text-rose-400" size={30} /><p className="mt-4 text-slate-600 dark:text-slate-400">{error || "Idea not found"}</p><Link to="/explore" className="mt-4 inline-flex text-sm font-semibold text-indigo-600 dark:text-indigo-400">Back to ideas</Link></div></div>;
 
   const overallScore = score(idea, 2);
-  const roadmap = [
-    { name: "Research", detail: "Validate the problem with 5 target users", done: true },
-    { name: "Prototype", detail: "Sketch the smallest useful experience", done: false },
-    { name: "MVP", detail: "Build and test the core value loop", done: false },
-    { name: "Launch", detail: "Share with your first focused community", done: false },
-  ];
+  const roadmap = idea.roadmap && idea.roadmap.length > 0 
+    ? idea.roadmap.map((item, index) => ({
+        name: item.phase,
+        detail: item.tasks.join(" · "),
+        done: index === 0, 
+      }))
+    : [
+        { name: "Research", detail: "Validate the problem with 5 target users", done: true },
+        { name: "Prototype", detail: "Sketch the smallest useful experience", done: false },
+        { name: "MVP", detail: "Build and test the core value loop", done: false },
+        { name: "Launch", detail: "Share with your first focused community", done: false },
+      ];
 
   const authorId = idea.author?._id || (idea.author as any)?.id;
   const isAuthor = user && authorId && user.id === authorId;
@@ -264,6 +270,9 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
                     </div>
                   </div>
                   <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-indigo-50">{idea.difficulty} path</span>
+                  {idea.estimatedTime && (
+                    <span className="rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-indigo-50">{idea.estimatedTime}</span>
+                  )}
                   {idea.status === "draft" && (
                     <span className="rounded-full bg-amber-400/20 px-3 py-1 text-xs font-semibold text-amber-200 border border-amber-300/30">Draft</span>
                   )}
@@ -369,7 +378,7 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
             )}
 
             {/* Tech stack */}
-            {idea.suggestedTechStack && (
+            {(idea.techStack?.length ? idea.techStack.length > 0 : idea.suggestedTechStack) && (
               <section className="rounded-[24px] border border-violet-100 dark:border-violet-500/20 bg-white dark:bg-[#120F17] p-6 shadow-sm dark:shadow-none transition-colors duration-500">
                 <div className="flex gap-4">
                   <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400">
@@ -377,7 +386,15 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
                   </span>
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wide text-violet-600 dark:text-violet-400">Suggested foundation</p>
-                    <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{idea.suggestedTechStack}</p>
+                    {idea.techStack && idea.techStack.length > 0 ? (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {idea.techStack.map(tech => (
+                          <span key={tech} className="rounded-full border border-violet-200 dark:border-violet-500/30 bg-violet-50 dark:bg-violet-500/10 px-3 py-1 text-xs font-semibold text-violet-700 dark:text-violet-300">{tech}</span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{idea.suggestedTechStack}</p>
+                    )}
                   </div>
                 </div>
               </section>

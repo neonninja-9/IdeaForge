@@ -33,6 +33,20 @@ const ideaSchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
+    techStack: [{
+        type: String,
+    }],
+    estimatedTime: {
+        type: String,
+    },
+    embedding: {
+        type: [Number],
+        index: "2dsphere", // or just keep it simple if you don't use geospatial
+    },
+    roadmap: [{
+        phase: String,
+        tasks: [String]
+    }],
     status: {
         type: String,
         enum: ["draft", "published"],

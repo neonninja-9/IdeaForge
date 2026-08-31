@@ -32,6 +32,11 @@ export interface Attachment {
   size?: number;
 }
 
+export interface RoadmapPhase {
+  phase: string;
+  tasks: string[];
+}
+
 export interface Idea {
   id: string;
   _id: string;
@@ -41,6 +46,9 @@ export interface Idea {
   impact?: string;
   difficulty: "Beginner" | "Intermediate" | "Advanced";
   suggestedTechStack?: string;
+  techStack?: string[];
+  estimatedTime?: string;
+  roadmap?: RoadmapPhase[];
   status: "draft" | "published";
   attachments?: Attachment[];
   author: IdeaAuthor;
