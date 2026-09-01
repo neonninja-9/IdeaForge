@@ -218,3 +218,35 @@ export interface SolutionVoteToggleResponse {
     upvotes: number;
   };
 }
+
+/* ── ForgeCoins / Wallet ────────────────────────────────────── */
+
+export interface Wallet {
+  balance: number;
+  lifetimeEarnings: number;
+}
+
+export interface WalletTransaction {
+  id: string;
+  amount: number;
+  type: string;
+  reason: string;
+  relatedIdea: { id: string; title: string } | null;
+  balanceAfter: number;
+  createdAt: string;
+}
+
+export interface WalletResponse {
+  status: "success";
+  data: { wallet: Wallet };
+}
+
+export interface TransactionsResponse {
+  status: "success";
+  data: {
+    transactions: WalletTransaction[];
+    total: number;
+    page: number;
+    totalPages: number;
+  };
+}

@@ -2,14 +2,18 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/inter";
+@import "@fontsource/source-serif-4";
+@import "@fontsource/ibm-plex-mono";
 
 @custom-variant dark (&:is(.dark *));
 
 @font-face { font-family: "Editorialnew-Regular"; src: url("/fonts/EditorialNew-Regular.woff2") format("woff2"); font-display: swap; }
 
 @theme {
-  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-heading: "Geist Sans", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Source Serif 4", Georgia, serif;
+  --font-mono: "IBM Plex Mono", monospace;
+  --font-editorial: "Editorialnew-Regular", "Times New Roman", Georgia, serif;
 
   /* ── Mistral Surface colors ── */
   --color-surface: #ffffff;
@@ -76,13 +80,13 @@ body {
 :root {
   /* Exact Custom Fonts */
   --fsize: 1.04166666667vw;
-  --f-regular: "Editorialnew-Regular", Georgia, serif;
-  --f-medium: "Editorialnew-Regular", Georgia, serif;
-  --f-light: "Editorialnew-Regular", Georgia, serif;
+  --f-regular: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --f-medium: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --f-light: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
   --f-edit: "Editorialnew-Regular", Georgia, serif;
   --f-edit-regular: "Editorialnew-Regular", serif;
   --f-edit-italic: "Editorialnew-Regular", Georgia, serif;
-  --f-izmir: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --f-izmir: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
   
   /* Luxury Dark Mode Palette */
   --color-caviar: #030206;
@@ -361,8 +365,9 @@ textarea:focus-visible {
 
 
 @theme inline {
-  --font-heading: "Editorialnew-Regular", "Times New Roman", Georgia, serif;
-  --font-sans: 'Inter Variable', sans-serif;
+  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Source Serif 4", Georgia, serif;
+  --font-mono: "IBM Plex Mono", monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);

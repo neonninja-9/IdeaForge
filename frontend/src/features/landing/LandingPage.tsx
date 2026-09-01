@@ -300,18 +300,18 @@ function StatsSection() {
    ═══════════════════════════════════════════════════════════════════════════ */
 function ActivityFeed() {
   const feedItems = [
-    "🧠 Maya refined \"Growth Flywheel\" with AI Forge",
-    "📌 Ravi pinned \"Q3 OKR Draft\" to Projects board",
-    "✅ Alex approved \"Launch Copy v2\" in review",
-    "💡 Sarah captured 3 new ideas from brainstorm",
-    "🔗 Dev linked research notes to investor deck",
-    "📊 Team velocity increased 34% this sprint",
-    "🎯 \"Product Hunt Launch\" moved to In Progress",
-    "🤖 AI generated 5 action items from meeting notes",
-    "⭐ \"Customer Interview Insights\" favorited by 4 members",
-    "📝 Knowledge base updated with 12 new entries",
-    "🚀 Sprint 14 completed — 23/25 items shipped",
-    "💬 3 new comments on \"Pricing Strategy\" idea",
+    "Maya refined \"Growth Flywheel\" with AI Forge",
+    "Ravi pinned \"Q3 OKR Draft\" to Projects board",
+    "Alex approved \"Launch Copy v2\" in review",
+    "Sarah captured 3 new ideas from brainstorm",
+    "Dev linked research notes to investor deck",
+    "Team velocity increased 34% this sprint",
+    "\"Product Hunt Launch\" moved to In Progress",
+    "AI generated 5 action items from meeting notes",
+    "\"Customer Interview Insights\" favorited by 4 members",
+    "Knowledge base updated with 12 new entries",
+    "Sprint 14 completed — 23/25 items shipped",
+    "3 new comments on \"Pricing Strategy\" idea",
   ];
 
   return (

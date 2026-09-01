@@ -398,7 +398,7 @@ const Shuffle: React.FC<ShuffleProps> = ({
   const userHasFont = useMemo(() => className && /font[-[]/i.test(className), [className]);
 
   const fallbackFont = useMemo(
-    () => (userHasFont ? {} : { fontFamily: `'Press Start 2P', sans-serif` }),
+    () => (userHasFont ? {} : { fontFamily: `"IBM Plex Mono", monospace` }),
     [userHasFont]
   );
 

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight, Lightbulb, Plus } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import ideaService from "../../services/ideaService";
+import walletService from "../../services/walletService";
 import type { Idea } from "../../types/idea.types";
 import { greeting, relativeDate } from "../../utils/formatters";
 import PageSkeleton from "../../components/PageSkeleton/PageSkeleton";
@@ -15,7 +16,7 @@ import InspirationPanel from "./InspirationPanel";
 export default function DashboardPage() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [stats, setStats] = useState({ ideasCount: 0, totalVotes: 0, totalComments: 0 });
+  const [stats, setStats] = useState({ ideasCount: 0, totalVotes: 0, totalComments: 0, forgeCoins: 0 });
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [loading, setLoading] = useState(true);
   const [capture, setCapture] = useState("");
@@ -31,10 +32,13 @@ export default function DashboardPage() {
       navigate("/login");
       return;
     }
-    ideaService.getDashboard()
-      .then((res) => {
-        setStats(res.data.stats);
-        setIdeas(res.data.ideas);
+    Promise.all([
+      ideaService.getDashboard(),
+      walletService.getWallet().catch(() => ({ data: { wallet: { balance: 0 } } })),
+    ])
+      .then(([dashRes, walletRes]) => {
+        setStats({ ...dashRes.data.stats, forgeCoins: walletRes.data.wallet.balance });
+        setIdeas(dashRes.data.ideas);
       })
       .catch(console.error)
       .finally(() => setLoading(false));

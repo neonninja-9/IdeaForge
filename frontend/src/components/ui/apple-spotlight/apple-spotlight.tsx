@@ -51,7 +51,7 @@ export function AppleSpotlight({ onSubmitSearch, focusSignal = 0, className }: A
   const shortcuts = [
     { label: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
     { label: 'Ideas', href: '/explore', icon: Lightbulb },
-    { label: 'AI Studio (Soon)', href: '/ai-studio', icon: Bot },
+    { label: 'AI Studio', href: '/ai-studio', icon: Bot },
     { label: 'Projects', href: '/projects', icon: FolderKanban },
   ];
 

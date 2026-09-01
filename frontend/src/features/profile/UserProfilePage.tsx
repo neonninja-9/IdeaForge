@@ -1,16 +1,34 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Settings } from "lucide-react";
+import { Coins, Settings, ArrowUpRight, ArrowDownRight, ChevronRight } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import ideaService from "../../services/ideaService";
-import type { Idea } from "../../types/idea.types";
+import walletService from "../../services/walletService";
+import type { Idea, Wallet, WalletTransaction } from "../../types/idea.types";
 import PageSkeleton from "../../components/PageSkeleton/PageSkeleton";
+
+function formatDate(dateString: string) {
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(dateString));
+}
+
+const TYPE_LABELS: Record<string, string> = {
+  idea_submit: "Idea Published",
+  vote_milestone: "Vote Milestone",
+  comment_received: "Comment Earned",
+  featured: "Featured",
+  manual_adjustment: "Adjustment",
+};
 
 export default function UserProfilePage() {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [loadingIdeas, setLoadingIdeas] = useState(true);
+  const [wallet, setWallet] = useState<Wallet | null>(null);
+  const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
+  const [txPage, setTxPage] = useState(1);
+  const [txTotalPages, setTxTotalPages] = useState(1);
+  const [loadingTx, setLoadingTx] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !user) navigate("/login");
@@ -23,7 +41,34 @@ export default function UserProfilePage() {
       .then((response) => setIdeas(response.data.ideas))
       .catch(console.error)
       .finally(() => setLoadingIdeas(false));
+
+    walletService
+      .getWallet()
+      .then((res) => setWallet(res.data.wallet))
+      .catch(console.error);
+
+    walletService
+      .getTransactions({ page: 1, limit: 10 })
+      .then((res) => {
+        setTransactions(res.data.transactions);
+        setTxTotalPages(res.data.totalPages);
+      })
+      .catch(console.error);
   }, [user]);
+
+  function loadMoreTransactions() {
+    const nextPage = txPage + 1;
+    setLoadingTx(true);
+    walletService
+      .getTransactions({ page: nextPage, limit: 10 })
+      .then((res) => {
+        setTransactions((prev) => [...prev, ...res.data.transactions]);
+        setTxPage(nextPage);
+        setTxTotalPages(res.data.totalPages);
+      })
+      .catch(console.error)
+      .finally(() => setLoadingTx(false));
+  }
 
   if (isLoading || !user) {
     return <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent"><PageSkeleton variant="profile" /></div>;
@@ -55,22 +100,98 @@ export default function UserProfilePage() {
               </Link>
             </div>
           </div>
-          <dl className="relative mt-8 grid grid-cols-3 border-t border-slate-100 dark:border-white/5 pt-6">
+          <dl className="relative mt-8 grid grid-cols-2 sm:grid-cols-4 gap-y-4 border-t border-slate-100 dark:border-white/5 pt-6">
             <div>
               <dt className="text-[10px] font-semibold tracking-[0.16em] text-slate-400 dark:text-slate-500">IDEAS</dt>
               <dd className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">{loadingIdeas ? "—" : ideas.length}</dd>
             </div>
-            <div className="border-x border-slate-100 dark:border-white/5 px-5 sm:px-8">
+            <div className="sm:border-x border-slate-100 dark:border-white/5 sm:px-5 lg:px-8">
               <dt className="text-[10px] font-semibold tracking-[0.16em] text-slate-400 dark:text-slate-500">VOTES EARNED</dt>
               <dd className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">{loadingIdeas ? "—" : totalVotes}</dd>
             </div>
-            <div className="pl-5 sm:pl-8">
+            <div className="sm:border-r border-slate-100 dark:border-white/5 sm:px-5 lg:px-8">
+              <dt className="text-[10px] font-semibold tracking-[0.16em] text-slate-400 dark:text-slate-500">FORGECOINS</dt>
+              <dd className="mt-1 flex items-center gap-1.5 text-2xl font-bold text-[#fa520f]">
+                <Coins size={18} className="text-[#ff8105]" />
+                {wallet ? wallet.balance.toLocaleString() : "—"}
+              </dd>
+            </div>
+            <div className="sm:pl-5 lg:pl-8">
               <dt className="text-[10px] font-semibold tracking-[0.16em] text-slate-400 dark:text-slate-500">MEMBER SINCE</dt>
               <dd className="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-300">{new Date(user.createdAt).toLocaleDateString(undefined, { month: "short", year: "numeric" })}</dd>
             </div>
           </dl>
         </section>
 
+        {/* ── Wallet & Earnings ── */}
+        <section className="mt-10">
+          <div className="mb-5">
+            <h2 className="font-heading text-xl font-bold tracking-tight text-slate-900 dark:text-white">Wallet & Earnings</h2>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Your ForgeCoin rewards for contributing ideas and engaging the community.</p>
+          </div>
+
+          {/* Summary cards */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="rounded-3xl border border-slate-100 dark:border-white/5 bg-gradient-to-br from-[#fa520f] to-[#ff8105] p-6 text-white shadow-lg shadow-[#fa520f1a] dark:shadow-none">
+              <div className="flex items-center gap-2 text-sm font-medium text-white/80">
+                <Coins size={16} /> Current Balance
+              </div>
+              <p className="mt-3 text-4xl font-bold tracking-tight">{wallet ? wallet.balance.toLocaleString() : "—"} <span className="text-lg font-medium text-white/70">FC</span></p>
+            </div>
+            <div className="rounded-3xl border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-6 shadow-sm dark:shadow-none">
+              <div className="flex items-center gap-2 text-sm font-medium text-slate-400 dark:text-slate-500">
+                <ArrowUpRight size={16} className="text-emerald-500" /> Lifetime Earnings
+              </div>
+              <p className="mt-3 text-4xl font-bold tracking-tight text-slate-900 dark:text-white">{wallet ? wallet.lifetimeEarnings.toLocaleString() : "—"} <span className="text-lg font-medium text-slate-400 dark:text-slate-500">FC</span></p>
+            </div>
+          </div>
+
+          {/* Transaction history */}
+          {transactions.length > 0 && (
+            <div className="mt-6 rounded-3xl border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] shadow-sm dark:shadow-none overflow-hidden">
+              <div className="px-5 py-4 border-b border-slate-100 dark:border-white/5">
+                <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Recent Transactions</h3>
+              </div>
+              <ul className="divide-y divide-slate-100 dark:divide-white/5">
+                {transactions.map((tx) => (
+                  <li key={tx.id} className="flex items-center gap-4 px-5 py-3.5">
+                    <span className={`grid size-8 shrink-0 place-items-center rounded-lg ${tx.amount > 0 ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-rose-50 dark:bg-rose-500/10 text-rose-500 dark:text-rose-400"}`}>
+                      {tx.amount > 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{TYPE_LABELS[tx.type] || tx.type}</p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500 truncate">
+                        {tx.reason}
+                        {tx.relatedIdea && (
+                          <> · <Link to={`/idea/${tx.relatedIdea.id}`} className="text-[#fa520f] hover:underline">{tx.relatedIdea.title}</Link></>
+                        )}
+                      </p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className={`text-sm font-bold ${tx.amount > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-500 dark:text-rose-400"}`}>
+                        {tx.amount > 0 ? "+" : ""}{tx.amount} FC
+                      </p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500">{formatDate(tx.createdAt)}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              {txPage < txTotalPages && (
+                <div className="px-5 py-3 border-t border-slate-100 dark:border-white/5">
+                  <button
+                    onClick={loadMoreTransactions}
+                    disabled={loadingTx}
+                    className="inline-flex items-center gap-1 text-sm font-semibold text-[#fa520f] hover:text-[#cc3a05] transition-colors disabled:opacity-50"
+                  >
+                    {loadingTx ? "Loading…" : "Load more"} <ChevronRight size={14} />
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </section>
+
+        {/* ── Your ideas ── */}
         <section className="mt-10">
           <div className="mb-5 flex items-end justify-between gap-4">
             <div>

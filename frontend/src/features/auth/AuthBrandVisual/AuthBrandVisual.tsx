@@ -34,7 +34,7 @@ export default function AuthBrandVisual({ caption }: { caption: string }) {
             text="IdeaForge"
             fontSize="clamp(3.4rem, 6.5vw, 5.4rem)"
             fontWeight={900}
-            fontFamily='"Geist Variable", ui-sans-serif, system-ui, sans-serif'
+            fontFamily='"Editorialnew-Regular", "Times New Roman", Georgia, serif'
             color="#6366f1"
             highlightColor="#a855f7"
             particleSize={2.2}

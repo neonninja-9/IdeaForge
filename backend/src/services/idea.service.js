@@ -11,6 +11,7 @@ import Category from "../../models/category.js";
 import Tag from "../../models/tag.js";
 import AppError from "../utils/AppError.js";
 import aiService from "./ai.service.js";
+import creditService from "./credit.service.js";
 import { cleanAiDescription } from "../utils/aiTextCleaner.js";
 
 
@@ -150,6 +151,11 @@ const ideaService = {
         if (idea.status === "published") {
             aiService.processIdeaBackground(idea._id, idea.title, idea.problem, idea.solution, idea.impact).catch(err => {
                 console.error("[IdeaService] Background AI process trigger failed:", err);
+            });
+
+            // Award ForgeCoins for publishing an idea (fire-and-forget)
+            creditService.creditForIdeaSubmit(data.author, idea._id).catch(err => {
+                console.error("[IdeaService] ForgeCoin credit failed:", err);
             });
         }
         

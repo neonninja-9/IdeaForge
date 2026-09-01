@@ -12,6 +12,7 @@ import {
   Sparkles,
   WandSparkles,
   X,
+  Coins
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import ideaService from "../../services/ideaService";
@@ -21,6 +22,7 @@ import aiService from "../../services/aiService";
 import type { Category, Tag, Attachment } from "../../types/idea.types";
 import PageSkeleton from "../../components/PageSkeleton/PageSkeleton";
 import AttachmentUploader from "../../components/AttachmentUploader/AttachmentUploader";
+import EmbeddingScanAnimation from "../../components/EmbeddingScanAnimation/EmbeddingScanAnimation";
 import { cleanAiDescription } from "../../utils/textCleaner";
 
 
@@ -111,7 +113,7 @@ function AiSuggestionCard({
           {isLoading ? <LoaderCircle size={14} className="animate-spin" /> : <Sparkles size={14} />}
         </span>
         <span className="text-xs font-semibold text-[#cc3a05] dark:text-[#ffa110]">
-          {isLoading ? `AI is refining your ${label}…` : `✨ AI-refined ${label}`}
+          {isLoading ? `AI is refining your ${label}…` : `AI-refined ${label}`}
         </span>
       </div>
       {isLoading ? (
@@ -264,6 +266,15 @@ export default function SubmitIdeaPage() {
   const [draftSavedAt, setDraftSavedAt] = useState<number | null>(null);
   const draftTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasHydratedRef = useRef(false);
+  const [showEmbeddingScan, setShowEmbeddingScan] = useState(false);
+  const pendingIdeaPathRef = useRef<string | null>(null);
+  const [fcToast, setFcToast] = useState(false);
+
+  const finishEmbeddingScan = useCallback(() => {
+    const path = pendingIdeaPathRef.current;
+    setShowEmbeddingScan(false);
+    if (path) navigate(path);
+  }, [navigate]);
 
 
 
@@ -506,7 +517,12 @@ export default function SubmitIdeaPage() {
       } else {
         const newIdea = response.data.idea as { _id?: string; id?: string };
         const newId = newIdea.id || newIdea._id || "";
-        navigate(`/idea/${newId}`);
+        pendingIdeaPathRef.current = `/idea/${newId}`;
+        setShowEmbeddingScan(true);
+
+        // Show ForgeCoin toast for published ideas
+        setFcToast(true);
+        setTimeout(() => setFcToast(false), 4000);
       }
     } catch (error) {
       setServerError(error instanceof Error ? error.message : "We couldn't save your idea. Please try again.");
@@ -516,12 +532,6 @@ export default function SubmitIdeaPage() {
     }
   }
 
-  function resetForm() {
-    setTitle(""); setProblem(""); setSolution(""); setImpact(""); setDifficulty(""); setSelectedCategory(""); setSelectedTags([]); setAttachments([]);
-    setErrors({}); setServerError(""); setDraftSavedAt(null); setCurrentStep(1);
-    setAiSuggestedStep3(false); setProblemSuggestion(null); setSolutionSuggestion(null);
-    clearDraft();
-  }
 
   /* ─── Loading ──────────────────────────────────────────────────── */
   if (authLoading || referenceLoading) return <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent transition-colors duration-500"><PageSkeleton variant="form" /></div>;
@@ -534,7 +544,22 @@ export default function SubmitIdeaPage() {
   /* ─── Main form ────────────────────────────────────────────────── */
   return (
     <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent px-5 py-7 sm:px-8 sm:py-10 xl:px-12 transition-colors duration-500">
+      <EmbeddingScanAnimation
+        open={showEmbeddingScan}
+        onComplete={finishEmbeddingScan}
+        leftText={problem}
+        rightText={solution}
+      />
       <div className="mx-auto max-w-[1440px]">
+        {/* ForgeCoin earned toast */}
+        {fcToast && (
+          <div className="fixed top-20 left-1/2 z-[60] -translate-x-1/2 animate-reveal-up">
+            <div className="flex items-center gap-2.5 rounded-2xl border border-amber-200 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-900/30 px-5 py-3 shadow-xl shadow-amber-500/10 backdrop-blur-sm">
+              <Coins className="text-amber-500" size={20} />
+              <span className="text-sm font-semibold text-amber-800 dark:text-amber-200">+50 ForgeCoins earned!</span>
+            </div>
+          </div>
+        )}
         <div className="mb-8 flex items-center justify-between gap-4">
           <button onClick={() => navigate(-1)} className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-medium text-slate-500 dark:text-slate-400 transition hover:bg-white dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"><ArrowLeft size={18} /> Back</button>
           <div className="hidden items-center gap-2 text-sm text-slate-400 dark:text-slate-500 sm:flex">{draftSavedAt ? <><span className="size-2 rounded-full bg-emerald-500" /> Draft saved at {formatDraftTime(draftSavedAt)}</> : <><span className="size-2 rounded-full bg-slate-300 dark:bg-slate-600" /> No draft</>}</div>
@@ -722,7 +747,7 @@ export default function SubmitIdeaPage() {
                     <div className="flex items-start gap-3 rounded-xl border border-[#e6d5a8] dark:border-[#ff8105]/20 bg-gradient-to-r from-[#fffaeb] to-[#fff8e0] dark:from-[#1a0800/20] dark:to-[#1a0800/20] px-4 py-3">
                       <Sparkles size={16} className="mt-0.5 shrink-0 text-[#fa520f] dark:text-[#ff8105]" />
                       <div>
-                        <p className="text-xs font-semibold text-[#cc3a05] dark:text-[#ffa110]">✨ AI analyzed your idea</p>
+                        <p className="text-xs font-semibold text-[#cc3a05] dark:text-[#ffa110]">AI analyzed your idea</p>
                         <p className="mt-0.5 text-xs text-[#fa520f]/80 dark:text-[#ff8105]/80">We've suggested a category, focus areas, and difficulty level based on your description. Feel free to adjust anything.</p>
                       </div>
                     </div>
@@ -737,7 +762,7 @@ export default function SubmitIdeaPage() {
                       <span className="relative block">
                         <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)} className={`w-full appearance-none rounded-2xl border bg-white dark:bg-[#1a1625] px-4 py-3.5 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-[#fa520f] dark:focus:border-[#fa520f]/50 focus:ring-4 focus:ring-[#fff8e0] dark:focus:ring-[#fff8e0]0/10 ${errors.category ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`}>
                           <option value="">Choose a category</option>
-                          {categories.map((category) => <option key={category.id || category._id} value={category.id || category._id}>{category.icon} {category.name}</option>)}
+                          {categories.map((category) => <option key={category.id || category._id} value={category.id || category._id}>{category.name}</option>)}
                         </select>
                         <ChevronDown size={17} className="pointer-events-none absolute right-4 top-3.5 text-slate-400 dark:text-slate-500" />
                       </span>

@@ -151,7 +151,7 @@ export default function IdeaSimulationModal({
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-base">{match.idea.categoryIcon}</span>
+
                         <h4 className="font-semibold text-sm text-white">{match.idea.title}</h4>
                         <span className="rounded-md bg-white/5 px-2 py-0.5 text-[10px] font-medium text-slate-400">
                           {match.idea.category}

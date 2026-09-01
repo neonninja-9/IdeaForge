@@ -19,6 +19,7 @@ import {
   Share2,
   Sparkles,
   Target,
+  Trash2,
   Users,
 } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -193,6 +194,19 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
     URL.revokeObjectURL(url);
   }
 
+  async function handleDeleteIdea() {
+    if (!id || !isAuthor) return;
+    if (window.confirm("Are you sure you want to delete this idea? This action cannot be undone.")) {
+      try {
+        await ideaService.deleteIdea(id);
+        navigate("/explore");
+      } catch (err) {
+        console.error("Failed to delete idea", err);
+        alert("Failed to delete idea. Please try again.");
+      }
+    }
+  }
+
   if (loading) return <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent transition-colors duration-500"><PageSkeleton variant="detail" /></div>;
   if (error || !idea) return <div className="min-h-screen bg-[var(--background)] dark:bg-transparent grid place-items-center px-5 transition-colors duration-500"><div className="text-center"><CircleAlert className="mx-auto text-rose-400" size={30} /><p className="mt-4 text-slate-600 dark:text-slate-400">{error || "Idea not found"}</p><Link to="/explore" className="mt-4 inline-flex text-sm font-semibold text-[#fa520f]">Back to ideas</Link></div></div>;
 
@@ -250,9 +264,14 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
             {/* Action buttons */}
             <div className="flex items-center gap-1">
               {isAuthor && (
-                <Link to={`/edit-idea/${id}`} className="grid size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-700 dark:hover:text-white" title="Edit">
-                  <Edit3 size={16} />
-                </Link>
+                <>
+                  <Link to={`/edit-idea/${id}`} className="grid size-11 sm:size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-700 dark:hover:text-white" title="Edit">
+                    <Edit3 size={16} />
+                  </Link>
+                  <button onClick={handleDeleteIdea} className="grid size-11 sm:size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-500 dark:hover:text-rose-400" title="Delete">
+                    <Trash2 size={16} />
+                  </button>
+                </>
               )}
               <button onClick={handleExportMarkdown} className="grid size-11 sm:size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-700 dark:hover:text-white" title="Export Markdown">
                 <Download size={16} />
