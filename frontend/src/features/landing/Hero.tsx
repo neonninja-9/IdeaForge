@@ -9,7 +9,7 @@ import VariableProximity from "../../components/VariableProximity";
 
 function ProductFrame() {
   return (
-    <div className="relative z-20 mx-auto w-full max-w-5xl rounded-[28px] border-2 border-[#9bb4ff]/50 bg-[#0c0d12] shadow-[0_-15px_60px_-10px_rgba(155,180,255,0.35),0_30px_90px_-15px_rgba(0,0,0,0.9)] overflow-hidden transition-all duration-300">
+    <div className="relative z-20 mx-auto w-full max-w-7xl rounded-[28px] border-2 border-[#9bb4ff]/50 bg-[#0c0d12] shadow-[0_-15px_60px_-10px_rgba(155,180,255,0.35),0_30px_90px_-15px_rgba(0,0,0,0.9)] overflow-hidden transition-all duration-300">
       {/* Top contact laser flare */}
       <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 sm:w-96 h-2.5 bg-gradient-to-r from-transparent via-white to-transparent blur-[1px] rounded-full z-30" />
       <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 sm:w-64 h-6 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,1)_0%,rgba(155,180,255,0.7)_45%,transparent_80%)] blur-sm z-30" />
@@ -32,9 +32,9 @@ function ProductFrame() {
       </div>
 
       {/* Real Dashboard Screenshot */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#1C1917]">
+      <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#1C1917]">
         <img
-          src="/images/screenshots/dashboard.jpg"
+          src="/images/screenshots/dashboard_new.png"
           alt="IdeaForge Real Project Dashboard"
           className="h-full w-full object-cover object-top transition-transform duration-700 hover:scale-[1.01]"
           loading="eager"

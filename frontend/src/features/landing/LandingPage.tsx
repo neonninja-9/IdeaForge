@@ -25,6 +25,7 @@ import AccordionGallery from "./effects/accordilonGalllary";
 import ScrollExpand from "./effects/scrollExpand";
 import ScrollVelocity from "./effects/scrollVelocity";
 import MagicRings from "../../components/MagicRings";
+import TextPressure from "../../components/TextPressure";
 
 const DriftWall = lazy(() => import("./effects/driftWall"));
 
@@ -43,12 +44,8 @@ function VelocityBand() {
     <section className="relative bg-[#0C0A09] py-8 overflow-hidden border-t border-white/5">
       <ScrollVelocity
         texts={[
-          "Submit Ideas",
-          "AI Roadmaps",
-          "Tech Stacks",
-          "Idea Matching",
-          "Community Voting",
-          "Ship Projects",
+          "Submit Ideas • AI Roadmaps • Tech Stacks",
+          "Idea Matching • Community Voting • Ship Projects",
         ]}
         velocity={60}
         className="text-white/10 font-black uppercase"
@@ -66,7 +63,21 @@ function CinematicReveal() {
     <section className="relative bg-[#0C0A09] w-full">
       <ScrollExpand
         alt="IdeaForge workspace dashboard"
-        title="From Problem to Project in Minutes"
+        title={
+          <div className="w-full h-full relative" style={{ height: 'min(18vw, 120px)' }}>
+            <TextPressure
+              text="From Problem to Project in Minutes"
+              flex
+              alpha={false}
+              stroke={false}
+              width
+              weight
+              italic
+              textColor="#ffffff"
+              minFontSize={24}
+            />
+          </div>
+        }
         scrollHint="Scroll to explore"
         startWidth={42}
         startHeight={58}

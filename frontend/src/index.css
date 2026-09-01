@@ -502,3 +502,48 @@ html.dark #root {
 html.dark [class*="bg-[#fafaf8]"] {
   background-color: transparent !important;
 }
+
+/* ── Click Effects ── */
+.click-effects {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999999;
+  overflow: hidden;
+}
+
+.click-effect {
+  position: absolute;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.click-effect__line {
+  position: absolute;
+  width: 2px;
+  height: 12px;
+  background-color: rgba(161, 98, 7, 0.8);
+  border-radius: 2px;
+  /* Centered horizontally, sticking up */
+  left: -1px;
+  top: -18px;
+  transform-origin: 50% 18px;
+}
+
+.click-effect__spark {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background-color: rgba(234, 179, 8, 0.8);
+  border-radius: 50%;
+  left: -2px;
+  top: -2px;
+}
+
+.dark .click-effect__line {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.dark .click-effect__spark {
+  background-color: rgba(255, 255, 255, 0.7);
+}
