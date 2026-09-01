@@ -429,8 +429,8 @@ export default function AIStudioPage() {
         <header className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <p className="text-sm font-semibold text-[#fa520f] dark:text-[#fa520f]">AI STUDIO</p>
-              <span className="rounded-full border border-[#e6d5a8] bg-[#fff8e0] px-2.5 py-1 text-[11px] font-semibold text-[#cc3a05] dark:border-[#fa520f]/25 dark:bg-[#fa520f]/10 dark:text-[#ff8105]">
+              <p className="text-sm font-semibold text-[#A16207] dark:text-[#A16207]">AI STUDIO</p>
+              <span className="rounded-full border border-[#FDE047] bg-[#FEF3C7] px-2.5 py-1 text-[11px] font-semibold text-[#854D0E] dark:border-[#A16207]/25 dark:bg-[#A16207]/10 dark:text-[#CA8A04]">
                 {source === "account" ? "Using your workspace" : "Demo mode"}
               </span>
             </div>
@@ -442,23 +442,23 @@ export default function AIStudioPage() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <Link to="/submit" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-white/10 dark:bg-[#120F17] dark:text-slate-300 dark:hover:bg-white/5">
+            <Link to="/submit" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-white/10 dark:bg-[#1C1917] dark:text-slate-300 dark:hover:bg-white/5">
               <Lightbulb size={17} /> Capture idea
             </Link>
-            <button onClick={handleExport} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#fa520f] px-4 text-sm font-semibold text-white shadow-lg shadow-[#fa520f1a] transition hover:bg-[#cc3a05] dark:shadow-none">
+            <button onClick={handleExport} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#A16207] px-4 text-sm font-semibold text-white shadow-lg shadow-[#A162071a] transition hover:bg-[#854D0E] dark:shadow-none">
               <Download size={17} /> Export artifact
             </button>
           </div>
         </header>
 
         <section className="mt-8 grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)_360px]">
-          <aside className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-sm transition-colors dark:border-white/5 dark:bg-[#120F17] dark:shadow-none">
+          <aside className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-sm transition-colors dark:border-white/5 dark:bg-[#1C1917] dark:shadow-none">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Idea queue</p>
                 <h2 className="font-heading mt-1 text-xl font-bold text-slate-900 dark:text-white">Choose context</h2>
               </div>
-              {loading && <LoaderCircle size={18} className="animate-spin text-[#fa520f]" />}
+              {loading && <LoaderCircle size={18} className="animate-spin text-[#A16207]" />}
             </div>
 
             <div className="mt-5 space-y-2">
@@ -471,8 +471,8 @@ export default function AIStudioPage() {
                     onClick={() => setSelectedIdeaId(id)}
                     className={`w-full rounded-2xl border px-4 py-3 text-left transition ${
                       active
-                        ? "border-[#e6d5a8] bg-[#fff8e0] text-[#cc3a05] dark:border-[#fa520f]/25 dark:bg-[#fa520f]/10 dark:text-[#ff8105]"
-                        : "border-slate-100 bg-slate-50 text-slate-600 hover:border-[#e6d5a8] hover:bg-white dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:border-white/15 dark:hover:bg-white/10"
+                        ? "border-[#FDE047] bg-[#FEF3C7] text-[#854D0E] dark:border-[#A16207]/25 dark:bg-[#A16207]/10 dark:text-[#CA8A04]"
+                        : "border-slate-100 bg-slate-50 text-slate-600 hover:border-[#FDE047] hover:bg-white dark:border-white/5 dark:bg-white/5 dark:text-slate-300 dark:hover:border-white/15 dark:hover:bg-white/10"
                     }`}
                   >
                     <span className="line-clamp-2 text-sm font-semibold">{idea.title}</span>
@@ -488,7 +488,7 @@ export default function AIStudioPage() {
           </aside>
 
           <section className="space-y-5">
-            <article className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-[0_18px_50px_-32px_rgba(15,23,42,.3)] transition-colors dark:border-white/5 dark:bg-[#120F17] dark:shadow-none sm:p-6">
+            <article className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-[0_18px_50px_-32px_rgba(15,23,42,.3)] transition-colors dark:border-white/5 dark:bg-[#1C1917] dark:shadow-none sm:p-6">
               <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                 <div>
                   <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -507,7 +507,7 @@ export default function AIStudioPage() {
                   <h2 className="mt-4 text-2xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white">{selectedIdea.title}</h2>
                   <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-500 dark:text-slate-400">{selectedIdea.problem}</p>
                 </div>
-                <div className="min-w-[150px] rounded-2xl bg-gradient-to-br from-[#fa520f] to-[#ffa110] p-4 text-white">
+                <div className="min-w-[150px] rounded-2xl bg-gradient-to-br from-[#A16207] to-[#EAB308] p-4 text-white">
                   <div className="flex items-center gap-2">
                     <Gauge size={18} />
                     <span className="text-xs font-semibold uppercase tracking-wide text-white/80">Readiness</span>
@@ -530,7 +530,7 @@ export default function AIStudioPage() {
               </div>
             </article>
 
-            <article className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-sm transition-colors dark:border-white/5 dark:bg-[#120F17] dark:shadow-none sm:p-6">
+            <article className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-sm transition-colors dark:border-white/5 dark:bg-[#1C1917] dark:shadow-none sm:p-6">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Productivity actions</p>
@@ -549,11 +549,11 @@ export default function AIStudioPage() {
                       onClick={() => setActiveAction(action.id)}
                       className={`min-h-[104px] rounded-2xl border p-4 text-left transition ${
                         active
-                          ? "border-[#e6d5a8] bg-[#fff8e0] shadow-sm dark:border-[#fa520f]/25 dark:bg-[#fa520f]/10"
-                          : "border-slate-100 bg-slate-50 hover:border-[#e6d5a8] hover:bg-white dark:border-white/5 dark:bg-white/[0.03] dark:hover:border-white/15 dark:hover:bg-white/5"
+                          ? "border-[#FDE047] bg-[#FEF3C7] shadow-sm dark:border-[#A16207]/25 dark:bg-[#A16207]/10"
+                          : "border-slate-100 bg-slate-50 hover:border-[#FDE047] hover:bg-white dark:border-white/5 dark:bg-white/[0.03] dark:hover:border-white/15 dark:hover:bg-white/5"
                       }`}
                     >
-                      <span className={`grid size-9 place-items-center rounded-xl ${active ? "bg-[#fa520f] text-white" : "bg-white text-[#fa520f] dark:bg-white/5 dark:text-[#ff8105]"}`}>
+                      <span className={`grid size-9 place-items-center rounded-xl ${active ? "bg-[#A16207] text-white" : "bg-white text-[#A16207] dark:bg-white/5 dark:text-[#CA8A04]"}`}>
                         <Icon size={17} />
                       </span>
                       <span className="mt-3 block text-sm font-semibold text-slate-800 dark:text-slate-100">{action.label}</span>
@@ -565,13 +565,13 @@ export default function AIStudioPage() {
             </article>
           </section>
 
-          <aside className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-sm transition-colors dark:border-white/5 dark:bg-[#120F17] dark:shadow-none">
+          <aside className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-sm transition-colors dark:border-white/5 dark:bg-[#1C1917] dark:shadow-none">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Canvas co-pilot</p>
                 <h2 className="font-heading mt-1 text-xl font-bold text-slate-900 dark:text-white">Fill the gaps</h2>
               </div>
-              <span className="grid size-10 place-items-center rounded-2xl bg-[#fff8e0] text-[#fa520f] dark:bg-white/5">
+              <span className="grid size-10 place-items-center rounded-2xl bg-[#FEF3C7] text-[#A16207] dark:bg-white/5">
                 <Bot size={18} />
               </span>
             </div>
@@ -588,7 +588,7 @@ export default function AIStudioPage() {
                       <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{block}</p>
                       <button
                         onClick={() => applyCanvasSuggestion(block)}
-                        className="inline-flex min-h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold text-[#fa520f] transition hover:bg-[#fff8e0] dark:hover:bg-[#fa520f]/10"
+                        className="inline-flex min-h-8 items-center gap-1 rounded-lg px-2 text-xs font-semibold text-[#A16207] transition hover:bg-[#FEF3C7] dark:hover:bg-[#A16207]/10"
                       >
                         {filled ? "Refresh" : "Apply"} <ArrowUpRight size={13} />
                       </button>
@@ -607,14 +607,14 @@ export default function AIStudioPage() {
         </section>
 
         <section className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
-          <article className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-[0_18px_50px_-32px_rgba(15,23,42,.3)] transition-colors dark:border-white/5 dark:bg-[#120F17] dark:shadow-none sm:p-6">
+          <article className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-[0_18px_50px_-32px_rgba(15,23,42,.3)] transition-colors dark:border-white/5 dark:bg-[#1C1917] dark:shadow-none sm:p-6">
             <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 dark:border-white/5 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#fa520f] dark:text-[#ff8105]">{artifact.eyebrow}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#A16207] dark:text-[#CA8A04]">{artifact.eyebrow}</p>
                 <h2 className="font-heading mt-1 text-2xl font-bold text-slate-900 dark:text-white">{artifact.title}</h2>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-500 dark:text-slate-400">{artifact.summary}</p>
               </div>
-              <button onClick={handleExport} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-white/10 dark:bg-[#1a1625] dark:text-slate-300 dark:hover:bg-white/5">
+              <button onClick={handleExport} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-white/10 dark:bg-[#292524] dark:text-slate-300 dark:hover:bg-white/5">
                 <Download size={15} /> Download
               </button>
             </div>
@@ -627,7 +627,7 @@ export default function AIStudioPage() {
                     <ul className="mt-3 space-y-2">
                       {section.body.map((item) => (
                         <li key={item} className="flex gap-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
-                          <span className="mt-2 size-1.5 shrink-0 rounded-full bg-[#fa520f]" />
+                          <span className="mt-2 size-1.5 shrink-0 rounded-full bg-[#A16207]" />
                           <span>{item}</span>
                         </li>
                       ))}
@@ -641,9 +641,9 @@ export default function AIStudioPage() {
           </article>
 
           <aside className="space-y-5">
-            <article className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-sm transition-colors dark:border-white/5 dark:bg-[#120F17] dark:shadow-none">
+            <article className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-sm transition-colors dark:border-white/5 dark:bg-[#1C1917] dark:shadow-none">
               <div className="flex items-center gap-3">
-                <span className="grid size-10 place-items-center rounded-2xl bg-[#fff8e0] text-[#fa520f] dark:bg-white/5">
+                <span className="grid size-10 place-items-center rounded-2xl bg-[#FEF3C7] text-[#A16207] dark:bg-white/5">
                   <Sparkles size={18} />
                 </span>
                 <div>
@@ -657,7 +657,7 @@ export default function AIStudioPage() {
               </div>
             </article>
 
-            <article className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-sm transition-colors dark:border-white/5 dark:bg-[#120F17] dark:shadow-none">
+            <article className="rounded-[28px] border border-slate-100 bg-white p-5 shadow-sm transition-colors dark:border-white/5 dark:bg-[#1C1917] dark:shadow-none">
               <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Markdown preview</p>
               <pre className="mt-4 max-h-[420px] overflow-auto whitespace-pre-wrap rounded-2xl bg-slate-950 p-4 text-xs leading-5 text-slate-100">
                 {markdown}

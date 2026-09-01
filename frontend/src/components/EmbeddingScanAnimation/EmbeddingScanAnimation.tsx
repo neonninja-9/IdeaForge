@@ -30,7 +30,7 @@ type Stage = "scan" | "embed" | "inspect";
 
 function Doc({ label, scan }: { label: string; scan: boolean }) {
   return (
-    <div className="relative h-[168px] w-[112px] overflow-hidden rounded-md border border-slate-200 bg-white dark:border-white/10 dark:bg-[#120F17]">
+    <div className="relative h-[168px] w-[112px] overflow-hidden rounded-md border border-slate-200 bg-white dark:border-white/10 dark:bg-[#1C1917]">
       <p className="px-3 pt-3 text-[10px] font-medium tracking-wide text-slate-400 dark:text-slate-500">{label}</p>
       <div className="mt-3 space-y-2 px-3">
         {[78, 62, 70, 48].map((width, index) => (
@@ -43,7 +43,7 @@ function Doc({ label, scan }: { label: string; scan: boolean }) {
       </div>
       {scan && (
         <motion.div
-          className="pointer-events-none absolute inset-x-0 h-px bg-[#fa520f]"
+          className="pointer-events-none absolute inset-x-0 h-px bg-[#A16207]"
           initial={{ top: "12%" }}
           animate={{ top: "88%" }}
           transition={{ duration: 1.4, ease: [0.45, 0, 0.2, 1] }}
@@ -59,7 +59,7 @@ function DotField({ reveal }: { reveal: boolean }) {
       {POINTS.map((point, index) => (
         <motion.span
           key={index}
-          className="absolute size-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#fa520f]"
+          className="absolute size-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#A16207]"
           style={{ left: `calc(50% + ${point.x}px)`, top: `calc(50% + ${point.y}px)` }}
           initial={{ opacity: 0, scale: 0.4 }}
           animate={{ opacity: reveal ? 1 : 0.25, scale: 1 }}
@@ -83,7 +83,7 @@ function Magnifier() {
       }}
     >
       <div className="relative -translate-x-1/2 -translate-y-1/2">
-        <div className="relative size-[96px] overflow-hidden rounded-full border border-[#fa520f] bg-white/70 dark:bg-[#120F17]/70">
+        <div className="relative size-[96px] overflow-hidden rounded-full border border-[#A16207] bg-white/70 dark:bg-[#1C1917]/70">
           <motion.div
             className="absolute left-1/2 top-1/2"
             initial={{ x: -GLASS_X[0] * ZOOM, y: -GLASS_Y[0] * ZOOM, scale: ZOOM }}
@@ -100,7 +100,7 @@ function Magnifier() {
                   className="absolute -translate-x-1/2 -translate-y-1/2 text-center"
                   style={{ left: `calc(50% + ${point.x}px)`, top: `calc(50% + ${point.y}px)` }}
                 >
-                  <span className="mx-auto block size-1.5 rounded-full bg-[#fa520f]" />
+                  <span className="mx-auto block size-1.5 rounded-full bg-[#A16207]" />
                   <span className="mt-0.5 block font-mono text-[7px] leading-none text-slate-500 dark:text-slate-400">
                     {point.value}
                   </span>
@@ -109,7 +109,7 @@ function Magnifier() {
             </div>
           </motion.div>
         </div>
-        <span className="absolute left-[86px] top-[86px] h-[28px] w-px origin-top-left rotate-45 bg-[#fa520f]" />
+        <span className="absolute left-[86px] top-[86px] h-[28px] w-px origin-top-left rotate-45 bg-[#A16207]" />
       </div>
     </motion.div>
   );
@@ -205,7 +205,7 @@ export default function EmbeddingScanAnimation({
           </p>
           <div className="mt-4 h-px w-24 overflow-hidden bg-slate-200 dark:bg-white/10">
             <motion.div
-              className="h-full bg-[#fa520f]"
+              className="h-full bg-[#A16207]"
               initial={{ width: "0%" }}
               animate={{ width: "100%" }}
               transition={{ duration: durationMs / 1000, ease: "linear" }}

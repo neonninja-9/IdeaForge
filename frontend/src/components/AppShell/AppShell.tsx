@@ -250,10 +250,10 @@ export default function AppShell() {
               WebkitMaskImage: "linear-gradient(to bottom, black 20%, transparent)"
             } : undefined} 
           />
-          <button onClick={() => setMobileOpen(true)} className="grid size-9 sm:size-11 place-items-center rounded-xl text-slate-600 hover:bg-white lg:hidden" aria-label="Open navigation">
+          <button onClick={() => setMobileOpen(true)} className="grid size-11 place-items-center rounded-xl text-slate-600 hover:bg-white lg:hidden" aria-label="Open navigation">
             <Menu size={21} />
           </button>
-          <Link to="/dashboard" className="flex min-w-0 items-center gap-3 text-slate-950 dark:text-white">
+          <Link to="/dashboard" className="flex min-h-11 min-w-0 items-center gap-3 text-slate-950 dark:text-white">
             <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-vivid text-white shadow-lg shadow-vivid/20 dark:shadow-black/70">
               <Sparkles size={19} aria-hidden="true" />
             </span>
@@ -263,10 +263,10 @@ export default function AppShell() {
             <AppleSpotlight onSubmitSearch={submitSearch} focusSignal={appleSpotlightFocusSignal} />
           </div>
           <div className="ml-auto flex items-center gap-1 sm:gap-4">
-            <button onClick={() => setDarkMode((enabled) => !enabled)} className="grid size-9 sm:size-11 place-items-center rounded-full text-slate-500 transition hover:bg-white hover:text-vivid dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white" aria-label={darkMode ? "Use light theme" : "Use dark theme"} title={darkMode ? "Use light theme" : "Use dark theme"}>
+            <button onClick={() => setDarkMode((enabled) => !enabled)} className="grid size-11 place-items-center rounded-full text-slate-500 transition hover:bg-white hover:text-vivid dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white" aria-label={darkMode ? "Use light theme" : "Use dark theme"} title={darkMode ? "Use light theme" : "Use dark theme"}>
               {darkMode ? <Sun size={19} /> : <Moon size={19} />}
             </button>
-            <button onClick={() => { setMobileSearchOpen(true); window.setTimeout(() => searchInputRef.current?.focus(), 0); }} className="grid size-9 sm:size-11 place-items-center rounded-full text-slate-500 transition hover:bg-white hover:text-vivid sm:hidden" aria-label="Search community ideas">
+            <button onClick={() => { setMobileSearchOpen(true); window.setTimeout(() => searchInputRef.current?.focus(), 0); }} className="grid size-11 place-items-center rounded-full text-slate-500 transition hover:bg-white hover:text-vivid sm:hidden" aria-label="Search community ideas">
               <Search size={20} />
             </button>
             
@@ -278,7 +278,7 @@ export default function AppShell() {
             >
               <button 
                 onClick={() => setNotificationsOpen((open) => !open)} 
-                className="relative grid size-9 sm:size-11 place-items-center rounded-full text-slate-500 transition hover:bg-white hover:text-vivid dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white" 
+                className="relative grid size-11 place-items-center rounded-full text-slate-500 transition hover:bg-white hover:text-vivid dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-white" 
                 aria-label="Notifications" 
                 aria-expanded={notificationsOpen} 
                 aria-haspopup="dialog"
@@ -295,7 +295,7 @@ export default function AppShell() {
                 <div 
                   role="dialog" 
                   aria-label="Notifications" 
-                  className="absolute right-0 top-12 z-50 w-80 sm:w-96 rounded-2xl border border-slate-100 dark:border-white/10 bg-white/95 dark:bg-[#120F17]/95 p-5 shadow-2xl shadow-slate-900/15 dark:shadow-black/80 backdrop-blur-xl transition-all"
+                  className="absolute right-0 top-12 z-50 w-80 sm:w-96 rounded-2xl border border-slate-100 dark:border-white/10 bg-white/95 dark:bg-[#1C1917]/95 p-5 shadow-2xl shadow-slate-900/15 dark:shadow-black/80 backdrop-blur-xl transition-all"
                 >
                   <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-3">
                     <div className="flex items-center gap-2">
@@ -337,7 +337,7 @@ export default function AppShell() {
                             onClick={() => handleNotificationClick(n)}
                             className={`py-2.5 first:pt-0 last:pb-0 flex items-start gap-3 cursor-pointer rounded-xl px-2 -mx-2 transition hover:bg-slate-50 dark:hover:bg-white/5 ${!n.read ? "bg-vivid/5 dark:bg-vivid/10" : ""}`}
                           >
-                            <span className={`mt-1.5 size-2 rounded-full shrink-0 ${n.type === "vote" ? "bg-[#fa520f]" : n.type === "comment" ? "bg-emerald-500" : "bg-vivid"}`} />
+                            <span className={`mt-1.5 size-2 rounded-full shrink-0 ${n.type === "vote" ? "bg-[#A16207]" : n.type === "comment" ? "bg-emerald-500" : "bg-vivid"}`} />
                             <div className="flex-1 min-w-0">
                               <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
                                 {n.actor?.username || "Someone"}{" "}
@@ -366,13 +366,13 @@ export default function AppShell() {
               )}
             </div>
 
-            <Link to="/profile" className="grid size-10 place-items-center rounded-full bg-slate-100 dark:bg-white/10 text-sm font-bold text-slate-900 dark:text-white transition hover:bg-vivid hover:text-white" aria-label="Open profile">
+            <Link to="/profile" className="grid size-11 place-items-center rounded-full bg-slate-100 dark:bg-white/10 text-sm font-bold text-slate-900 dark:text-white transition hover:bg-vivid hover:text-white" aria-label="Open profile">
               {user?.username?.slice(0, 1).toUpperCase() || "U"}
             </Link>
           </div>
         </header>
 
-        {mobileSearchOpen && <div className="fixed inset-x-0 top-0 z-[70] border-b border-slate-100 bg-white p-4 shadow-xl sm:hidden"><form onSubmit={submitMobileSearch} className="flex items-center gap-2"><Search size={19} className="ml-2 text-slate-400" /><input ref={searchInputRef} value={mobileSearchQuery} onChange={(event) => setMobileSearchQuery(event.target.value)} className="min-h-11 min-w-0 flex-1 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400" placeholder="Search community ideas" aria-label="Search community ideas" /><button type="button" onClick={() => setMobileSearchOpen(false)} className="min-h-11 rounded-xl px-3 text-sm font-semibold text-slate-500 hover:bg-slate-50">Cancel</button><button type="submit" className="grid size-11 place-items-center rounded-xl bg-[#fa520f] text-white" aria-label="Submit search"><Search size={18} /></button></form></div>}
+        {mobileSearchOpen && <div className="fixed inset-x-0 top-0 z-[70] border-b border-slate-100 bg-white p-4 shadow-xl sm:hidden"><form onSubmit={submitMobileSearch} className="flex items-center gap-2"><Search size={19} className="ml-2 text-slate-400" /><input ref={searchInputRef} value={mobileSearchQuery} onChange={(event) => setMobileSearchQuery(event.target.value)} className="min-h-11 min-w-0 flex-1 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400" placeholder="Search community ideas" aria-label="Search community ideas" /><button type="button" onClick={() => setMobileSearchOpen(false)} className="min-h-11 rounded-xl px-3 text-sm font-semibold text-slate-500 hover:bg-slate-50">Cancel</button><button type="submit" className="grid size-11 place-items-center rounded-xl bg-[#A16207] text-white" aria-label="Submit search"><Search size={18} /></button></form></div>}
 
         <main className="pb-24 lg:pb-8"><PageTransition><Outlet /></PageTransition></main>
         {!darkMode && <SunsetStripe />}
@@ -382,7 +382,7 @@ export default function AppShell() {
         <aside className={`h-full w-72 bg-white p-5 shadow-2xl transition-transform duration-300 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`} onClick={(event) => event.stopPropagation()}>
           <div className="mb-8 flex items-center justify-between">
             <span className="font-heading text-lg font-bold text-slate-900">Navigation</span>
-            <button onClick={() => setMobileOpen(false)} className="grid size-10 place-items-center rounded-xl text-slate-500 hover:bg-slate-100" aria-label="Close navigation"><X size={20} /></button>
+            <button onClick={() => setMobileOpen(false)} className="grid size-11 place-items-center rounded-xl text-slate-500 hover:bg-slate-100" aria-label="Close navigation"><X size={20} /></button>
           </div>
           <nav aria-label="Mobile navigation" className="space-y-1">
             {primaryNavigation.map((item) => {

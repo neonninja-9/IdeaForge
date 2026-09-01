@@ -48,10 +48,10 @@ export default function AlternativeSolutionModal({ ideaId, isOpen, onClose, onSu
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-slate-900/40 backdrop-blur-sm dark:bg-black/60 transition-opacity">
-      <div className="w-full max-w-lg bg-white dark:bg-[#1A1625] border-t sm:border border-slate-200 dark:border-white/10 rounded-t-[32px] sm:rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] sm:shadow-xl overflow-hidden animate-reveal-up sm:animate-reveal-scale flex flex-col max-h-[90vh]">
+      <div className="w-full max-w-lg bg-white dark:bg-[#292524] border-t sm:border border-slate-200 dark:border-white/10 rounded-t-[32px] sm:rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] sm:shadow-xl overflow-hidden animate-reveal-up sm:animate-reveal-scale flex flex-col max-h-[90vh]">
         <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/[0.02]">
           <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200">
-            <Rocket size={18} className="text-[#fa520f]" />
+            <Rocket size={18} className="text-[#A16207]" />
             <h2 className="text-sm font-bold tracking-wide uppercase">Propose Approach</h2>
           </div>
           <button onClick={onClose} className="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-200/50 dark:hover:text-slate-300 dark:hover:bg-white/10 transition">
@@ -69,7 +69,7 @@ export default function AlternativeSolutionModal({ ideaId, isOpen, onClose, onSu
               value={title}
               onChange={e => setTitle(e.target.value)}
               placeholder="e.g. Use a Serverless architecture instead..."
-              className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.03] px-4 py-2.5 text-sm font-medium text-slate-800 dark:text-slate-200 outline-none transition focus:border-[#fa520f]/40 focus:ring-2 focus:ring-[#fa520f]/10"
+              className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.03] px-4 py-2.5 text-sm font-medium text-slate-800 dark:text-slate-200 outline-none transition focus:border-[#A16207]/40 focus:ring-2 focus:ring-[#A16207]/10"
               required
             />
           </div>
@@ -81,7 +81,7 @@ export default function AlternativeSolutionModal({ ideaId, isOpen, onClose, onSu
               onChange={e => setDescription(e.target.value)}
               placeholder="Explain how your solution works and why it's better..."
               rows={5}
-              className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.03] px-4 py-3 text-sm text-slate-700 dark:text-slate-300 outline-none transition focus:border-[#fa520f]/40 focus:ring-2 focus:ring-[#fa520f]/10 resize-none"
+              className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.03] px-4 py-3 text-sm text-slate-700 dark:text-slate-300 outline-none transition focus:border-[#A16207]/40 focus:ring-2 focus:ring-[#A16207]/10 resize-none"
               required
             />
           </div>
@@ -93,7 +93,7 @@ export default function AlternativeSolutionModal({ ideaId, isOpen, onClose, onSu
               value={techStack}
               onChange={e => setTechStack(e.target.value)}
               placeholder="e.g. React, Firebase, Tailwind..."
-              className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.03] px-4 py-2.5 text-sm font-medium text-slate-800 dark:text-slate-200 outline-none transition focus:border-[#fa520f]/40 focus:ring-2 focus:ring-[#fa520f]/10"
+              className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/[0.03] px-4 py-2.5 text-sm font-medium text-slate-800 dark:text-slate-200 outline-none transition focus:border-[#A16207]/40 focus:ring-2 focus:ring-[#A16207]/10"
             />
           </div>
         </form>
@@ -102,7 +102,7 @@ export default function AlternativeSolutionModal({ ideaId, isOpen, onClose, onSu
           <button type="button" onClick={onClose} className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-white/10 transition">
             Cancel
           </button>
-          <button type="submit" disabled={submitting} onClick={handleSubmit} className="flex items-center gap-2 px-5 py-2 bg-[#fa520f] hover:bg-[#cc3a05] text-white text-xs font-semibold rounded-xl transition disabled:opacity-50">
+          <button type="submit" disabled={submitting} onClick={handleSubmit} className="flex items-center gap-2 px-5 py-2 bg-[#A16207] hover:bg-[#854D0E] text-white text-xs font-semibold rounded-xl transition disabled:opacity-50">
             {submitting ? "Submitting..." : "Submit Proposal"} <Send size={14} />
           </button>
         </div>

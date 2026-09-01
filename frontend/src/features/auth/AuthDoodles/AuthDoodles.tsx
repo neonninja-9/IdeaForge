@@ -11,7 +11,7 @@ export default function AuthDoodles() {
 
       {/* ── Lightbulb — top left, floating ── */}
       <svg
-        className="absolute top-[8%] left-[8%] w-14 h-14 text-vivid/20 dark:text-[#fa520f]/25 animate-doodle-float"
+        className="absolute top-[8%] left-[8%] w-14 h-14 text-vivid/20 dark:text-[#A16207]/25 animate-doodle-float"
         viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
       >
         <path d="M32 6C22 6 14 14 14 24c0 7 4 13 10 16v6h16v-6c6-3 10-9 10-16 0-10-8-18-18-18z" />
@@ -49,7 +49,7 @@ export default function AuthDoodles() {
 
       {/* ── Code bracket — bottom left, bobbing ── */}
       <svg
-        className="absolute bottom-[18%] left-[12%] w-14 h-14 text-vivid/18 dark:text-[#fa520f]/25 animate-doodle-bob"
+        className="absolute bottom-[18%] left-[12%] w-14 h-14 text-vivid/18 dark:text-[#A16207]/25 animate-doodle-bob"
         style={{ animationDelay: "0.8s" }}
         viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
       >
@@ -81,7 +81,7 @@ export default function AuthDoodles() {
 
       {/* ── Small star — middle area ── */}
       <svg
-        className="absolute top-[30%] right-[30%] w-8 h-8 text-vivid/15 dark:text-[#fa520f]/20 animate-doodle-pulse"
+        className="absolute top-[30%] right-[30%] w-8 h-8 text-vivid/15 dark:text-[#A16207]/20 animate-doodle-pulse"
         style={{ animationDelay: "2s" }}
         viewBox="0 0 32 32" fill="currentColor"
       >
@@ -90,7 +90,7 @@ export default function AuthDoodles() {
 
       {/* ── Zigzag path — decorative line, bottom ── */}
       <svg
-        className="absolute bottom-[32%] left-[30%] w-32 h-8 text-vivid/10 dark:text-[#fa520f]/15 animate-doodle-float"
+        className="absolute bottom-[32%] left-[30%] w-32 h-8 text-vivid/10 dark:text-[#A16207]/15 animate-doodle-float"
         style={{ animationDelay: "3s" }}
         viewBox="0 0 128 32" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
       >
@@ -114,7 +114,7 @@ export default function AuthDoodles() {
 
       {/* ── Pencil — writing doodle ── */}
       <svg
-        className="absolute top-[70%] left-[22%] w-12 h-12 text-vivid/15 dark:text-[#fa520f]/20 animate-doodle-drift"
+        className="absolute top-[70%] left-[22%] w-12 h-12 text-vivid/15 dark:text-[#A16207]/20 animate-doodle-drift"
         style={{ animationDelay: "2.2s" }}
         viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
       >

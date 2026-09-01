@@ -29,7 +29,7 @@ export default function RegisterPage() {
   }, [darkMode]);
 
   return (
-    <div className="min-h-screen flex bg-[#f8f9fc] dark:bg-[#030206] dot-grid relative transition-colors duration-300">
+    <div className="h-screen overflow-hidden flex bg-[#f8f9fc] dark:bg-[#030206] dot-grid relative transition-colors duration-300">
       {/* ── Theme Toggle in top right corner ── */}
       <div className="absolute top-5 right-5 z-50">
         <button
@@ -44,11 +44,11 @@ export default function RegisterPage() {
       </div>
 
       {/* ── Left Panel: Doodle Playground (desktop only) ── */}
-      <div className="hidden lg:flex lg:w-[55%] relative items-center justify-center overflow-hidden">
+      <div className="hidden lg:flex lg:w-[55%] h-full relative items-center justify-center overflow-hidden">
         <AuthDoodles />
 
         {/* Ambient glow blobs */}
-        <div className="absolute top-1/3 left-1/3 h-72 w-72 rounded-full bg-vivid/8 dark:bg-[#fa520f]/15 blur-[100px] pointer-events-none animate-doodle-float" />
+        <div className="absolute top-1/3 left-1/3 h-72 w-72 rounded-full bg-vivid/8 dark:bg-[#A16207]/15 blur-[100px] pointer-events-none animate-doodle-float" />
         <div className="absolute bottom-1/3 right-1/4 h-56 w-56 rounded-full bg-vivid-light/10 dark:bg-purple-500/15 blur-[80px] pointer-events-none animate-doodle-float" style={{ animationDelay: "2s" }} />
 
         {/* Branding */}
@@ -64,11 +64,12 @@ export default function RegisterPage() {
       </div>
 
       {/* ── Right Panel: Animated Auth Card ── */}
-      <div className="w-full lg:w-[45%] flex items-center justify-center px-5 py-12 sm:px-8 relative">
-        {/* Mobile-only doodles */}
-        <div className="lg:hidden">
-          <AuthDoodles />
-        </div>
+      <div className="w-full lg:w-[45%] h-full overflow-y-auto">
+        <div className="min-h-full flex flex-col items-center justify-center px-5 py-12 sm:px-8 relative">
+          {/* Mobile-only doodles */}
+          <div className="lg:hidden absolute inset-0 overflow-hidden pointer-events-none">
+            <AuthDoodles />
+          </div>
 
         <div className="w-full max-w-md relative z-10">
           {/* Mobile branding */}
@@ -90,5 +91,6 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 }

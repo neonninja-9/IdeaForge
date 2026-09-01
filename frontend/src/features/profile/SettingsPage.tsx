@@ -76,15 +76,15 @@ export default function SettingsPage() {
     <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent px-5 py-7 sm:px-8 sm:py-10 xl:px-12 transition-colors duration-500">
       <main className="mx-auto max-w-4xl">
         <header>
-          <p className="text-sm font-semibold text-[#fa520f] dark:text-[#fa520f]">PREFERENCES</p>
+          <p className="text-sm font-semibold text-[#A16207] dark:text-[#A16207]">PREFERENCES</p>
           <h1 className="font-heading mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">Make your workspace yours.</h1>
           <p className="mt-3 max-w-2xl text-base leading-7 text-slate-500 dark:text-slate-400">Account details come from your IdeaForge profile, and preferences are saved to your account.</p>
         </header>
 
-        <section className="mt-9 overflow-hidden rounded-[28px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] shadow-sm dark:shadow-none transition-colors">
+        <section className="mt-9 overflow-hidden rounded-[28px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#1C1917] shadow-sm dark:shadow-none transition-colors">
           <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 px-6 py-5">
             <div className="flex items-center gap-3">
-              <span className="grid size-10 place-items-center rounded-xl bg-[#fff8e0] dark:bg-white/5 text-[#fa520f] dark:text-[#fa520f]">
+              <span className="grid size-10 place-items-center rounded-xl bg-[#FEF3C7] dark:bg-white/5 text-[#A16207] dark:text-[#A16207]">
                 <SlidersHorizontal size={19} />
               </span>
               <div>
@@ -94,7 +94,7 @@ export default function SettingsPage() {
             </div>
             <button
               onClick={() => setIsEditingProfile(!isEditingProfile)}
-              className="text-xs font-semibold text-[#fa520f] dark:text-[#fa520f] hover:text-[#cc3a05] dark:hover:text-indigo-300 bg-[#fff8e0] dark:bg-white/5 px-3.5 py-2 rounded-xl transition"
+              className="text-xs font-semibold text-[#A16207] dark:text-[#A16207] hover:text-[#854D0E] dark:hover:text-indigo-300 bg-[#FEF3C7] dark:bg-white/5 px-3.5 py-2 rounded-xl transition"
             >
               {isEditingProfile ? "Cancel" : "Edit Profile"}
             </button>
@@ -113,7 +113,7 @@ export default function SettingsPage() {
                 <input
                   value={usernameInput}
                   onChange={(e) => setUsernameInput(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-200 outline-none focus:border-[#fa520f]"
+                  className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#292524] px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-200 outline-none focus:border-[#A16207]"
                 />
               </div>
               <div>
@@ -122,13 +122,13 @@ export default function SettingsPage() {
                   type="email"
                   value={emailInput}
                   onChange={(e) => setEmailInput(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-200 outline-none focus:border-[#fa520f]"
+                  className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#292524] px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-200 outline-none focus:border-[#A16207]"
                 />
               </div>
               <button
                 type="submit"
                 disabled={savingProfile}
-                className="inline-flex items-center justify-center rounded-xl bg-[#fa520f] px-5 py-2.5 text-xs font-semibold text-white hover:bg-[#cc3a05] disabled:opacity-50"
+                className="inline-flex items-center justify-center rounded-xl bg-[#A16207] px-5 py-2.5 text-xs font-semibold text-white hover:bg-[#854D0E] disabled:opacity-50"
               >
                 {savingProfile ? "Saving..." : "Save Changes"}
               </button>
@@ -153,9 +153,9 @@ export default function SettingsPage() {
           )}
         </section>
 
-        <section className="mt-6 overflow-hidden rounded-[28px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] shadow-sm dark:shadow-none transition-colors">
+        <section className="mt-6 overflow-hidden rounded-[28px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#1C1917] shadow-sm dark:shadow-none transition-colors">
           <div className="flex items-center gap-3 border-b border-slate-100 dark:border-white/5 px-6 py-5">
-            <span className="grid size-10 place-items-center rounded-xl bg-[#fffaeb] dark:bg-white/5 text-[#fa520f] dark:text-[#ff8105]">
+            <span className="grid size-10 place-items-center rounded-xl bg-[#FFFBEB] dark:bg-white/5 text-[#A16207] dark:text-[#CA8A04]">
               <BellRing size={19} />
             </span>
             <div>
@@ -182,7 +182,7 @@ export default function SettingsPage() {
                   type="checkbox"
                   checked={preferences?.[item.key] || false}
                   onChange={(event) => updatePreference(item.key, event.target.checked)}
-                  className="size-5 rounded accent-[#fa520f] cursor-pointer"
+                  className="size-5 rounded accent-[#A16207] cursor-pointer"
                   aria-label={item.label}
                 />
               </label>
@@ -190,7 +190,7 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        <section className="mt-6 rounded-[28px] border border-rose-100 dark:border-rose-500/20 bg-white dark:bg-[#120F17] p-6 shadow-sm dark:shadow-none transition-colors">
+        <section className="mt-6 rounded-[28px] border border-rose-100 dark:border-rose-500/20 bg-white dark:bg-[#1C1917] p-6 shadow-sm dark:shadow-none transition-colors">
           <div className="flex items-start gap-3">
             <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400">
               <ShieldCheck size={19} />

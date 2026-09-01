@@ -1,9 +1,11 @@
 import { ArrowRight, Bot, GitBranch, Lightbulb, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useRef } from "react";
 import LaserFlow from "../../components/LaserFlow";
-import BlurText from "./effects/blurText";
-import Shuffle from "./effects/suffle-text";
+import GhostFibers from "../../components/GhostFibers";
+import ScrambledText from "../../components/ScrambledText";
 import SpecularButton from "./effects/specularButton";
+import VariableProximity from "../../components/VariableProximity";
 
 function ProductFrame() {
   return (
@@ -30,7 +32,7 @@ function ProductFrame() {
       </div>
 
       {/* Real Dashboard Screenshot */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#0a0b0e]">
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#1C1917]">
         <img
           src="/images/screenshots/dashboard.jpg"
           alt="IdeaForge Real Project Dashboard"
@@ -45,40 +47,75 @@ function ProductFrame() {
 }
 
 export default function Hero() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   return (
-    <section className="relative min-h-[960px] overflow-hidden bg-[#090a0c] px-5 pb-20 pt-28 text-white sm:px-6 lg:px-10">
-      {/* Background ambient lighting */}
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_0%,rgba(155,180,255,0.08),transparent_50%),radial-gradient(circle_at_50%_50%,rgba(86,131,218,0.12),transparent_40%)]" />
+    <section 
+      ref={containerRef}
+      className="relative min-h-[960px] overflow-hidden bg-[#0C0A09] px-5 pb-20 pt-28 text-white sm:px-6 lg:px-10"
+    >
+      {/* GhostFibers Background */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <GhostFibers
+          lineColor="#2d3748"
+          glowColor="#1a202c"
+          speed={0.2}
+          scale={2}
+          rotation={0}
+          rotationSpeed={0.25}
+          layers={4}
+          waveAmplitude={0.015}
+          waveFrequency={3}
+          waveSpeed={0.15}
+          layerSpeed={0.08}
+          twist={0.1}
+          twistFrequency={5}
+          twistSpeed={1.2}
+          lineFrequency={5}
+          lineSpacing={2}
+          lineSharpness={16}
+          glowFalloff={10}
+          glowIntensity={1.6}
+          brightness={2}
+          blueBoost={1.25}
+          vignette={0.8}
+          grain={0.05}
+          dpr={1}
+          lightMode={false}
+          fps={60}
+          paused={false}
+        />
+      </div>
 
       <div className="relative mx-auto max-w-[1200px]">
         {/* ── Top Centered Hero Header ── */}
         <div className="relative z-30 max-w-3xl mx-auto text-center pt-6 sm:pt-12 pb-6 sm:pb-8">
-          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-xs font-medium text-[#d1d1d1] backdrop-blur-md">
-            <span className="size-2 rounded-full bg-[#ff8964] shadow-[0_0_18px_rgba(255,137,100,0.9)] animate-pulse" />
-            AI-powered project idea platform
-          </p>
 
-          {/* BlurText animated headline */}
-          <BlurText
-            text="Forge Raw Problems into Polished Projects"
-            delay={80}
-            animateBy="words"
-            direction="top"
-            className="text-5xl font-black tracking-tight leading-[1.08] text-white sm:text-6xl lg:text-7xl justify-center"
-          />
 
-          {/* Shuffle animated subtitle */}
-          <div className="mt-5 max-w-xl mx-auto">
-            <Shuffle
-              text="Submit real-world problems, get AI-generated roadmaps and tech stack suggestions, and discover similar projects — all in one platform built for builders."
-              className="!text-base !sm:text-lg !leading-relaxed !text-[#a5a7b0] !normal-case !tracking-normal"
-              tag="p"
-              textAlign="center"
-              shuffleDirection="up"
-              duration={0.5}
-              stagger={0.02}
-              triggerOnHover={false}
+          {/* VariableProximity animated headline */}
+          <div className="flex justify-center w-full mb-6">
+            <VariableProximity
+              label="Forge Raw Problems into Polished Projects"
+              className="text-5xl font-black tracking-tight leading-[1.08] text-white sm:text-6xl lg:text-7xl cursor-default"
+              fromFontVariationSettings="'wght' 400"
+              toFontVariationSettings="'wght' 900"
+              containerRef={containerRef}
+              radius={120}
+              falloff="linear"
             />
+          </div>
+
+          {/* ScrambledText animated subtitle */}
+          <div className="mt-5 max-w-xl mx-auto">
+            <ScrambledText
+              className="text-base sm:text-lg leading-relaxed text-[#a5a7b0] text-center"
+              radius={100}
+              duration={1.2}
+              speed={0.5}
+              scrambleChars=".:*^#"
+            >
+              Submit real-world problems, get AI-generated roadmaps and tech stack suggestions, and discover similar projects — all in one platform built for builders.
+            </ScrambledText>
           </div>
 
           {/* SpecularButton CTAs */}

@@ -1,7 +1,17 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./app/providers/AuthProvider";
 import { useAuth } from "./hooks/useAuth";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const Navbar = lazy(() => import("./components/Navbar/Navbar"));
 const AppShell = lazy(() => import("./components/AppShell/AppShell"));
@@ -28,7 +38,7 @@ function LandingPage() {
 
   // The landing experience is public-only. Once signed in, visitors enter the
   // product workspace instead of falling back into marketing content.
-  if (isLoading) return <div className="min-h-screen bg-[#090a0c]" />;
+  if (isLoading) return <div className="min-h-screen bg-[#0C0A09]" />;
   if (user) return <Navigate to="/dashboard" replace />;
 
   return <LandingPageContent />;
@@ -40,7 +50,7 @@ function LandingPage() {
  */
 function LandingLayout() {
   return (
-    <div className="min-h-screen bg-[#090a0c] flex flex-col">
+    <div className="min-h-screen bg-[#0C0A09] flex flex-col">
       <Navbar />
       <div className="flex-1"><Outlet /></div>
       <Footer />
@@ -54,10 +64,11 @@ function WorkspaceLayout() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <div className="font-sans antialiased bg-surface flex flex-col min-h-screen">
-          <Suspense fallback={<div className="grid min-h-screen place-items-center bg-[#fffaeb]" aria-busy="true" aria-label="Loading page"><div className="flex items-center gap-3 rounded-2xl bg-white px-5 py-4 text-sm font-medium text-slate-500 shadow-sm"><span className="size-2 animate-pulse rounded-full bg-[#fa520f]" /> Loading your workspace…</div></div>}>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AuthProvider>
+          <div className="font-sans antialiased bg-surface flex flex-col min-h-screen">
+            <Suspense fallback={<div className="grid min-h-screen place-items-center bg-[#FFFBEB]" aria-busy="true" aria-label="Loading page"><div className="flex items-center gap-3 rounded-2xl bg-white px-5 py-4 text-sm font-medium text-slate-500 shadow-sm"><span className="size-2 animate-pulse rounded-full bg-[#A16207]" /> Loading your workspace…</div></div>}>
             <Routes>
               {/* Auth pages — full-page immersion, no Navbar/Footer */}
               <Route path="/login" element={<LoginPage />} />
@@ -92,7 +103,8 @@ function App() {
           </Suspense>
         </div>
       </AuthProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 

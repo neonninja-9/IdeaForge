@@ -29,7 +29,7 @@ export default function LoginPage() {
   }, [darkMode]);
 
   return (
-    <div className="min-h-screen flex bg-[#f8f9fc] dark:bg-[#030206] dot-grid relative transition-colors duration-300">
+    <div className="h-screen overflow-hidden flex bg-[#f8f9fc] dark:bg-[#030206] dot-grid relative transition-colors duration-300">
       {/* ── Theme Toggle in top right corner ── */}
       <div className="absolute top-5 right-5 z-50">
         <button
@@ -44,7 +44,7 @@ export default function LoginPage() {
       </div>
 
       {/* ── Left Panel: Doodle Playground (desktop only) ── */}
-      <div className="hidden lg:flex lg:w-[55%] relative items-center justify-center overflow-hidden">
+      <div className="hidden lg:flex lg:w-[55%] h-full relative items-center justify-center overflow-hidden">
         <AuthDoodles />
 
         {/* Ambient glow blobs */}
@@ -64,28 +64,30 @@ export default function LoginPage() {
       </div>
 
       {/* ── Right Panel: Animated Auth Card ── */}
-      <div className="w-full lg:w-[45%] flex items-center justify-center px-5 py-12 sm:px-8 relative">
-        {/* Mobile-only doodles (subtle, behind card) */}
-        <div className="lg:hidden">
-          <AuthDoodles />
-        </div>
-
-        <div className="w-full max-w-md relative z-10">
-          {/* Mobile branding */}
-          <div className="lg:hidden text-center mb-6">
-            <Link to="/" className="text-2xl font-black tracking-tight text-fg dark:text-white">
-              IdeaForge
-            </Link>
+      <div className="w-full lg:w-[45%] h-full overflow-y-auto">
+        <div className="min-h-full flex flex-col items-center justify-center px-5 py-12 sm:px-8 relative">
+          {/* Mobile-only doodles (subtle, behind card) */}
+          <div className="lg:hidden absolute inset-0 overflow-hidden pointer-events-none">
+            <AuthDoodles />
           </div>
 
-          {/* ── Animated Auth Card ── */}
-          <AuthCard initialMode="login" onModeChange={setAuthMode} />
+          <div className="w-full max-w-md relative z-10">
+            {/* Mobile branding */}
+            <div className="lg:hidden text-center mb-6">
+              <Link to="/" className="text-2xl font-black tracking-tight text-fg dark:text-white">
+                IdeaForge
+              </Link>
+            </div>
 
-          {/* Back to home */}
-          <div className="text-center mt-4">
-            <Link to="/" className="text-xs text-fg-muted dark:text-slate-400 hover:text-fg dark:hover:text-white transition-colors uppercase tracking-[0.15em] font-medium">
-              ← Back to Home
-            </Link>
+            {/* ── Animated Auth Card ── */}
+            <AuthCard initialMode="login" onModeChange={setAuthMode} />
+
+            {/* Back to home */}
+            <div className="text-center mt-4">
+              <Link to="/" className="text-xs text-fg-muted dark:text-slate-400 hover:text-fg dark:hover:text-white transition-colors uppercase tracking-[0.15em] font-medium">
+                ← Back to Home
+              </Link>
+            </div>
           </div>
         </div>
       </div>

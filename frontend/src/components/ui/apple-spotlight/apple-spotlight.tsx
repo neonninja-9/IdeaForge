@@ -69,7 +69,7 @@ export function AppleSpotlight({ onSubmitSearch, focusSignal = 0, className }: A
           animate={{ width: isActive ? 320 : 44 }}
           transition={{ layout: { duration: 0.35, type: 'spring', bounce: 0.15 }, width: { duration: 0.35, type: 'spring', bounce: 0.15 } }}
           className={cn(
-            "rounded-full border border-slate-200/80 bg-white text-slate-950 shadow-sm transition-colors focus-within:border-[#fa520f] focus-within:ring-4 focus-within:ring-[#fff8e0]",
+            "rounded-full border border-slate-200/80 bg-white text-slate-950 shadow-sm transition-colors focus-within:border-[#A16207] focus-within:ring-4 focus-within:ring-[#FEF3C7]",
             !isActive && "cursor-pointer hover:bg-slate-50"
           )}
           onClick={() => {
@@ -157,7 +157,7 @@ export function AppleSpotlight({ onSubmitSearch, focusSignal = 0, className }: A
                   marginLeft: isActive && index > 0 ? 8 : 0
                 }}
                 transition={{ type: 'spring', stiffness: 480, damping: 28, delay: isActive ? index * 0.045 : 0 }}
-                className="grid h-11 shrink-0 place-items-center rounded-full bg-white text-slate-500 shadow-sm ring-1 ring-slate-200/80 transition hover:-translate-y-0.5 hover:bg-[#fa520f] hover:text-white hover:shadow-md"
+                className="grid h-11 shrink-0 place-items-center rounded-full bg-white text-slate-500 shadow-sm ring-1 ring-slate-200/80 transition hover:-translate-y-0.5 hover:bg-[#A16207] hover:text-white hover:shadow-md"
                 style={{ pointerEvents: isActive ? 'auto' : 'none' }}
               >
                 <Icon className="size-5 shrink-0" strokeWidth={1.8} aria-hidden="true" />

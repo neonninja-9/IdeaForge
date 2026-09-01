@@ -208,7 +208,7 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
   }
 
   if (loading) return <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent transition-colors duration-500"><PageSkeleton variant="detail" /></div>;
-  if (error || !idea) return <div className="min-h-screen bg-[var(--background)] dark:bg-transparent grid place-items-center px-5 transition-colors duration-500"><div className="text-center"><CircleAlert className="mx-auto text-rose-400" size={30} /><p className="mt-4 text-slate-600 dark:text-slate-400">{error || "Idea not found"}</p><Link to="/explore" className="mt-4 inline-flex text-sm font-semibold text-[#fa520f]">Back to ideas</Link></div></div>;
+  if (error || !idea) return <div className="min-h-screen bg-[var(--background)] dark:bg-transparent grid place-items-center px-5 transition-colors duration-500"><div className="text-center"><CircleAlert className="mx-auto text-rose-400" size={30} /><p className="mt-4 text-slate-600 dark:text-slate-400">{error || "Idea not found"}</p><Link to="/explore" className="mt-4 inline-flex text-sm font-semibold text-[#A16207]">Back to ideas</Link></div></div>;
 
   const hasRealRoadmap = idea.roadmap && idea.roadmap.length > 0;
   const roadmap = hasRealRoadmap
@@ -252,7 +252,7 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
           <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
             {/* Author */}
             <div className="flex items-center gap-3">
-              <span className="grid size-9 place-items-center rounded-full bg-gradient-to-br from-[#fa520f] to-[#ff8105] text-xs font-bold text-white">
+              <span className="grid size-9 place-items-center rounded-full bg-gradient-to-br from-[#A16207] to-[#CA8A04] text-xs font-bold text-white">
                 {idea.author?.username?.charAt(0).toUpperCase()}
               </span>
               <div>
@@ -319,9 +319,9 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
             {/* Impact (inline, no heavy card) */}
             {idea.impact && (
               <section className="flex gap-3">
-                <span className="mt-0.5 text-[#fa520f]"><Target size={16} /></span>
+                <span className="mt-0.5 text-[#A16207]"><Target size={16} /></span>
                 <div>
-                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#fa520f]">Impact</h2>
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#A16207]">Impact</h2>
                   <p className="mt-1 text-sm leading-7 text-slate-600 dark:text-slate-300">{idea.impact}</p>
                 </div>
               </section>
@@ -330,9 +330,9 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
             {/* Tech stack (inline tags) */}
             {hasTechStack && (
               <section className="flex gap-3">
-                <span className="mt-0.5 text-[#fa520f]"><Sparkles size={16} /></span>
+                <span className="mt-0.5 text-[#A16207]"><Sparkles size={16} /></span>
                 <div>
-                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#fa520f]">Tech Stack</h2>
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-[#A16207]">Tech Stack</h2>
                   {idea.techStack && idea.techStack.length > 0 ? (
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {idea.techStack.map(tech => (
@@ -368,7 +368,7 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
                           <div className="flex items-center gap-3 p-2">
                             <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400"><FileText size={16} /></div>
                             <p className="truncate text-xs font-medium text-slate-700 dark:text-slate-300">{att.name}</p>
-                            <a href={att.url} target="_blank" rel="noreferrer" download={att.name} className="ml-auto grid size-7 place-items-center rounded-lg text-slate-400 hover:text-[#fa520f] hover:bg-slate-100 dark:hover:bg-white/5"><Download size={14} /></a>
+                            <a href={att.url} target="_blank" rel="noreferrer" download={att.name} className="ml-auto grid size-7 place-items-center rounded-lg text-slate-400 hover:text-[#A16207] hover:bg-slate-100 dark:hover:bg-white/5"><Download size={14} /></a>
                           </div>
                         )}
                       </div>
@@ -386,9 +386,9 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
                   className="flex w-full items-center justify-between gap-2"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-[#fa520f]"><Sparkles size={16} /></span>
+                    <span className="text-[#A16207]"><Sparkles size={16} /></span>
                     <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">Execution Roadmap</h2>
-                    <span className="rounded-full bg-[#fa520f]/10 px-2 py-0.5 text-[10px] font-semibold text-[#fa520f]">AI Generated</span>
+                    <span className="rounded-full bg-[#A16207]/10 px-2 py-0.5 text-[10px] font-semibold text-[#A16207]">AI Generated</span>
                   </div>
                   {roadmapOpen ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
                 </button>
@@ -429,17 +429,17 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
                     onChange={(event) => setCommentText(event.target.value)}
                     rows={2}
                     placeholder="Share a thought or suggestion..."
-                    className="w-full resize-none rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.03] px-4 py-3 text-sm leading-6 text-slate-700 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-[#fa520f]/40 focus:ring-2 focus:ring-[#fa520f]/10"
+                    className="w-full resize-none rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.03] px-4 py-3 text-sm leading-6 text-slate-700 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-[#A16207]/40 focus:ring-2 focus:ring-[#A16207]/10"
                   />
                   <div className="mt-2 flex justify-end">
-                    <button type="submit" disabled={submittingComment || !commentText.trim()} className="inline-flex min-h-11 sm:min-h-9 items-center gap-2 rounded-lg bg-[#fa520f] px-4 text-xs font-semibold text-white transition hover:bg-[#cc3a05] disabled:opacity-50">
+                    <button type="submit" disabled={submittingComment || !commentText.trim()} className="inline-flex min-h-11 sm:min-h-9 items-center gap-2 rounded-lg bg-[#A16207] px-4 text-xs font-semibold text-white transition hover:bg-[#854D0E] disabled:opacity-50">
                       {submittingComment ? "Posting..." : "Post"}<Send size={13} />
                     </button>
                   </div>
                 </form>
               ) : (
                 <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">
-                  <Link to="/login" className="font-semibold text-[#fa520f]">Sign in</Link> to join the discussion.
+                  <Link to="/login" className="font-semibold text-[#A16207]">Sign in</Link> to join the discussion.
                 </p>
               )}
 
@@ -454,7 +454,7 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
                   return (
                     <article key={comment.id || comment._id} className="rounded-xl bg-slate-50 dark:bg-white/[0.03] p-4">
                       <div className="flex items-center gap-2.5">
-                        <span className="grid size-7 place-items-center rounded-full bg-gradient-to-br from-[#fa520f] to-[#ff8105] text-[10px] font-bold text-white">
+                        <span className="grid size-7 place-items-center rounded-full bg-gradient-to-br from-[#A16207] to-[#CA8A04] text-[10px] font-bold text-white">
                           {comment.user?.username?.charAt(0).toUpperCase()}
                         </span>
                         <div className="min-w-0 flex-1">
@@ -480,12 +480,12 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
             <section className="rounded-2xl border border-slate-100 dark:border-white/8 bg-white dark:bg-white/[0.02] p-5">
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center">
-                  <ArrowUp size={16} className="mx-auto text-[#fa520f]" />
+                  <ArrowUp size={16} className="mx-auto text-[#A16207]" />
                   <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">{voteCount}</p>
                   <p className="text-[10px] font-medium text-slate-400 dark:text-slate-500">Upvotes</p>
                 </div>
                 <div className="text-center">
-                  <Users size={16} className="mx-auto text-[#ff8105]" />
+                  <Users size={16} className="mx-auto text-[#CA8A04]" />
                   <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">{comments.length}</p>
                   <p className="text-[10px] font-medium text-slate-400 dark:text-slate-500">Comments</p>
                 </div>
@@ -495,8 +495,8 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
                 disabled={voting}
                 className={`mt-4 flex min-h-10 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold transition ${
                   hasVoted
-                    ? "bg-[#fa520f] text-white hover:bg-[#cc3a05]"
-                    : "border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-[#fa520f] hover:bg-[#fa520f]/5 dark:hover:bg-[#fa520f]/10"
+                    ? "bg-[#A16207] text-white hover:bg-[#854D0E]"
+                    : "border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-[#A16207] hover:bg-[#A16207]/5 dark:hover:bg-[#A16207]/10"
                 }`}
               >
                 <ArrowUp size={15} />

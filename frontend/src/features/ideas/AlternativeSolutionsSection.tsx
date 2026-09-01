@@ -95,12 +95,12 @@ export default function AlternativeSolutionsSection({ ideaId }: Props) {
 
       <div className="space-y-4">
         {solutions.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 py-12 px-6 text-center bg-slate-50/50 dark:bg-[#120F17]/50 flex flex-col items-center justify-center">
+          <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 py-12 px-6 text-center bg-slate-50/50 dark:bg-[#1C1917]/50 flex flex-col items-center justify-center">
             {/* Custom SVG Illustration */}
             <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="mb-6">
               {/* Central node */}
               <circle cx="60" cy="60" r="16" fill="url(#brandGlow)" fillOpacity="0.15" />
-              <circle cx="60" cy="60" r="8" fill="#fa520f" />
+              <circle cx="60" cy="60" r="8" fill="#A16207" />
               {/* Branching paths */}
               <path d="M60 44V24" stroke="currentColor" className="text-slate-200 dark:text-white/10" strokeWidth="2" strokeDasharray="4 4" strokeLinecap="round" />
               <path d="M60 76V96" stroke="currentColor" className="text-slate-200 dark:text-white/10" strokeWidth="2" strokeDasharray="4 4" strokeLinecap="round" />
@@ -114,8 +114,8 @@ export default function AlternativeSolutionsSection({ ideaId }: Props) {
               
               <defs>
                 <radialGradient id="brandGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(60 60) rotate(90) scale(16)">
-                  <stop stopColor="#fa520f" />
-                  <stop offset="1" stopColor="#fa520f" stopOpacity="0" />
+                  <stop stopColor="#A16207" />
+                  <stop offset="1" stopColor="#A16207" stopOpacity="0" />
                 </radialGradient>
               </defs>
             </svg>
@@ -126,7 +126,7 @@ export default function AlternativeSolutionsSection({ ideaId }: Props) {
             </p>
             <button
               onClick={handleProposeClick}
-              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-[#fa520f] px-5 text-sm font-semibold text-white shadow-md shadow-[#fa520f1a] transition hover:-translate-y-0.5 hover:bg-[#cc3a05]"
+              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-[#A16207] px-5 text-sm font-semibold text-white shadow-md shadow-[#A162071a] transition hover:-translate-y-0.5 hover:bg-[#854D0E]"
             >
               <Plus size={16} /> Propose First Alternative
             </button>

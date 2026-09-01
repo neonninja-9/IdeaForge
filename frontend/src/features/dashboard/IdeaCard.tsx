@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { Heart, MessageCircle, Send, Trash2, Vote } from "lucide-react";
+import { ArrowUpRight, Heart, MessageCircle, Send, Trash2, Vote } from "lucide-react";
 import type { Idea } from "../../types/idea.types";
-import { potentialScore } from "../../utils/formatters";
+import { potentialScore, relativeDate } from "../../utils/formatters";
 
 interface IdeaCardProps {
   idea: Idea;
@@ -27,44 +27,68 @@ export default function IdeaCard({
   const score = potentialScore(idea);
   const ideaId = idea.id || idea._id;
   const isDraft = idea.status === "draft";
+  const statusClasses = isDraft
+    ? "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-300"
+    : "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-300";
 
   return (
-    <article className="group relative rounded-[32px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-8 shadow-[0_12px_40px_-24px_rgba(0,0,0,0.1)] dark:shadow-none transition duration-500 hover:-translate-y-2 hover:shadow-2xl">
-      {/* Delete confirmation overlay */}
+    <article className="group relative min-w-0 overflow-hidden rounded-lg border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/50 transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md dark:border-white/[0.08] dark:bg-[#100d18]/90 dark:shadow-black/30 dark:hover:border-white/15 sm:p-5">
       {deleteConfirmId === ideaId && (
-        <div className="absolute inset-0 z-20 grid place-items-center rounded-[32px] bg-black/50 backdrop-blur-sm">
-          <div className="rounded-2xl bg-white dark:bg-[#1a1625] p-6 shadow-xl text-center max-w-xs">
+        <div className="absolute inset-0 z-20 grid place-items-center bg-slate-950/55 p-4 backdrop-blur-sm">
+          <div className="max-w-xs rounded-lg bg-white p-5 text-center shadow-xl dark:bg-[#171323]">
             <p className="text-sm font-semibold text-slate-800 dark:text-white">Delete this idea?</p>
             <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">This action cannot be undone. All votes and comments will also be removed.</p>
             <div className="mt-4 flex gap-2">
-              <button onClick={() => onDeleteConfirm(null)} className="flex-1 min-h-11 sm:min-h-10 rounded-xl border border-slate-200 dark:border-white/10 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-white/5">Cancel</button>
-              <button onClick={() => onDelete(ideaId)} disabled={isDeleting} className="flex-1 min-h-11 sm:min-h-10 rounded-xl bg-rose-600 py-2.5 text-xs font-semibold text-white transition hover:bg-rose-700 disabled:opacity-60">{isDeleting ? "Deleting..." : "Delete"}</button>
+              <button onClick={() => onDeleteConfirm(null)} className="min-h-11 flex-1 rounded-lg border border-slate-200 py-2.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A16207] dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5">Cancel</button>
+              <button onClick={() => onDelete(ideaId)} disabled={isDeleting} className="min-h-11 flex-1 rounded-lg bg-rose-600 py-2.5 text-xs font-semibold text-white transition hover:bg-rose-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500 disabled:opacity-60">{isDeleting ? "Deleting..." : "Delete"}</button>
             </div>
           </div>
         </div>
       )}
       <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <span className="rounded-full bg-slate-100 dark:bg-white/5 px-4 py-1.5 text-xs font-semibold tracking-wide text-slate-600 dark:text-slate-300 uppercase">{idea.category?.name || "Uncategorized"}</span>
-          {isDraft && <span className="rounded-full bg-amber-50 dark:bg-amber-500/10 px-3 py-1.5 text-[10px] font-bold tracking-wide text-amber-700 dark:text-amber-400 uppercase">Draft</span>}
+        <div className="min-w-0 space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-600 dark:bg-white/[0.06] dark:text-slate-300">{idea.category?.name || "Uncategorized"}</span>
+            <span className={`rounded-lg border px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide ${statusClasses}`}>{isDraft ? "Draft" : "Published"}</span>
+          </div>
+          <p className="text-xs font-medium text-slate-400 dark:text-slate-500">{relativeDate(idea.updatedAt || idea.createdAt)}</p>
         </div>
         <div className="flex items-center gap-1">
-          <button onClick={() => onDeleteConfirm(ideaId)} className="grid size-11 sm:size-10 place-items-center rounded-full text-slate-300 dark:text-slate-600 transition hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-500" aria-label={`Delete ${idea.title}`}><Trash2 size={16} /></button>
-          <button className="grid size-11 sm:size-10 place-items-center rounded-full text-slate-300 dark:text-slate-500 transition hover:bg-vivid/10 hover:text-vivid" aria-label={`Favorite ${idea.title}`}><Heart size={18} /></button>
+          <button onClick={() => onDeleteConfirm(ideaId)} className="grid size-11 place-items-center rounded-lg text-slate-400 transition hover:bg-rose-50 hover:text-rose-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500 dark:text-slate-600 dark:hover:bg-rose-500/10 dark:hover:text-rose-400" aria-label={`Delete ${idea.title}`}><Trash2 size={16} /></button>
+          <button className="grid size-11 place-items-center rounded-lg text-slate-400 transition hover:bg-vivid/10 hover:text-vivid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A16207] dark:text-slate-500 dark:hover:text-vivid-light" aria-label={`Favorite ${idea.title}`}><Heart size={18} /></button>
         </div>
       </div>
-      <Link to={`/idea/${ideaId}`} className="mt-8 block"><h3 className="font-heading line-clamp-2 text-xl font-bold leading-tight text-slate-900 dark:text-white group-hover:text-vivid transition-colors">{idea.title}</h3><p className="mt-3 line-clamp-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">{idea.problem}</p></Link>
-      <div className="mt-8 flex items-center justify-between border-t border-slate-100 dark:border-white/5 pt-6"><div><p className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">Potential</p><p className="mt-1 text-lg font-bold text-slate-800 dark:text-white">{score}% <span className="font-normal text-slate-400">score</span></p></div><div className="flex items-center gap-4 text-sm text-slate-400"><span className="flex items-center gap-1.5"><Vote size={16} />{idea.voteCount}</span><span className="flex items-center gap-1.5"><MessageCircle size={16} />{idea.commentCount}</span></div></div>
-      <div className="mt-6 flex gap-3">
+      <Link to={`/idea/${ideaId}`} className="mt-5 block rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A16207]">
+        <h3 className="font-heading line-clamp-2 text-xl font-normal leading-tight text-slate-950 transition-colors group-hover:text-vivid dark:text-white">{idea.title}</h3>
+        <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-600 dark:text-slate-400">{idea.problem}</p>
+      </Link>
+      <div className="mt-5 border-t border-slate-100 pt-4 dark:border-white/[0.06]">
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400">Potential</p>
+              <p className="text-sm font-bold text-slate-800 dark:text-white">{score}%</p>
+            </div>
+            <div className="mt-2 h-2 rounded-full bg-slate-100 dark:bg-white/[0.06]">
+              <div className="h-full rounded-full bg-[#A16207]" style={{ width: `${score}%` }} />
+            </div>
+          </div>
+          <div className="flex shrink-0 items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+            <span className="flex items-center gap-1.5"><Vote size={16} />{idea.voteCount}</span>
+            <span className="flex items-center gap-1.5"><MessageCircle size={16} />{idea.commentCount}</span>
+          </div>
+        </div>
+      </div>
+      <div className="mt-5 flex min-w-0 flex-wrap gap-2">
         {isDraft ? (
           <>
-            <Link to={`/edit-idea/${ideaId}`} className="flex-1 rounded-2xl bg-slate-50 dark:bg-white/5 py-3.5 text-center text-sm font-semibold text-slate-600 dark:text-slate-300 transition hover:bg-slate-100 dark:hover:bg-white/10">Edit</Link>
-            <button onClick={() => onPublish(ideaId)} disabled={isPublishing === ideaId} className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 py-3.5 text-sm font-semibold text-emerald-700 dark:text-emerald-400 transition hover:bg-emerald-100 dark:hover:bg-emerald-500/20 disabled:opacity-60"><Send size={14} /> {isPublishing === ideaId ? "Publishing..." : "Publish"}</button>
+            <Link to={`/edit-idea/${ideaId}`} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A16207] dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10">Edit</Link>
+            <button onClick={() => onPublish(ideaId)} disabled={isPublishing === ideaId} className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-emerald-600 text-sm font-semibold text-white transition hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500 disabled:opacity-60"><Send size={14} /> {isPublishing === ideaId ? "Publishing..." : "Publish"}</button>
           </>
         ) : (
           <>
-            <Link to={`/idea/${ideaId}`} className="flex-1 rounded-2xl bg-slate-50 dark:bg-white/5 py-3.5 text-center text-sm font-semibold text-slate-600 dark:text-slate-300 transition hover:bg-slate-100 dark:hover:bg-white/10">View</Link>
-            <button onClick={() => onDraftSimilar(idea.problem)} className="flex-1 rounded-2xl bg-vivid/5 dark:bg-vivid/10 py-3.5 text-sm font-semibold text-vivid dark:text-vivid-light transition hover:bg-vivid/10 dark:hover:bg-vivid/20">Draft similar</button>
+            <Link to={`/idea/${ideaId}`} className="inline-flex min-h-11 min-w-[8rem] flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-50 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A16207] dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10">View <ArrowUpRight size={14} /></Link>
+            <button onClick={() => onDraftSimilar(idea.problem)} className="min-h-11 min-w-[8rem] flex-1 rounded-lg bg-vivid/10 text-sm font-semibold text-vivid transition hover:bg-vivid/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A16207] dark:bg-vivid/15 dark:text-vivid-light dark:hover:bg-vivid/25">Draft similar</button>
           </>
         )}
       </div>

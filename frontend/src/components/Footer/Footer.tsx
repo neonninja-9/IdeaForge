@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SoftAurora from "../SoftAurora";
 
 const footerLinks: Record<string, { label: string; to?: string; href?: string }[]> = {
   Product: [
@@ -16,11 +17,29 @@ const footerLinks: Record<string, { label: string; to?: string; href?: string }[
 
 export default function Footer() {
   return (
-    <footer className="bg-[#090a0c] text-white pt-16 sm:pt-20 pb-10 px-5 sm:px-6 lg:px-10">
-      <div className="max-w-7xl mx-auto">
+    <footer className="relative bg-[#0C0A09] text-white pt-16 sm:pt-20 pb-10 px-5 sm:px-6 lg:px-10 overflow-hidden">
+      <div className="absolute inset-0 z-0 opacity-40 mix-blend-screen">
+        <SoftAurora
+          speed={0.6}
+          scale={1.5}
+          brightness={1}
+          color1="#5683da"
+          color2="#e100ff"
+          noiseFrequency={2.5}
+          noiseAmplitude={1}
+          bandHeight={0.5}
+          bandSpread={1}
+          octaveDecay={0.1}
+          layerOffset={0}
+          colorSpeed={1}
+          enableMouseInteraction
+          mouseInfluence={0.25}
+        />
+      </div>
+      <div className="relative z-10 max-w-7xl mx-auto">
         <div className="grid gap-10 mb-14 sm:grid-cols-2 sm:gap-12 sm:mb-20 lg:grid-cols-4">
           <div>
-            <Link to="/" className="text-2xl font-black mb-4 block hover:text-[#8fb0ef] transition-colors">IdeaForge</Link>
+            <Link to="/" className="text-2xl font-heading font-black mb-4 block hover:text-[#8fb0ef] transition-colors">IdeaForge</Link>
             <p className="text-sm text-[#a9a9aa] leading-relaxed mb-5">
               A calm operating layer for ideas, decisions, projects, and launch narratives.
             </p>

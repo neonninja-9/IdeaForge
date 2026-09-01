@@ -84,7 +84,7 @@ export default function AiLaunchpadModal({
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/75 backdrop-blur-md px-4 py-6 sm:px-6 overflow-y-auto">
-      <div className="animate-reveal-up relative w-full max-w-4xl rounded-[32px] border border-violet-500/20 bg-[#120F17] text-white shadow-2xl shadow-purple-950/50 p-6 sm:p-8 my-auto overflow-hidden">
+      <div className="animate-reveal-up relative w-full max-w-4xl rounded-[32px] border border-violet-500/20 bg-[#1C1917] text-white shadow-2xl shadow-purple-950/50 p-6 sm:p-8 my-auto overflow-hidden">
         {/* Ambient background glows */}
         <div className="pointer-events-none absolute -top-28 -right-28 size-96 rounded-full bg-violet-600/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-28 -left-28 size-96 rounded-full bg-indigo-600/20 blur-3xl" />

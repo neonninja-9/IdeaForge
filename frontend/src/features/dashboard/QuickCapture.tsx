@@ -36,20 +36,26 @@ export default function QuickCapture({ capture, setCapture, onManualEntry }: Qui
   }
 
   return (
-    <div className="mt-5 rounded-[22px] border border-slate-200 bg-slate-50 dark:border-white/10 dark:bg-[#1a1625] p-3 shadow-lg shadow-black/5 dark:shadow-2xl dark:shadow-black/30 sm:p-4">
-      <textarea value={capture} onChange={(event) => setCapture(event.target.value)} rows={2} placeholder="What's on your mind today? Jot down any raw thought..." className="min-h-16 w-full resize-none !border-none bg-transparent px-2 py-2 text-base text-slate-700 dark:text-slate-200 !outline-none focus:!outline-none focus-visible:!outline-none focus:!border-transparent focus:!ring-0 focus:!shadow-none !shadow-none placeholder:text-slate-400 dark:placeholder:text-slate-500 sm:text-lg" aria-label="Capture an idea" style={{ outline: 'none', boxShadow: 'none', borderColor: 'transparent' }} />
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 dark:border-white/10 pt-3">
+    <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-2 transition focus-within:border-vivid/50 focus-within:ring-2 focus-within:ring-vivid/20 dark:border-white/10 dark:bg-[#171323] sm:p-3">
+      <textarea
+        value={capture}
+        onChange={(event) => setCapture(event.target.value)}
+        rows={3}
+        placeholder="Describe a problem, feature, product, or rough thought..."
+        className="min-h-20 w-full resize-none border-none bg-transparent px-2 py-2 text-base leading-6 text-slate-800 shadow-none outline-none placeholder:text-slate-400 focus:border-transparent focus:outline-none focus:ring-0 dark:text-slate-100 dark:placeholder:text-slate-500"
+        aria-label="Capture an idea"
+      />
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-3 dark:border-white/10">
         <div className="flex items-center gap-1">
-          <span className="group relative"><button type="button" disabled className="grid size-10 cursor-not-allowed place-items-center rounded-xl text-slate-600" aria-label="Record voice note — coming soon"><Mic size={18} /></button><span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 shadow-lg transition group-hover:opacity-100">Coming soon</span></span>
-          <span className="group relative"><button type="button" disabled className="grid size-10 cursor-not-allowed place-items-center rounded-xl text-slate-600" aria-label="Add camera image — coming soon"><Camera size={18} /></button><span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 shadow-lg transition group-hover:opacity-100">Coming soon</span></span>
-          <span className="group relative"><button type="button" disabled className="grid size-10 cursor-not-allowed place-items-center rounded-xl text-slate-600" aria-label="Attach a file — coming soon"><FileUp size={18} /></button><span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-800 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 shadow-lg transition group-hover:opacity-100">Coming soon</span></span>
-          <span className="ml-1 hidden text-xs text-slate-500 sm:inline">A raw thought is all you need to start.</span>
+          <span className="group relative"><button type="button" disabled className="grid size-11 cursor-not-allowed place-items-center rounded-lg text-slate-400 dark:text-slate-600" aria-label="Record voice note, coming soon"><Mic size={18} /></button><span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 shadow-lg transition group-hover:opacity-100">Coming soon</span></span>
+          <span className="group relative"><button type="button" disabled className="grid size-11 cursor-not-allowed place-items-center rounded-lg text-slate-400 dark:text-slate-600" aria-label="Add camera image, coming soon"><Camera size={18} /></button><span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 shadow-lg transition group-hover:opacity-100">Coming soon</span></span>
+          <span className="group relative"><button type="button" disabled className="grid size-11 cursor-not-allowed place-items-center rounded-lg text-slate-400 dark:text-slate-600" aria-label="Attach a file, coming soon"><FileUp size={18} /></button><span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 shadow-lg transition group-hover:opacity-100">Coming soon</span></span>
         </div>
-        <div className="flex w-full sm:w-auto items-center justify-between sm:justify-start gap-2">
+        <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-start">
           <button
             type="button"
             onClick={onManualEntry}
-            className="inline-flex min-h-11 flex-1 sm:flex-none items-center justify-center rounded-xl bg-slate-200 text-slate-700 dark:bg-white/5 px-4 text-sm font-medium dark:text-white transition hover:bg-slate-300 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/20"
+            className="inline-flex min-h-11 flex-1 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A16207] dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 sm:flex-none"
           >
             Manual Entry
           </button>
@@ -57,7 +63,7 @@ export default function QuickCapture({ capture, setCapture, onManualEntry }: Qui
             type="button"
             onClick={handleMagicStructure}
             disabled={isStructuring || !capture.trim()}
-            className="inline-flex min-h-11 flex-1 sm:flex-none items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#fa520f] to-[#ffa110] px-4 text-sm font-semibold text-white shadow-lg shadow-[#fa520f]/20 transition hover:-translate-y-0.5 hover:from-[#ff8105] hover:to-[#ffa110] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#fa520f] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+            className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-vivid px-4 text-sm font-semibold text-white shadow-sm shadow-vivid/20 transition hover:bg-vivid-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A16207] disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
           >
             {isStructuring ? <LoaderCircle className="animate-spin" size={17} /> : <WandSparkles size={17} />}
             {isStructuring ? "Forging..." : "Magic Structure"}

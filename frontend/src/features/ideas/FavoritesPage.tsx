@@ -41,10 +41,10 @@ export default function FavoritesPage() {
               <Link
                 key={idea.id || idea._id}
                 to={`/idea/${idea.id || idea._id}`}
-                className="rounded-[28px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-6 shadow-sm dark:shadow-none transition hover:-translate-y-0.5 hover:border-rose-200 dark:hover:border-rose-500/30 hover:shadow-md"
+                className="rounded-[28px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#1C1917] p-6 shadow-sm dark:shadow-none transition hover:-translate-y-0.5 hover:border-rose-200 dark:hover:border-rose-500/30 hover:shadow-md"
               >
                 <div className="flex items-center justify-between">
-                  <span className="rounded-full bg-[#fff8e0] dark:bg-white/5 px-3 py-1 text-xs font-semibold text-[#fa520f] dark:text-[#fa520f]">
+                  <span className="rounded-full bg-[#FEF3C7] dark:bg-white/5 px-3 py-1 text-xs font-semibold text-[#A16207] dark:text-[#A16207]">
                     {idea.category?.name || "Uncategorized"}
                   </span>
                   <Heart size={18} className="fill-rose-500 text-rose-500" />
@@ -56,7 +56,7 @@ export default function FavoritesPage() {
             ))}
           </section>
         ) : (
-          <section className="mt-9 rounded-[30px] border border-dashed border-rose-200 dark:border-rose-500/20 bg-white dark:bg-[#120F17] px-6 py-20 text-center flex flex-col items-center justify-center">
+          <section className="mt-9 rounded-[30px] border border-dashed border-rose-200 dark:border-rose-500/20 bg-white dark:bg-[#1C1917] px-6 py-20 text-center flex flex-col items-center justify-center">
             {/* Custom SVG Illustration */}
             <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="mb-6">
               <circle cx="60" cy="60" r="40" fill="url(#heartGlow)" fillOpacity="0.2" />
@@ -71,7 +71,7 @@ export default function FavoritesPage() {
             </svg>
             <h2 className="font-heading mt-5 text-xl font-bold text-slate-900 dark:text-white">No favorites yet.</h2>
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500 dark:text-slate-400">Open an idea and use the heart button to save it here.</p>
-            <Link to="/explore" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#fa520f] px-4 text-sm font-semibold text-white hover:bg-[#cc3a05]">
+            <Link to="/explore" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#A16207] px-4 text-sm font-semibold text-white hover:bg-[#854D0E]">
               <Lightbulb size={17} /> Explore ideas
             </Link>
           </section>

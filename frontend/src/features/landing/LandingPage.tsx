@@ -22,6 +22,7 @@ import FlowingMenu from "./effects/flowingMenu";
 import AccordionGallery from "./effects/accordilonGalllary";
 import ScrollExpand from "./effects/scrollExpand";
 import ScrollVelocity from "./effects/scrollVelocity";
+import MagicRings from "../../components/MagicRings";
 
 const DriftWall = lazy(() => import("./effects/driftWall"));
 
@@ -37,7 +38,7 @@ const Hero = lazy(() => import("./Hero"));
    ═══════════════════════════════════════════════════════════════════════════ */
 function VelocityBand() {
   return (
-    <section className="relative bg-[#090a0c] py-8 overflow-hidden border-t border-white/5">
+    <section className="relative bg-[#0C0A09] py-8 overflow-hidden border-t border-white/5">
       <ScrollVelocity
         texts={[
           "Submit Ideas",
@@ -60,10 +61,8 @@ function VelocityBand() {
    ═══════════════════════════════════════════════════════════════════════════ */
 function CinematicReveal() {
   return (
-    <section className="relative bg-[#090a0c] w-full">
+    <section className="relative bg-[#0C0A09] w-full">
       <ScrollExpand
-        src="/images/screenshots/dashboard.jpg"
-        mediaType="image"
         alt="IdeaForge workspace dashboard"
         title="From Problem to Project in Minutes"
         scrollHint="Scroll to explore"
@@ -78,11 +77,38 @@ function CinematicReveal() {
         overlayScrim={0.75}
         useWindowScroll={true}
       >
-        <div className="flex flex-col items-center gap-6">
-          <p className="text-white/90 text-lg sm:text-xl max-w-lg font-medium drop-shadow-md">
+        <div className="flex flex-col items-center gap-6 relative w-full h-full justify-center">
+          {/* MagicRings Background Overlay */}
+          <div className="absolute inset-0 z-0 opacity-80 mix-blend-screen overflow-hidden">
+            <MagicRings
+              color="#A855F7"
+              colorTwo="#6366F1"
+              ringCount={6}
+              speed={1}
+              attenuation={10}
+              lineThickness={2}
+              baseRadius={0.35}
+              radiusStep={0.1}
+              scaleRate={0.1}
+              opacity={1}
+              blur={0}
+              noiseAmount={0.1}
+              rotation={0}
+              ringGap={1.5}
+              fadeIn={0.7}
+              fadeOut={0.5}
+              followMouse={true}
+              mouseInfluence={0.1}
+              hoverScale={1.1}
+              parallax={0.02}
+              clickBurst={true}
+            />
+          </div>
+          
+          <p className="text-white/90 text-lg sm:text-xl max-w-lg font-medium drop-shadow-md relative z-10 text-center">
             A platform that transforms scattered real-world problems into structured, AI-enriched project ideas with roadmaps and tech stack recommendations.
           </p>
-          <Link to="/register">
+          <Link to="/register" className="relative z-10">
             <SpecularButton
               size="lg"
               radius={28}
@@ -120,7 +146,7 @@ function FeatureExplorer() {
   ];
 
   return (
-    <section className="relative bg-[#0a0b0e]">
+    <section className="relative bg-[#1C1917]">
       <div className="mx-auto max-w-[1200px] px-5 pt-20 pb-4 sm:px-6 lg:px-10">
         <ScrollFloat
           containerClassName="!my-0"
@@ -134,9 +160,9 @@ function FeatureExplorer() {
           items={menuItems}
           speed={12}
           textColor="#fff"
-          bgColor="#0a0b0e"
+          bgColor="#1C1917"
           marqueeBgColor="#9bb4ff"
-          marqueeTextColor="#090a0c"
+          marqueeTextColor="#0C0A09"
           borderColor="rgba(255,255,255,0.08)"
         />
       </div>
@@ -172,7 +198,7 @@ function FeaturesShowcase() {
   ];
 
   return (
-    <section className="relative bg-[#090a0c] py-20 sm:py-28">
+    <section className="relative bg-[#0C0A09] py-20 sm:py-28">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-6 lg:px-10">
         <ScrollFloat
           containerClassName="!my-0 !mb-10"
@@ -185,7 +211,7 @@ function FeaturesShowcase() {
           items={galleryItems}
           defaultIndex={0}
           accentColor="#9bb4ff"
-          overlayColor="#090a0c"
+          overlayColor="#0C0A09"
           textColor="#ffffff"
           height={480}
           gap={12}
@@ -216,7 +242,7 @@ function StatsSection() {
   ];
 
   return (
-    <section className="relative bg-[#090a0c] py-20 sm:py-28 border-t border-white/5">
+    <section className="relative bg-[#0C0A09] py-20 sm:py-28 border-t border-white/5">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-6 lg:px-10">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12">
           {stats.map((stat) => (
@@ -257,7 +283,7 @@ function ActivityFeed() {
   ];
 
   return (
-    <section className="relative bg-[#0a0b0e] py-20 sm:py-28">
+    <section className="relative bg-[#1C1917] py-20 sm:py-28">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-6 lg:px-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Left: Description */}
@@ -330,7 +356,7 @@ function ShowcaseWall() {
   ];
 
   return (
-    <section className="relative bg-[#090a0c] overflow-hidden">
+    <section className="relative bg-[#0C0A09] overflow-hidden">
       <div className="mx-auto max-w-[1200px] px-5 sm:px-6 lg:px-10 pt-20 sm:pt-28 pb-6">
         <ScrollFloat
           containerClassName="!my-0"
@@ -341,7 +367,7 @@ function ShowcaseWall() {
       </div>
 
       <div className="h-[500px] sm:h-[600px] relative">
-        <Suspense fallback={<div className="h-full bg-[#090a0c]" />}>
+        <Suspense fallback={<div className="h-full bg-[#0C0A09]" />}>
           <DriftWall
             items={wallItems}
             columns={5}
@@ -362,7 +388,7 @@ function ShowcaseWall() {
             fade={0.6}
             dim={0.55}
             grayscale
-            overlayColor="#090a0c"
+            overlayColor="#0C0A09"
           />
         </Suspense>
       </div>
@@ -375,7 +401,7 @@ function ShowcaseWall() {
    ═══════════════════════════════════════════════════════════════════════════ */
 function CTASection() {
   return (
-    <section className="relative bg-[#090a0c] py-24 sm:py-32 overflow-hidden border-t border-white/5">
+    <section className="relative bg-[#0C0A09] py-24 sm:py-32 overflow-hidden border-t border-white/5">
       {/* Ambient glow */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,rgba(155,180,255,0.08)_0%,transparent_60%)]" />
 
@@ -441,9 +467,9 @@ function CTASection() {
    ═══════════════════════════════════════════════════════════════════════════ */
 export default function LandingPage() {
   return (
-    <main className="bg-[#090a0c] text-white">
+    <main className="bg-[#0C0A09] text-white">
       {/* Section 1: Hero with LaserFlow + BlurText + Shuffle + SpecularButton */}
-      <Suspense fallback={<div className="min-h-screen bg-[#090a0c]" />}>
+      <Suspense fallback={<div className="min-h-screen bg-[#0C0A09]" />}>
         <Hero />
       </Suspense>
 

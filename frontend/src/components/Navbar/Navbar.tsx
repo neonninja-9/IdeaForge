@@ -34,18 +34,22 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed inset-x-0 top-0 z-50 border-b transition-all duration-300 ${
-        scrolled
-          ? "border-white/10 bg-[#090a0c]/88 backdrop-blur-xl"
-          : "border-transparent bg-transparent"
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+        scrolled ? "pt-4" : "pt-0"
       }`}
     >
-      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-5 sm:px-6 lg:px-0">
+      <div 
+        className={`mx-auto flex items-center justify-between transition-all duration-500 ${
+          scrolled 
+            ? "h-14 w-[95%] max-w-[1000px] rounded-full border border-white/15 bg-[#0C0A09]/50 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] px-5 sm:px-8" 
+            : "h-20 w-full max-w-[1200px] rounded-none border border-transparent bg-transparent px-5 sm:px-6 lg:px-0"
+        }`}
+      >
         <Link to="/" className="flex items-center gap-2 text-white">
-          <span className="grid size-8 place-items-center rounded-lg bg-white text-[#090a0c]">
+          <span className="grid size-8 place-items-center rounded-lg bg-white text-[#0C0A09]">
             <Sparkles className="size-4" />
           </span>
-          <span className="text-lg font-black">IdeaForge</span>
+          <span className="text-lg font-heading font-black">IdeaForge</span>
         </Link>
 
         <div className="hidden items-center gap-8 md:flex">
@@ -122,8 +126,12 @@ export default function Navbar() {
         </button>
       </div>
 
-      <div className={`md:hidden ${mobileOpen ? "block" : "hidden"}`}>
-        <div className="border-t border-white/10 bg-[#090a0c] px-5 py-5">
+      <div 
+        className={`md:hidden absolute left-0 right-0 top-full mt-2 mx-auto w-[95%] max-w-[400px] transition-all duration-300 origin-top ${
+          mobileOpen ? "opacity-100 scale-y-100 pointer-events-auto" : "opacity-0 scale-y-95 pointer-events-none"
+        }`}
+      >
+        <div className="rounded-2xl border border-white/10 bg-[#0C0A09]/95 backdrop-blur-xl p-5 shadow-2xl">
           {navLinks.map((link) => (
             <a
               key={link.label}

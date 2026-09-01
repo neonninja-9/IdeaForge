@@ -18,8 +18,8 @@
   /* ── Mistral Surface colors ── */
   --color-surface: #ffffff;
   --color-surface-alt: #fafafa;
-  --color-surface-cream: #fff8e0;
-  --color-surface-cream-soft: #fffaeb;
+  --color-surface-cream: #FEF3C7;
+  --color-surface-cream-soft: #FFFBEB;
   --color-surface-idea: #fff0c2;
   --color-surface-dark: #0a0a0a;
   --color-surface-dark-card: #141414;
@@ -37,26 +37,26 @@
   --color-edge-dark: #2a2a2a;
 
   /* ── Mistral Accent (saturated orange) ── */
-  --color-vivid: #fa520f;
-  --color-vivid-light: #ff8105;
-  --color-vivid-hover: #cc3a05;
+  --color-vivid: #A16207;
+  --color-vivid-light: #CA8A04;
+  --color-vivid-hover: #854D0E;
 
   /* ── Mistral Cream palette ── */
-  --color-cream: #fff8e0;
-  --color-cream-light: #fffaeb;
+  --color-cream: #FEF3C7;
+  --color-cream-light: #FFFBEB;
   --color-cream-deeper: #fff0c2;
-  --color-beige-deep: #e6d5a8;
+  --color-beige-deep: #FDE047;
 
   /* ── Mistral Sunshine gradient stops ── */
   --color-sunshine-300: #ffd06a;
   --color-sunshine-500: #ffb83e;
-  --color-sunshine-700: #ffa110;
-  --color-sunshine-800: #ff8105;
+  --color-sunshine-700: #EAB308;
+  --color-sunshine-800: #CA8A04;
   --color-sunshine-900: #ff8a00;
   --color-yellow-saturated: #ffd900;
 
   /* ── Dot grid ── */
-  --color-dot: #e6d5a8;
+  --color-dot: #FDE047;
 }
 
 html {
@@ -352,12 +352,12 @@ textarea:focus-visible {
 .sunset-stripe {
   background: linear-gradient(
     90deg,
-    #fa520f 0%,
+    #A16207 0%,
     #ff8a00 20%,
-    #ffa110 40%,
+    #EAB308 40%,
     #ffb83e 60%,
     #ffd900 80%,
-    #fff8e0 100%
+    #FEF3C7 100%
   );
   height: 6px;
   width: 100%;
@@ -415,32 +415,32 @@ textarea:focus-visible {
   --card-foreground: #1f1f1f;
   --popover: #ffffff;
   --popover-foreground: #1f1f1f;
-  --primary: #fa520f;
+  --primary: #A16207;
   --primary-foreground: #ffffff;
-  --secondary: #fffaeb;
+  --secondary: #FFFBEB;
   --secondary-foreground: #1f1f1f;
-  --muted: #fff8e0;
+  --muted: #FEF3C7;
   --muted-foreground: #6a6a6a;
-  --accent: #fffaeb;
+  --accent: #FFFBEB;
   --accent-foreground: #1f1f1f;
   --destructive: oklch(0.577 0.245 27.325);
   --border: #ededed;
   --input: #c7c7c7;
-  --ring: #fa520f;
-  --chart-1: #fa520f;
-  --chart-2: #ffa110;
+  --ring: #A16207;
+  --chart-1: #A16207;
+  --chart-2: #EAB308;
   --chart-3: #ffb83e;
   --chart-4: #ffd06a;
-  --chart-5: #fff8e0;
+  --chart-5: #FEF3C7;
   --radius: 0.5rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #1f1f1f;
   --sidebar-primary: #1f1f1f;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #fffaeb;
+  --sidebar-accent: #FFFBEB;
   --sidebar-accent-foreground: #1f1f1f;
   --sidebar-border: #ededed;
-  --sidebar-ring: #fa520f;
+  --sidebar-ring: #A16207;
 }
 
 .dark {
@@ -488,7 +488,7 @@ textarea:focus-visible {
     @apply font-sans;
   }
   *:focus-visible {
-    @apply outline-none ring-2 ring-offset-2 ring-[#fa520f] dark:ring-[#ff8105] ring-offset-white dark:ring-offset-[#100d1b];
+    @apply outline-none ring-2 ring-offset-2 ring-[#A16207] dark:ring-[#CA8A04] ring-offset-white dark:ring-offset-[#100d1b];
   }
 }
 
