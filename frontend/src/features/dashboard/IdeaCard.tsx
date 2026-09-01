@@ -37,8 +37,8 @@ export default function IdeaCard({
             <p className="text-sm font-semibold text-slate-800 dark:text-white">Delete this idea?</p>
             <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">This action cannot be undone. All votes and comments will also be removed.</p>
             <div className="mt-4 flex gap-2">
-              <button onClick={() => onDeleteConfirm(null)} className="flex-1 rounded-xl border border-slate-200 dark:border-white/10 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-white/5">Cancel</button>
-              <button onClick={() => onDelete(ideaId)} disabled={isDeleting} className="flex-1 rounded-xl bg-rose-600 py-2.5 text-xs font-semibold text-white transition hover:bg-rose-700 disabled:opacity-60">{isDeleting ? "Deleting..." : "Delete"}</button>
+              <button onClick={() => onDeleteConfirm(null)} className="flex-1 min-h-11 sm:min-h-10 rounded-xl border border-slate-200 dark:border-white/10 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300 transition hover:bg-slate-50 dark:hover:bg-white/5">Cancel</button>
+              <button onClick={() => onDelete(ideaId)} disabled={isDeleting} className="flex-1 min-h-11 sm:min-h-10 rounded-xl bg-rose-600 py-2.5 text-xs font-semibold text-white transition hover:bg-rose-700 disabled:opacity-60">{isDeleting ? "Deleting..." : "Delete"}</button>
             </div>
           </div>
         </div>
@@ -49,8 +49,8 @@ export default function IdeaCard({
           {isDraft && <span className="rounded-full bg-amber-50 dark:bg-amber-500/10 px-3 py-1.5 text-[10px] font-bold tracking-wide text-amber-700 dark:text-amber-400 uppercase">Draft</span>}
         </div>
         <div className="flex items-center gap-1">
-          <button onClick={() => onDeleteConfirm(ideaId)} className="grid size-10 place-items-center rounded-full text-slate-300 dark:text-slate-600 transition hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-500" aria-label={`Delete ${idea.title}`}><Trash2 size={16} /></button>
-          <button className="grid size-10 place-items-center rounded-full text-slate-300 dark:text-slate-500 transition hover:bg-vivid/10 hover:text-vivid" aria-label={`Favorite ${idea.title}`}><Heart size={18} /></button>
+          <button onClick={() => onDeleteConfirm(ideaId)} className="grid size-11 sm:size-10 place-items-center rounded-full text-slate-300 dark:text-slate-600 transition hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-500" aria-label={`Delete ${idea.title}`}><Trash2 size={16} /></button>
+          <button className="grid size-11 sm:size-10 place-items-center rounded-full text-slate-300 dark:text-slate-500 transition hover:bg-vivid/10 hover:text-vivid" aria-label={`Favorite ${idea.title}`}><Heart size={18} /></button>
         </div>
       </div>
       <Link to={`/idea/${ideaId}`} className="mt-8 block"><h3 className="font-heading line-clamp-2 text-xl font-bold leading-tight text-slate-900 dark:text-white group-hover:text-vivid transition-colors">{idea.title}</h3><p className="mt-3 line-clamp-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">{idea.problem}</p></Link>

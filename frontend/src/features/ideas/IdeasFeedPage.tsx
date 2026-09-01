@@ -99,7 +99,7 @@ export default function IdeasFeedPage() {
     <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent transition-colors duration-500">
       <main className="mx-auto max-w-7xl px-5 py-7 sm:px-8 sm:py-10 xl:px-12">
         <header className="mb-8">
-          <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">COMMUNITY IDEAS</p>
+          <p className="text-sm font-semibold text-[#fa520f] dark:text-[#fa520f]">COMMUNITY IDEAS</p>
           <h1 className="font-heading mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">Explore what people are building.</h1>
           <p className="mt-3 max-w-2xl text-base leading-7 text-slate-500 dark:text-slate-400">Find a promising thread, add your perspective, or turn one into your next experiment.</p>
         </header>
@@ -114,14 +114,14 @@ export default function IdeasFeedPage() {
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                className="w-full min-h-12 rounded-xl border border-slate-200 dark:border-white/10 bg-[#fcfcfd] dark:bg-[#1a1625] py-2.5 pl-10 pr-4 text-sm text-slate-800 dark:text-slate-200 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500/30"
+                className="w-full min-h-12 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] py-2.5 pl-10 pr-4 text-sm text-slate-800 dark:text-slate-200 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-[#fff8e0]0/30"
                 placeholder="Search ideas..."
               />
               {searchInput && (
                 <button
                   type="button"
                   onClick={() => setSearchInput("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-200 rounded-full p-0.5 transition-colors cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#fa520f]/30 rounded-full p-0.5 transition-colors cursor-pointer"
                   aria-label="Clear search"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -136,7 +136,7 @@ export default function IdeasFeedPage() {
               aria-label="Filter by category"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="min-h-12 w-full cursor-pointer rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500/30 md:w-48"
+              className="min-h-12 w-full cursor-pointer rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-[#fff8e0]0/30 md:w-48"
             >
               <option value="">All Categories</option>
               {categories.map((cat) => (
@@ -149,7 +149,7 @@ export default function IdeasFeedPage() {
               aria-label="Filter by difficulty"
               value={selectedDifficulty}
               onChange={(e) => setSelectedDifficulty(e.target.value)}
-              className="min-h-12 w-full cursor-pointer rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500/30 md:w-40"
+              className="min-h-12 w-full cursor-pointer rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-[#fff8e0]0/30 md:w-40"
             >
               <option value="">All Levels</option>
               <option value="Beginner">Beginner</option>
@@ -162,7 +162,7 @@ export default function IdeasFeedPage() {
               aria-label="Sort ideas"
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="min-h-12 w-full cursor-pointer rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-500/30 md:ml-auto md:w-40"
+              className="min-h-12 w-full cursor-pointer rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:focus:ring-[#fff8e0]0/30 md:ml-auto md:w-40"
             >
               <option value="newest">Newest</option>
               <option value="top">Most Voted</option>
@@ -171,7 +171,7 @@ export default function IdeasFeedPage() {
           </div>
           <p className="text-sm text-slate-500 dark:text-slate-400">
             {total} idea{total !== 1 ? "s" : ""} found
-            {refreshing && <span className="ml-2 text-indigo-500 dark:text-indigo-400">Updating...</span>}
+            {refreshing && <span className="ml-2 text-[#fa520f] dark:text-[#fa520f]">Updating...</span>}
           </p>
           {loadError && hasLoadedIdeas && (
             <p className="mt-2 text-sm text-red-500 dark:text-red-400">{loadError}</p>
@@ -186,7 +186,7 @@ export default function IdeasFeedPage() {
         ) : loading || !hasLoadedIdeas ? (
           <PageSkeleton variant="feed" />
         ) : ideas.length === 0 ? (
-          <div className="rounded-[28px] border border-dashed border-indigo-200 dark:border-indigo-500/20 bg-white dark:bg-[#120F17] p-16 text-center shadow-sm dark:shadow-none">
+          <div className="rounded-[28px] border border-dashed border-[#e6d5a8] dark:border-white/10 bg-white dark:bg-[#120F17] p-16 text-center shadow-sm dark:shadow-none">
             <div className="text-5xl mb-4">🔍</div>
             <h3 className="font-heading mb-2 text-xl font-bold text-slate-900 dark:text-white">No ideas found</h3>
             <p className="mx-auto mb-6 max-w-md text-sm text-slate-500 dark:text-slate-400">
@@ -197,7 +197,7 @@ export default function IdeasFeedPage() {
             {user && (
               <Link
                 to="/submit"
-                className="inline-flex min-h-11 items-center rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white transition hover:bg-indigo-700"
+                className="inline-flex min-h-11 items-center rounded-xl bg-[#fa520f] px-5 text-sm font-semibold text-white transition hover:bg-[#cc3a05]"
               >
                 Submit an Idea
               </Link>
@@ -209,11 +209,11 @@ export default function IdeasFeedPage() {
               <Link
                 key={idea.id || idea._id}
                 to={`/idea/${idea.id || idea._id}`}
-                className="group flex flex-col rounded-[24px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-6 shadow-sm dark:shadow-none transition-all duration-300 hover:-translate-y-0.5 hover:border-indigo-200 dark:hover:border-indigo-500/30 hover:shadow-lg"
+                className="group flex flex-col rounded-[24px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-6 shadow-sm dark:shadow-none transition-all duration-300 hover:-translate-y-0.5 hover:border-[#e6d5a8] dark:hover:border-white/15 hover:shadow-lg"
               >
                 {/* Category & Date */}
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="rounded-full bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1 text-[10px] font-bold tracking-wider text-indigo-600 dark:text-indigo-400">
+                  <span className="rounded-full bg-[#fff8e0] dark:bg-white/5 px-3 py-1 text-[10px] font-bold tracking-wider text-[#fa520f] dark:text-[#fa520f]">
                     {idea.category?.name || "Uncategorized"}
                   </span>
                   <span className="ml-auto text-[10px] text-slate-400 dark:text-slate-500">
@@ -222,7 +222,7 @@ export default function IdeasFeedPage() {
                 </div>
 
                 {/* Title */}
-                <h3 className="mb-2 text-base font-bold text-slate-900 dark:text-white transition-colors group-hover:text-indigo-600 dark:group-hover:text-indigo-400 line-clamp-2">
+                <h3 className="mb-2 text-base font-bold text-slate-900 dark:text-white transition-colors group-hover:text-[#fa520f] dark:group-hover:text-[#fa520f] line-clamp-2">
                   {idea.title}
                 </h3>
 

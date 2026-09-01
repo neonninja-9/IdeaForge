@@ -44,7 +44,7 @@ export default function FavoritesPage() {
                 className="rounded-[28px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-6 shadow-sm dark:shadow-none transition hover:-translate-y-0.5 hover:border-rose-200 dark:hover:border-rose-500/30 hover:shadow-md"
               >
                 <div className="flex items-center justify-between">
-                  <span className="rounded-full bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                  <span className="rounded-full bg-[#fff8e0] dark:bg-white/5 px-3 py-1 text-xs font-semibold text-[#fa520f] dark:text-[#fa520f]">
                     {idea.category?.name || "Uncategorized"}
                   </span>
                   <Heart size={18} className="fill-rose-500 text-rose-500" />
@@ -56,13 +56,22 @@ export default function FavoritesPage() {
             ))}
           </section>
         ) : (
-          <section className="mt-9 rounded-[30px] border border-dashed border-rose-200 dark:border-rose-500/20 bg-white dark:bg-[#120F17] px-6 py-16 text-center">
-            <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-rose-50 dark:bg-rose-500/10 text-rose-500 dark:text-rose-400">
-              <Heart size={25} />
-            </span>
+          <section className="mt-9 rounded-[30px] border border-dashed border-rose-200 dark:border-rose-500/20 bg-white dark:bg-[#120F17] px-6 py-20 text-center flex flex-col items-center justify-center">
+            {/* Custom SVG Illustration */}
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="mb-6">
+              <circle cx="60" cy="60" r="40" fill="url(#heartGlow)" fillOpacity="0.2" />
+              <path d="M60 40C60 40 50 30 40 30C30 30 24 38 24 48C24 64 60 84 60 84C60 84 96 64 96 48C96 38 90 30 80 30C70 30 60 40 60 40Z" stroke="currentColor" className="text-rose-200 dark:text-rose-500/20" strokeWidth="2" strokeDasharray="4 4" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M60 48C60 48 53 41 46 41C39 41 35 46.5 35 53.5C35 64.5 60 78.5 60 78.5C60 78.5 85 64.5 85 53.5C85 46.5 81 41 74 41C67 41 60 48 60 48Z" fill="#f43f5e" />
+              <defs>
+                <radialGradient id="heartGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(60 60) rotate(90) scale(40)">
+                  <stop stopColor="#f43f5e" />
+                  <stop offset="1" stopColor="#f43f5e" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+            </svg>
             <h2 className="font-heading mt-5 text-xl font-bold text-slate-900 dark:text-white">No favorites yet.</h2>
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500 dark:text-slate-400">Open an idea and use the heart button to save it here.</p>
-            <Link to="/explore" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white hover:bg-indigo-700">
+            <Link to="/explore" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#fa520f] px-4 text-sm font-semibold text-white hover:bg-[#cc3a05]">
               <Lightbulb size={17} /> Explore ideas
             </Link>
           </section>

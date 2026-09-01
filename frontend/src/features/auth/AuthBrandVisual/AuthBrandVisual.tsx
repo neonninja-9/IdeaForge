@@ -26,7 +26,7 @@ export default function AuthBrandVisual({ caption }: { caption: string }) {
       {/* Free-floating Particle Text with zero bounding box/background */}
       <div className="relative h-[240px] sm:h-[280px] w-full flex items-center justify-center">
         {/* Soft ambient neon radial glow */}
-        <div className="absolute left-1/2 top-1/2 h-44 w-[85%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-indigo-500/15 via-purple-500/20 to-pink-500/15 dark:from-indigo-500/20 dark:via-purple-500/25 dark:to-pink-500/15 blur-3xl pointer-events-none" />
+        <div className="absolute left-1/2 top-1/2 h-44 w-[85%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 dark:from-blue-500/25 dark:via-purple-500/25 dark:to-pink-500/25 blur-3xl pointer-events-none" />
 
         {/* Interactive Particle Text Effect - Loads animation only once, repels interactively */}
         <div className="relative z-10 size-full flex items-center justify-center cursor-crosshair">

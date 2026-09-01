@@ -19,9 +19,10 @@ import favoriteRoutes from "./favorite.routes.js";
 import notificationRoutes from "./notification.routes.js";
 import templateRoutes from "./template.routes.js";
 import uploadRoutes from "./upload.routes.js";
-
+import solutionRoutes from "./solution.routes.js";
 const router = Router();
 
+router.use("/", solutionRoutes); // Mount before /ideas to catch /ideas/:ideaId/solutions
 router.use("/auth", authRoutes);
 router.use("/ideas", ideaRoutes);
 router.use("/categories", categoryRoutes);
@@ -35,5 +36,4 @@ router.use("/favorites", favoriteRoutes);
 router.use("/notifications", notificationRoutes);
 router.use("/templates", templateRoutes);
 router.use("/upload", uploadRoutes);
-
 export default router;

@@ -1,7 +1,7 @@
 import { Clock3 } from "lucide-react";
 
 const inspirations = [
-  { title: "Technology", prompt: "What everyday task could AI make simpler?", tone: "from-indigo-500 to-violet-500", icon: "✦" },
+  { title: "Technology", prompt: "What everyday task could AI make simpler?", tone: "from-[#fa520f] to-[#fff8e0]0", icon: "✦" },
   { title: "Healthcare", prompt: "How could care feel more personal?", tone: "from-emerald-500 to-teal-500", icon: "✚" },
   { title: "Education", prompt: "What would make learning more accessible?", tone: "from-amber-400 to-orange-500", icon: "⌁" },
   { title: "Environment", prompt: "What small habit could create a bigger impact?", tone: "from-sky-500 to-cyan-500", icon: "◌" },

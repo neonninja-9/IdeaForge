@@ -161,7 +161,7 @@ export interface NotificationItem {
   _id?: string;
   recipient: string;
   actor: { _id: string; id?: string; username: string; avatarUrl?: string };
-  type: "vote" | "comment" | "mention" | "system";
+  type: "vote" | "comment" | "mention" | "system" | "solution" | "upvote";
   idea?: { _id: string; id?: string; title: string };
   read: boolean;
   createdAt: string;
@@ -180,5 +180,41 @@ export interface FavoritesResponse {
   data: {
     favorites: string[];
     ideas?: Idea[];
+  };
+}
+
+export interface AlternativeSolution {
+  id: string;
+  _id: string;
+  idea: string;
+  author: { _id: string; id?: string; username: string; avatar?: string };
+  title: string;
+  description: string;
+  techStack?: string;
+  upvotes: number;
+  upvotedBy: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SolutionsListResponse {
+  status: "success";
+  data: {
+    solutions: AlternativeSolution[];
+  };
+}
+
+export interface SolutionResponse {
+  status: "success";
+  data: {
+    solution: AlternativeSolution;
+  };
+}
+
+export interface SolutionVoteToggleResponse {
+  status: "success";
+  data: {
+    voted: boolean;
+    upvotes: number;
   };
 }
