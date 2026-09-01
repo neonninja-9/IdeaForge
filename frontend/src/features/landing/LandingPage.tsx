@@ -6,6 +6,7 @@
  */
 
 import { lazy, Suspense, useEffect } from "react";
+import { useInView } from "react-intersection-observer";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import { Link } from "react-router-dom";
@@ -31,6 +32,15 @@ const DriftWall = lazy(() => import("./effects/driftWall"));
 
 /* ── Lazy Hero with LaserFlow (heavy WebGL) ── */
 const Hero = lazy(() => import("./Hero"));
+
+function LazySection({ children, minHeight = "500px" }: { children: React.ReactNode, minHeight?: string }) {
+  const { ref, inView } = useInView({ rootMargin: "600px", triggerOnce: true });
+  return (
+    <div ref={ref} style={{ minHeight: inView ? "auto" : minHeight, width: "100%" }}>
+      {inView ? children : null}
+    </div>
+  );
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    Section 1: Hero
@@ -504,26 +514,38 @@ export default function LandingPage() {
       </div>
 
       {/* Section 4: FlowingMenu Feature Explorer */}
-      <FeatureExplorer />
+      <LazySection minHeight="600px">
+        <FeatureExplorer />
+      </LazySection>
 
       {/* Section 5: AccordionGallery Features */}
       <div id="workflow">
-        <FeaturesShowcase />
+        <LazySection minHeight="800px">
+          <FeaturesShowcase />
+        </LazySection>
       </div>
 
       {/* Section 6: Stats CountUp */}
-      <StatsSection />
+      <LazySection minHeight="400px">
+        <StatsSection />
+      </LazySection>
 
       {/* Section 7: AnimatedList Activity Feed */}
       <div id="metabrain">
-        <ActivityFeed />
+        <LazySection minHeight="800px">
+          <ActivityFeed />
+        </LazySection>
       </div>
 
       {/* Section 8: DriftWall Showcase */}
-      <ShowcaseWall />
+      <LazySection minHeight="700px">
+        <ShowcaseWall />
+      </LazySection>
 
       {/* Section 9: CTA with SpecularButton + BlurText */}
-      <CTASection />
+      <LazySection minHeight="400px">
+        <CTASection />
+      </LazySection>
     </main>
   );
 }

@@ -129,22 +129,30 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
     lastPositionRef.current = { x, y };
     const containerRect = containerRef.current.getBoundingClientRect();
 
-    letterRefs.current.forEach((letterRef, index) => {
-      if (!letterRef) return;
-
+    // Phase 1: READ
+    const letterData = letterRefs.current.map((letterRef) => {
+      if (!letterRef) return null;
       const rect = letterRef.getBoundingClientRect();
-      const letterCenterX = rect.left + rect.width / 2 - containerRect.left;
-      const letterCenterY = rect.top + rect.height / 2 - containerRect.top;
+      return {
+        letterRef,
+        letterCenterX: rect.left + rect.width / 2 - containerRect.left,
+        letterCenterY: rect.top + rect.height / 2 - containerRect.top
+      };
+    });
+
+    // Phase 2: WRITE
+    letterData.forEach((data, index) => {
+      if (!data) return;
 
       const distance = calculateDistance(
         mousePositionRef.current.x,
         mousePositionRef.current.y,
-        letterCenterX,
-        letterCenterY
+        data.letterCenterX,
+        data.letterCenterY
       );
 
       if (distance >= radius) {
-        letterRef.style.fontVariationSettings = fromFontVariationSettings;
+        data.letterRef.style.fontVariationSettings = fromFontVariationSettings;
         return;
       }
 
@@ -157,7 +165,7 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
         .join(', ');
 
       interpolatedSettingsRef.current[index] = newSettings;
-      letterRef.style.fontVariationSettings = newSettings;
+      data.letterRef.style.fontVariationSettings = newSettings;
     });
   });
 

@@ -5,9 +5,11 @@ import AppError from "../utils/AppError.js";
 
 const UPLOADS_DIR = path.resolve(process.cwd(), "uploads");
 
-// Ensure directory exists
-if (!fs.existsSync(UPLOADS_DIR)) {
-    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+// Ensure directory exists (only if not on Vercel, as Vercel has a read-only filesystem)
+if (!process.env.VERCEL) {
+    if (!fs.existsSync(UPLOADS_DIR)) {
+        fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+    }
 }
 
 const uploadController = {
@@ -21,6 +23,10 @@ const uploadController = {
 
             if (!data || !name) {
                 throw new AppError("File data and name are required", 400);
+            }
+
+            if (process.env.VERCEL) {
+                throw new AppError("Local file uploads are not supported in Vercel's serverless environment. Please configure a cloud storage provider (e.g., AWS S3, Cloudinary).", 501);
             }
 
             // Extract base64 payload

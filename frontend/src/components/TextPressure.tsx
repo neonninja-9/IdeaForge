@@ -138,16 +138,22 @@ const TextPressure: React.FC<TextPressureProps> = ({
         const titleRect = titleRef.current.getBoundingClientRect();
         const maxDist = titleRect.width / 2;
 
-        spansRef.current.forEach(span => {
-          if (!span) return;
-
+        // Phase 1: READ (get all rects before modifying any styles to prevent forced synchronous layouts)
+        const charData = spansRef.current.map(span => {
+          if (!span) return null;
           const rect = span.getBoundingClientRect();
-          const charCenter = {
-            x: rect.x + rect.width / 2,
-            y: rect.y + rect.height / 2
+          return {
+            span,
+            centerX: rect.x + rect.width / 2,
+            centerY: rect.y + rect.height / 2
           };
+        });
 
-          const d = dist(mouseRef.current, charCenter);
+        // Phase 2: WRITE (apply all style changes)
+        charData.forEach(data => {
+          if (!data) return;
+
+          const d = dist(mouseRef.current, { x: data.centerX, y: data.centerY });
 
           const wdth = width ? Math.floor(getAttr(d, maxDist, 5, 200)) : 100;
           const wght = weight ? Math.floor(getAttr(d, maxDist, 100, 900)) : 400;
@@ -156,11 +162,11 @@ const TextPressure: React.FC<TextPressureProps> = ({
 
           const newFontVariationSettings = `'wght' ${wght}, 'wdth' ${wdth}, 'ital' ${italVal}`;
 
-          if (span.style.fontVariationSettings !== newFontVariationSettings) {
-            span.style.fontVariationSettings = newFontVariationSettings;
+          if (data.span.style.fontVariationSettings !== newFontVariationSettings) {
+            data.span.style.fontVariationSettings = newFontVariationSettings;
           }
-          if (alpha && span.style.opacity !== alphaVal) {
-            span.style.opacity = alphaVal;
+          if (alpha && data.span.style.opacity !== alphaVal) {
+            data.span.style.opacity = alphaVal;
           }
         });
       }

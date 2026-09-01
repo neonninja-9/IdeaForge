@@ -305,9 +305,10 @@ const GhostFibers: FC<GhostFibersProps> = ({
 
     const setSize = () => {
       const rect = container.getBoundingClientRect();
-      renderer.setSize(Math.max(1, Math.floor(rect.width)), Math.max(1, Math.floor(rect.height)));
+      const renderScale = 0.5; // Downscale internal resolution to 50% for massive GPU performance boost
+      renderer.setSize(Math.max(1, Math.floor(rect.width * renderScale)), Math.max(1, Math.floor(rect.height * renderScale)));
       
-      // Ensure CSS size remains 100% so it stretches
+      // Ensure CSS size remains 100% so the lower-res canvas stretches to fill the screen
       const canvas = gl.canvas as HTMLCanvasElement;
       canvas.style.width = '100%';
       canvas.style.height = '100%';
