@@ -48,8 +48,8 @@ export default function LoginPage() {
         <AuthDoodles />
 
         {/* Ambient glow blobs */}
-        <div className="absolute top-1/4 left-1/4 h-72 w-72 rounded-full bg-vivid/8 dark:bg-[#fa520f]/15 blur-[100px] pointer-events-none animate-doodle-float" />
-        <div className="absolute bottom-1/4 right-1/4 h-56 w-56 rounded-full bg-vivid-light/10 dark:bg-purple-500/15 blur-[80px] pointer-events-none animate-doodle-float" style={{ animationDelay: "2s" }} />
+        <div className="absolute top-1/4 left-1/4 h-72 w-72 rounded-full bg-indigo-500/15 dark:bg-[#6366f1]/15 blur-[100px] pointer-events-none animate-doodle-float" />
+        <div className="absolute bottom-1/4 right-1/4 h-56 w-56 rounded-full bg-purple-500/15 dark:bg-[#a855f7]/15 blur-[80px] pointer-events-none animate-doodle-float" style={{ animationDelay: "2s" }} />
 
         {/* Branding */}
         <div className="relative z-10 text-center px-12 flex flex-col items-center gap-10 w-full">

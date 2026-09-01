@@ -118,7 +118,7 @@ export default function DashboardPage() {
             <div className="pointer-events-none absolute -right-20 -top-28 size-80 rounded-full bg-purple-500/5 dark:bg-purple-500/10 blur-3xl" />
             <div className="pointer-events-none absolute -bottom-36 left-1/3 size-72 rounded-full bg-[#fa520f]/5 dark:bg-[#fa520f]/10 blur-3xl" />
             <div className="relative max-w-3xl">
-              <h1 className="font-heading text-2xl font-bold leading-[1.15] tracking-tight text-slate-900 dark:text-white sm:text-4xl md:text-5xl">{greeting()},<br /><span className="text-slate-400 dark:text-slate-400 font-normal">{user?.username}.</span></h1>
+              <h1 className="font-heading text-2xl font-normal leading-[1.15] tracking-tight text-slate-900 dark:text-white sm:text-4xl md:text-5xl">{greeting()},<br /><span className="text-slate-400 dark:text-slate-400 font-normal">{user?.username}.</span></h1>
               <div className="mt-6" />
               <QuickCapture capture={capture} setCapture={setCapture} onManualEntry={() => openCapture()} />
             </div>

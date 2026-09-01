@@ -30,6 +30,7 @@ import ideaService from "../../services/ideaService";
 import voteService from "../../services/voteService";
 import type { Comment, Idea } from "../../types/idea.types";
 import AiLaunchpadSection from "../../components/AiLaunchpad/AiLaunchpadSection";
+import AlternativeSolutionsSection from "./AlternativeSolutionsSection";
 
 function formatDate(dateString?: string) {
   if (!dateString) return "Recently";
@@ -293,8 +294,8 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
               </section>
             </div>
 
-            {/* AI Architecture & Code Launchpad */}
-            <AiLaunchpadSection idea={idea} />
+            {/* Alternative Solutions */}
+            <AlternativeSolutionsSection ideaId={id!} />
 
             {/* Impact (inline, no heavy card) */}
             {idea.impact && (
@@ -495,6 +496,9 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
                 )}
               </div>
             </section>
+
+            {/* AI Architecture & Code Launchpad */}
+            <AiLaunchpadSection idea={idea} />
           </aside>
         </div>
       </main>
