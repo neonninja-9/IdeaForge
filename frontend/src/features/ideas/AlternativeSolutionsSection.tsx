@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Users, Plus, ArrowUp, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Users, Plus, ArrowUp } from "lucide-react";
 import solutionService from "../../services/solutionService";
 import type { AlternativeSolution } from "../../types/idea.types";
 import AlternativeSolutionModal from "./AlternativeSolutionModal";
@@ -95,9 +95,41 @@ export default function AlternativeSolutionsSection({ ideaId }: Props) {
 
       <div className="space-y-4">
         {solutions.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 p-8 text-center bg-slate-50/50 dark:bg-white/[0.01]">
-            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">No alternative approaches proposed yet.</p>
-            <p className="text-xs text-slate-400 mt-1">Have a different way to build this? Share your solution with the community.</p>
+          <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 py-12 px-6 text-center bg-slate-50/50 dark:bg-[#120F17]/50 flex flex-col items-center justify-center">
+            {/* Custom SVG Illustration */}
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="mb-6">
+              {/* Central node */}
+              <circle cx="60" cy="60" r="16" fill="url(#brandGlow)" fillOpacity="0.15" />
+              <circle cx="60" cy="60" r="8" fill="#fa520f" />
+              {/* Branching paths */}
+              <path d="M60 44V24" stroke="currentColor" className="text-slate-200 dark:text-white/10" strokeWidth="2" strokeDasharray="4 4" strokeLinecap="round" />
+              <path d="M60 76V96" stroke="currentColor" className="text-slate-200 dark:text-white/10" strokeWidth="2" strokeDasharray="4 4" strokeLinecap="round" />
+              <path d="M44 60H24" stroke="currentColor" className="text-slate-200 dark:text-white/10" strokeWidth="2" strokeDasharray="4 4" strokeLinecap="round" />
+              <path d="M76 60H96" stroke="currentColor" className="text-slate-200 dark:text-white/10" strokeWidth="2" strokeDasharray="4 4" strokeLinecap="round" />
+              
+              <circle cx="60" cy="24" r="4" fill="currentColor" className="text-slate-300 dark:text-slate-600" />
+              <circle cx="60" cy="96" r="4" fill="currentColor" className="text-slate-300 dark:text-slate-600" />
+              <circle cx="24" cy="60" r="4" fill="currentColor" className="text-slate-300 dark:text-slate-600" />
+              <circle cx="96" cy="60" r="4" fill="currentColor" className="text-slate-300 dark:text-slate-600" />
+              
+              <defs>
+                <radialGradient id="brandGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(60 60) rotate(90) scale(16)">
+                  <stop stopColor="#fa520f" />
+                  <stop offset="1" stopColor="#fa520f" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+            </svg>
+
+            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-2">No Alternative Approaches Yet</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6 max-w-sm mx-auto leading-relaxed">
+              Have a different way to build this? A different tech stack? Share your alternative solution and branch this idea in a new direction.
+            </p>
+            <button
+              onClick={handleProposeClick}
+              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-[#fa520f] px-5 text-sm font-semibold text-white shadow-md shadow-[#fa520f1a] transition hover:-translate-y-0.5 hover:bg-[#cc3a05]"
+            >
+              <Plus size={16} /> Propose First Alternative
+            </button>
           </div>
         ) : (
           solutions.map(solution => {

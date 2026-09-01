@@ -5,7 +5,6 @@ import {
   ChevronUp,
   Code2,
   Copy,
-  ExternalLink,
   Sparkles,
   Bot,
 } from "lucide-react";

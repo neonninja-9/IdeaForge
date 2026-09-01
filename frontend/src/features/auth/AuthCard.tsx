@@ -383,7 +383,7 @@ export function AuthCard({ initialMode = "login", onModeChange }: AuthCardProps)
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full overflow-hidden h-12 rounded-xl bg-gradient-to-r from-[#6366f1] to-[#a855f7] hover:from-[#4f46e5] hover:to-[#9333ea] text-white text-sm font-semibold transition-all duration-300 shadow-[0_4px_20px_rgba(168,85,247,0.35)] hover:shadow-[0_6px_25px_rgba(168,85,247,0.5)] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+              className="group relative w-full overflow-hidden h-12 rounded-xl bg-gradient-to-r from-[#fa520f] to-[#ffa110] hover:from-[#cc3a05] hover:to-[#ff8105] text-white text-sm font-semibold transition-all duration-300 shadow-[0_4px_20px_rgba(250,82,15,0.35)] hover:shadow-[0_6px_25px_rgba(250,82,15,0.5)] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
                 <AnimatePresence mode="wait" initial={false}>

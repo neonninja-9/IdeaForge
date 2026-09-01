@@ -47,8 +47,8 @@ export default function AlternativeSolutionModal({ ideaId, isOpen, onClose, onSu
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm dark:bg-black/60 transition-opacity">
-      <div className="w-full max-w-lg bg-white dark:bg-[#1A1625] border border-slate-200 dark:border-white/10 rounded-2xl shadow-xl overflow-hidden animate-reveal-up flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-slate-900/40 backdrop-blur-sm dark:bg-black/60 transition-opacity">
+      <div className="w-full max-w-lg bg-white dark:bg-[#1A1625] border-t sm:border border-slate-200 dark:border-white/10 rounded-t-[32px] sm:rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] sm:shadow-xl overflow-hidden animate-reveal-up sm:animate-reveal-scale flex flex-col max-h-[90vh]">
         <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-white/5 bg-slate-50 dark:bg-white/[0.02]">
           <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200">
             <Rocket size={18} className="text-[#fa520f]" />

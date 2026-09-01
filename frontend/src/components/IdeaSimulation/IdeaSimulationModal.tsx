@@ -3,11 +3,9 @@ import { Link } from "react-router-dom";
 import {
   ArrowRight,
   CheckCircle2,
-  Cpu,
   Layers,
   Lightbulb,
   Radar,
-  RotateCw,
   ShieldCheck,
   Sparkles,
   TrendingUp,
@@ -35,43 +33,22 @@ export default function IdeaSimulationModal({
   createdIdeaId,
 }: IdeaSimulationModalProps) {
   const [isScanning, setIsScanning] = useState(true);
-  const [scanProgress, setScanProgress] = useState(0);
-  const [activeScanStep, setActiveScanStep] = useState(0);
   const [result, setResult] = useState<SimulationResult | null>(null);
-
-  const SCAN_STEPS = [
-    "Vectorizing problem & solution semantic matrix...",
-    "Querying benchmark demo database (15+ curated projects)...",
-    "Running multi-factor semantic overlap analysis...",
-    "Synthesizing market novelty & competitive differentiation...",
-  ];
 
   useEffect(() => {
     if (!isOpen) return;
 
     // Reset simulation state
     setIsScanning(true);
-    setScanProgress(0);
-    setActiveScanStep(0);
 
     const simulation = runIdeaSimilaritySimulation(ideaData);
     setResult(simulation);
 
     // Progress stepper animation
     const progressInterval = setInterval(() => {
-      setScanProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          setTimeout(() => setIsScanning(false), 300);
-          return 100;
-        }
-        const next = prev + 5;
-        if (next >= 25 && next < 50) setActiveScanStep(1);
-        else if (next >= 50 && next < 75) setActiveScanStep(2);
-        else if (next >= 75) setActiveScanStep(3);
-        return next;
-      });
-    }, 80);
+      setIsScanning(false);
+      clearInterval(progressInterval);
+    }, 2400); // Wait 2.4s for minimal animation
 
     return () => clearInterval(progressInterval);
   }, [isOpen, ideaData]);
@@ -79,8 +56,8 @@ export default function IdeaSimulationModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 backdrop-blur-md px-4 py-6 sm:px-6 overflow-y-auto">
-      <div className="animate-reveal-up relative w-full max-w-3xl rounded-[32px] border border-[#ff8105]/20 bg-[#120F17] text-white shadow-2xl shadow-purple-950/40 p-6 sm:p-8 my-auto overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-[#120F17]/80 backdrop-blur-md transition-opacity">
+      <div className="animate-reveal-up sm:animate-reveal-scale relative w-full max-w-3xl rounded-t-[32px] sm:rounded-[32px] border-t sm:border border-[#ff8105]/20 bg-[#120F17] text-white shadow-[0_-10px_40px_rgba(250,82,15,0.15)] sm:shadow-2xl sm:shadow-purple-950/40 p-6 sm:p-8 sm:my-auto overflow-hidden">
         {/* Ambient background glows */}
         <div className="pointer-events-none absolute -top-24 -right-24 size-96 rounded-full bg-[#fa520f]/15 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-24 -left-24 size-96 rounded-full bg-[#fa520f]/15 blur-3xl" />
@@ -96,69 +73,15 @@ export default function IdeaSimulationModal({
         </button>
 
         {isScanning ? (
-          /* ─── PHASE 1: Interactive Live Scanner Simulation ─── */
-          <div className="py-8 flex flex-col items-center text-center">
-            {/* Animated Radar Pulse Icon */}
-            <div className="relative mb-6">
-              <div className="grid size-24 place-items-center rounded-[28px] bg-gradient-to-tr from-[#fa520f]/30 to-[#cc3a05]/30 border border-[#ff8105]/40 text-[#ff8105] shadow-xl shadow-[#fa520f]/30">
-                <Radar size={44} className="animate-spin text-[#ff8105]" style={{ animationDuration: "3s" }} />
+          /* ─── PHASE 1: Minimal Scanning Animation ─── */
+          <div className="py-20 flex flex-col items-center justify-center">
+            {/* Animated Radar Pulse Icon Only */}
+            <div className="relative">
+              <div className="grid size-28 place-items-center rounded-full bg-gradient-to-tr from-[#fa520f]/10 to-[#cc3a05]/10 border border-[#ff8105]/20 text-[#ff8105] shadow-2xl shadow-[#fa520f]/20">
+                <Radar size={48} className="animate-spin text-[#ff8105]" style={{ animationDuration: "2s" }} />
               </div>
-              <span className="absolute inset-0 rounded-[28px] border-2 border-[#ff8105]/40 animate-ping" />
-            </div>
-
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#ff8105]/30 bg-[#fa520f]/10 px-3.5 py-1 text-xs font-semibold text-[#ffa110] mb-3">
-              <Cpu size={14} className="animate-pulse" />
-              <span>Simulating Market Landscape (Demo Database)</span>
-            </div>
-
-            <h2 className="font-heading text-2xl font-bold text-white sm:text-3xl">
-              Benchmarking Your Idea
-            </h2>
-            <p className="mt-2 max-w-md text-sm text-slate-400">
-              Comparing "{ideaData.title}" against demo benchmark ideas to calculate novelty, domain overlaps, and competitive edge.
-            </p>
-
-            {/* Progress Bar */}
-            <div className="mt-8 w-full max-w-md">
-              <div className="flex items-center justify-between text-xs font-medium text-slate-400 mb-2">
-                <span>Simulation progress</span>
-                <span className="font-bold text-[#ff8105]">{scanProgress}%</span>
-              </div>
-              <div className="h-2.5 w-full rounded-full bg-white/5 overflow-hidden border border-white/5">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#fffaeb]0 via-purple-500 to-[#ffa110] transition-all duration-100 shadow-[0_0_12px_rgba(139,92,246,0.6)]"
-                  style={{ width: `${scanProgress}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Animated Stepper Steps */}
-            <div className="mt-6 w-full max-w-md space-y-2 text-left">
-              {SCAN_STEPS.map((step, idx) => {
-                const isCompleted = activeScanStep > idx || scanProgress === 100;
-                const isCurrent = activeScanStep === idx && scanProgress < 100;
-                return (
-                  <div
-                    key={step}
-                    className={`flex items-center gap-3 rounded-xl px-3.5 py-2 text-xs transition-all duration-300 ${
-                      isCompleted
-                        ? "bg-emerald-500/10 text-emerald-300 border border-emerald-500/20"
-                        : isCurrent
-                        ? "bg-[#fa520f]/15 text-[#ffd06a] border border-[#ff8105]/30 shadow-sm"
-                        : "text-slate-500 bg-white/[0.02]"
-                    }`}
-                  >
-                    {isCompleted ? (
-                      <CheckCircle2 size={15} className="shrink-0 text-emerald-400" />
-                    ) : isCurrent ? (
-                      <RotateCw size={15} className="shrink-0 animate-spin text-[#ff8105]" />
-                    ) : (
-                      <div className="size-2 rounded-full bg-slate-600 mx-1" />
-                    )}
-                    <span className="font-medium">{step}</span>
-                  </div>
-                );
-              })}
+              <span className="absolute inset-0 rounded-full border-2 border-[#ff8105]/30 animate-ping" style={{ animationDuration: "1.5s" }} />
+              <span className="absolute inset-[-15px] rounded-full border border-[#ff8105]/10 animate-pulse" style={{ animationDuration: "2s" }} />
             </div>
           </div>
         ) : (

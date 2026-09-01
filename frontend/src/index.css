@@ -236,11 +236,6 @@ input {
   -webkit-tap-highlight-color: transparent;
 }
 
-:where(a, button, select, summary):focus-visible {
-  outline: 2px solid color-mix(in srgb, #fa520f 60%, transparent);
-  outline-offset: 2px;
-}
-
 input:focus,
 input:focus-visible,
 textarea:focus,
@@ -486,6 +481,9 @@ textarea:focus-visible {
   }
   html {
     @apply font-sans;
+  }
+  *:focus-visible {
+    @apply outline-none ring-2 ring-offset-2 ring-[#fa520f] dark:ring-[#ff8105] ring-offset-white dark:ring-offset-[#100d1b];
   }
 }
 

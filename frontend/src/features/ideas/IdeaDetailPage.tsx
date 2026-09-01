@@ -254,13 +254,13 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
                   <Edit3 size={16} />
                 </Link>
               )}
-              <button onClick={handleExportMarkdown} className="grid size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-700 dark:hover:text-white" title="Export Markdown">
+              <button onClick={handleExportMarkdown} className="grid size-11 sm:size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-700 dark:hover:text-white" title="Export Markdown">
                 <Download size={16} />
               </button>
-              <button onClick={handleFavorite} className={`grid size-9 place-items-center rounded-lg transition ${isFavorite ? "text-rose-500 bg-rose-50 dark:bg-rose-500/10" : "text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-rose-500"}`} title={isFavorite ? "Remove from favorites" : "Add to favorites"}>
+              <button onClick={handleFavorite} className={`grid size-11 sm:size-9 place-items-center rounded-lg transition ${isFavorite ? "text-rose-500 bg-rose-50 dark:bg-rose-500/10" : "text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-rose-500"}`} title={isFavorite ? "Remove from favorites" : "Add to favorites"}>
                 <Heart size={16} className={isFavorite ? "fill-current" : ""} />
               </button>
-              <button onClick={handleShare} className="grid size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-700 dark:hover:text-white" title="Share">
+              <button onClick={handleShare} className="grid size-11 sm:size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-700 dark:hover:text-white" title="Share">
                 <Share2 size={16} />
               </button>
               {linkCopied && <span className="text-xs font-medium text-emerald-500 ml-1">Copied!</span>}
@@ -413,7 +413,7 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
                     className="w-full resize-none rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/[0.03] px-4 py-3 text-sm leading-6 text-slate-700 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-[#fa520f]/40 focus:ring-2 focus:ring-[#fa520f]/10"
                   />
                   <div className="mt-2 flex justify-end">
-                    <button type="submit" disabled={submittingComment || !commentText.trim()} className="inline-flex min-h-9 items-center gap-2 rounded-lg bg-[#fa520f] px-4 text-xs font-semibold text-white transition hover:bg-[#cc3a05] disabled:opacity-50">
+                    <button type="submit" disabled={submittingComment || !commentText.trim()} className="inline-flex min-h-11 sm:min-h-9 items-center gap-2 rounded-lg bg-[#fa520f] px-4 text-xs font-semibold text-white transition hover:bg-[#cc3a05] disabled:opacity-50">
                       {submittingComment ? "Posting..." : "Post"}<Send size={13} />
                     </button>
                   </div>
@@ -443,7 +443,7 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
                           <p className="text-[10px] text-slate-400 dark:text-slate-500">{formatDate(comment.createdAt)}</p>
                         </div>
                         {isMyComment && (
-                          <button onClick={() => handleDeleteComment(comment.id || comment._id)} className="text-[10px] font-medium text-rose-400 hover:text-rose-600">Delete</button>
+                          <button onClick={() => handleDeleteComment(comment.id || comment._id)} className="min-h-[44px] sm:min-h-0 text-[10px] font-medium text-rose-400 hover:text-rose-600">Delete</button>
                         )}
                       </div>
                       <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{comment.text}</p>

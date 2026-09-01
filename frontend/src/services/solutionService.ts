@@ -1,6 +1,5 @@
 import { apiFetch } from "./apiClient";
 import type {
-  AlternativeSolution,
   SolutionResponse,
   SolutionsListResponse,
   SolutionVoteToggleResponse
