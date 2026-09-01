@@ -18,14 +18,11 @@ import SpecularButton from "./effects/specularButton";
 import ScrollFloat from "./effects/scrollFloat";
 import CountUp from "./effects/countUp";
 import AnimatedList from "./effects/animatedList";
-import GradualBlur from "./effects/gradualBlur";
 import FlowingMenu from "./effects/flowingMenu";
 import AccordionGallery from "./effects/accordilonGalllary";
 import ScrollExpand from "./effects/scrollExpand";
-import TiltedCard from "./effects/titledCard";
 import ScrollVelocity from "./effects/scrollVelocity";
 
-const DepthCarousel = lazy(() => import("./effects/depthCarousel"));
 const DriftWall = lazy(() => import("./effects/driftWall"));
 
 /* ── Lazy Hero with LaserFlow (heavy WebGL) ── */
@@ -65,9 +62,9 @@ function CinematicReveal() {
   return (
     <section className="relative bg-[#090a0c] w-full">
       <ScrollExpand
-        src="/images/screenshots/explore.jpg"
+        src="/images/screenshots/dashboard.jpg"
         mediaType="image"
-        alt="IdeaForge workspace"
+        alt="IdeaForge workspace dashboard"
         title="From Problem to Project in Minutes"
         scrollHint="Scroll to explore"
         startWidth={42}
@@ -78,11 +75,11 @@ function CinematicReveal() {
         scrollDistance={1.2}
         holdDistance={0.35}
         smoothing={0.1}
-        overlayScrim={0.5}
+        overlayScrim={0.75}
         useWindowScroll={true}
       >
         <div className="flex flex-col items-center gap-6">
-          <p className="text-white/80 text-lg sm:text-xl max-w-lg font-medium">
+          <p className="text-white/90 text-lg sm:text-xl max-w-lg font-medium drop-shadow-md">
             A platform that transforms scattered real-world problems into structured, AI-enriched project ideas with roadmaps and tech stack recommendations.
           </p>
           <Link to="/register">
@@ -208,62 +205,7 @@ function FeaturesShowcase() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Section 6: DepthCarousel Product Screenshots
-   ═══════════════════════════════════════════════════════════════════════════ */
-function ProductCarousel() {
-  const carouselItems = [
-    { image: "/images/screenshots/dashboard.jpg", alt: "IdeaForge Dashboard" },
-    { image: "/images/screenshots/explore.jpg", alt: "Idea Feed" },
-    { image: "/images/screenshots/ai-studio.jpg", alt: "AI Roadmap Studio" },
-    { image: "/images/screenshots/submit.jpg", alt: "Submit Project Idea" },
-    { image: "/images/screenshots/landing.jpg", alt: "Project Board" },
-    { image: "/images/screenshots/login.jpg", alt: "Authentication" },
-  ];
-
-  return (
-    <section className="relative bg-[#0a0b0e] py-20 sm:py-28 overflow-hidden">
-      <GradualBlur position="top" height="8rem" strength={3} />
-
-      <div className="mx-auto max-w-[1200px] px-5 sm:px-6 lg:px-10 mb-12">
-        <ScrollFloat
-          containerClassName="!my-0"
-          textClassName="!text-white font-black tracking-tight"
-        >
-          See it in action
-        </ScrollFloat>
-      </div>
-
-      <div className="h-[420px] sm:h-[500px] max-w-[1200px] mx-auto px-5">
-        <Suspense fallback={<div className="h-full bg-[#0a0b0e]" />}>
-          <DepthCarousel
-            items={carouselItems}
-            cardWidth={320}
-            cardHeight={400}
-            radius={20}
-            tint="#090a0c"
-            depth={200}
-            spread={90}
-            tilt={22}
-            visibleCards={4}
-            falloff={0.2}
-            blur={6}
-            duration={700}
-            autoplay
-            autoplayDelay={3500}
-            loop
-            showControls
-            showIndicators
-          />
-        </Suspense>
-      </div>
-
-      <GradualBlur position="bottom" height="8rem" strength={3} />
-    </section>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   Section 7: Stats with CountUp
+   Section 6: Stats with CountUp
    ═══════════════════════════════════════════════════════════════════════════ */
 function StatsSection() {
   const stats = [
@@ -296,7 +238,7 @@ function StatsSection() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Section 8: Activity Feed with AnimatedList
+   Section 7: Activity Feed with AnimatedList
    ═══════════════════════════════════════════════════════════════════════════ */
 function ActivityFeed() {
   const feedItems = [
@@ -366,24 +308,24 @@ function ActivityFeed() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Section 9: DriftWall Showcase
+   Section 8: DriftWall Showcase
    ═══════════════════════════════════════════════════════════════════════════ */
 function ShowcaseWall() {
   const wallItems = [
+    { image: "/images/screenshots/dashboard.jpg", title: "Dashboard" },
     { image: "/images/screenshots/explore.jpg", title: "Idea Feed" },
-    { image: "/images/screenshots/submit.jpg", title: "Project Board" },
+    { image: "/images/screenshots/submit.jpg", title: "Submit Flow" },
     { image: "/images/screenshots/login.jpg", title: "Community" },
     { image: "/images/screenshots/ai-studio.jpg", title: "AI Roadmap" },
     { image: "/images/screenshots/explore.jpg", title: "Idea Detail" },
-    { image: "/images/screenshots/submit.jpg", title: "Submit Flow" },
+    { image: "/images/screenshots/submit.jpg", title: "Project Board" },
     { image: "/images/screenshots/login.jpg", title: "Contributors" },
-    { image: "/images/screenshots/landing.jpg", title: "Domain Categories" },
+    { image: "/images/screenshots/landing.jpg", title: "Projects" },
     { image: "/images/screenshots/ai-studio.jpg", title: "AI Studio" },
     { image: "/images/screenshots/explore.jpg", title: "Idea Matching" },
     { image: "/images/screenshots/submit.jpg", title: "Tech Stacks" },
     { image: "/images/screenshots/ai-studio.jpg", title: "Brainstorm" },
     { image: "/images/screenshots/explore.jpg", title: "Roadmaps" },
-    { image: "/images/screenshots/ai-studio.jpg", title: "AI Engine" },
     { image: "/images/screenshots/landing.jpg", title: "Innovation" },
   ];
 
@@ -429,104 +371,65 @@ function ShowcaseWall() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Section 10: CTA Banner with TiltedCard + SpecularButton + BlurText
+   Section 9: CTA Banner (Centered, distraction-free)
    ═══════════════════════════════════════════════════════════════════════════ */
 function CTASection() {
   return (
-    <section className="relative bg-[#090a0c] py-24 sm:py-32 overflow-hidden">
+    <section className="relative bg-[#090a0c] py-24 sm:py-32 overflow-hidden border-t border-white/5">
       {/* Ambient glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,rgba(155,180,255,0.06)_0%,transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,rgba(155,180,255,0.08)_0%,transparent_60%)]" />
 
-      <div className="relative mx-auto max-w-[1200px] px-5 sm:px-6 lg:px-10">
-        <div className="grid lg:grid-cols-[1fr_auto_1fr] gap-8 items-center">
-          {/* Left TiltedCard */}
-          <div className="hidden lg:flex justify-center">
-            <TiltedCard
-              imageSrc="/images/screenshots/explore.jpg"
-              altText="IdeaForge Idea Feed"
-              captionText="Idea Feed"
-              containerHeight="320px"
-              containerWidth="280px"
-              imageHeight="280px"
-              imageWidth="240px"
-              rotateAmplitude={12}
-              scaleOnHover={1.08}
-              showMobileWarning={false}
-              showTooltip
-            />
-          </div>
+      <div className="relative mx-auto max-w-[800px] px-5 sm:px-6 lg:px-10 text-center">
+        <BlurText
+          text="Start forging your next big idea"
+          delay={60}
+          animateBy="words"
+          direction="top"
+          className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] text-white justify-center"
+        />
 
-          {/* Center CTA */}
-          <div className="text-center max-w-lg mx-auto">
-            <BlurText
-              text="Start forging your next big idea"
-              delay={60}
-              animateBy="words"
-              direction="top"
-              className="text-4xl sm:text-5xl font-black tracking-tight leading-[1.1] text-white justify-center"
-            />
+        <p className="mt-5 text-[#a5a7b0] text-base sm:text-lg leading-relaxed max-w-xl mx-auto">
+          Join thousands of developers, students, and researchers turning real-world problems into actionable projects with AI-powered roadmaps.
+        </p>
 
-            <p className="mt-5 text-[#a5a7b0] text-base sm:text-lg leading-relaxed">
-              Join thousands of developers, students, and researchers turning real-world problems into actionable projects with AI-powered roadmaps.
-            </p>
-
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/register">
-                <SpecularButton
-                  size="lg"
-                  radius={28}
-                  tint="#5683da"
-                  tintOpacity={0.2}
-                  blur={12}
-                  textColor="#ffffff"
-                  lineColor="#9bb4ff"
-                  baseColor="#4a5568"
-                  intensity={1.2}
-                  autoAnimate
-                  className="font-bold"
-                >
-                  <span className="flex items-center gap-2">
-                    Submit an Idea
-                    <ArrowRight className="size-4" />
-                  </span>
-                </SpecularButton>
-              </Link>
-              <Link to="/explore">
-                <SpecularButton
-                  size="md"
-                  radius={28}
-                  tint="#ffffff"
-                  tintOpacity={0.04}
-                  blur={8}
-                  textColor="#ffffff"
-                  lineColor="#ffffff"
-                  baseColor="#525252"
-                  intensity={0.6}
-                  followMouse
-                  className="font-semibold"
-                >
-                  Explore Projects
-                </SpecularButton>
-              </Link>
-            </div>
-          </div>
-
-          {/* Right TiltedCard */}
-          <div className="hidden lg:flex justify-center">
-            <TiltedCard
-              imageSrc="/images/screenshots/ai-studio.jpg"
-              altText="IdeaForge AI Roadmap"
-              captionText="AI Roadmap"
-              containerHeight="320px"
-              containerWidth="280px"
-              imageHeight="280px"
-              imageWidth="240px"
-              rotateAmplitude={12}
-              scaleOnHover={1.08}
-              showMobileWarning={false}
-              showTooltip
-            />
-          </div>
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link to="/register">
+            <SpecularButton
+              size="lg"
+              radius={28}
+              tint="#5683da"
+              tintOpacity={0.2}
+              blur={12}
+              textColor="#ffffff"
+              lineColor="#9bb4ff"
+              baseColor="#4a5568"
+              intensity={1.2}
+              autoAnimate
+              className="font-bold"
+            >
+              <span className="flex items-center gap-2">
+                Submit an Idea
+                <ArrowRight className="size-4" />
+              </span>
+            </SpecularButton>
+          </Link>
+          <Link to="/explore">
+            <SpecularButton
+              size="md"
+              radius={28}
+              tint="#ffffff"
+              tintOpacity={0.04}
+              blur={8}
+              textColor="#ffffff"
+              lineColor="#ffffff"
+              baseColor="#525252"
+              intensity={0.6}
+              followMouse
+              className="font-semibold"
+            >
+              Explore Projects
+            </SpecularButton>
+          </Link>
         </div>
       </div>
     </section>
@@ -547,7 +450,7 @@ export default function LandingPage() {
       {/* Section 2: ScrollVelocity Marquee */}
       <VelocityBand />
 
-      {/* Section 3: ScrollExpand Cinematic Reveal */}
+      {/* Section 3: ScrollExpand Cinematic Reveal (with dark masked dashboard) */}
       <CinematicReveal />
 
       {/* Section 4: FlowingMenu Feature Explorer */}
@@ -556,19 +459,16 @@ export default function LandingPage() {
       {/* Section 5: AccordionGallery Features */}
       <FeaturesShowcase />
 
-      {/* Section 6: DepthCarousel Product Screenshots */}
-      <ProductCarousel />
-
-      {/* Section 7: Stats CountUp */}
+      {/* Section 6: Stats CountUp */}
       <StatsSection />
 
-      {/* Section 8: AnimatedList Activity Feed */}
+      {/* Section 7: AnimatedList Activity Feed */}
       <ActivityFeed />
 
-      {/* Section 9: DriftWall Showcase */}
+      {/* Section 8: DriftWall Showcase */}
       <ShowcaseWall />
 
-      {/* Section 10: CTA with TiltedCard + SpecularButton + BlurText */}
+      {/* Section 9: CTA with SpecularButton + BlurText */}
       <CTASection />
     </main>
   );
