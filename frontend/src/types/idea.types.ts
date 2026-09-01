@@ -51,6 +51,8 @@ export interface Idea {
   roadmap?: RoadmapPhase[];
   status: "draft" | "published";
   attachments?: Attachment[];
+  workflow?: string;
+  architecture?: string;
   author: IdeaAuthor;
   category: Category;
   tags: Tag[];

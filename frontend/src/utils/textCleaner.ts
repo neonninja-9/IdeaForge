@@ -23,7 +23,7 @@ export function cleanAiDescription(text: string): string {
     // Lines starting with "Below is...", "I've refined...", "I have refined..."
     /^(?:Below\s+is|I(?:'ve|\s+have)\s+(?:refined|expanded|improved|updated|crafted))[^\n]*?(?::|\n+)/i,
     // Markdown headings or labeled prefixes like "**Refined Problem Statement:**", "### Refined Problem", "Problem Statement:"
-    /^(?:#{1,6}\s*|\*{1,2}|_{1,2})?\s*(?:Refined|Revised|Improved|Updated|Polished|Proposed)?\s*(?:Problem(?:\s+Statement|\s+Description)?|Solution(?:\s+Statement|\s+Description)?|Description|Statement)\s*(?::|-)?\s*(?:\*{1,2}|_{1,2})?\s*(?::|-)?\s*(?:\n+|$)/i,
+    /^(?:#{1,6}\s*|\*{1,2}|_{1,2})?\s*(?:Refined|Revised|Improved|Updated|Polished|Proposed)?\s*(?:Problem(?:\s+Statement|\s+Description)?|Solution(?:\s+Statement|\s+Description)?|Description|Statement)\s*(?::|-)?\s*(?:\*{1,2}|_{1,2})?\s*(?::|-)?\s*(?:\n+|\s+|$)/i,
   ];
 
   let matched = true;

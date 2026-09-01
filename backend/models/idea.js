@@ -43,6 +43,14 @@ const ideaSchema = new mongoose.Schema({
         type: [Number],
         index: "2dsphere", // or just keep it simple if you don't use geospatial
     },
+    workflow: {
+        type: String,
+        default: "",
+    },
+    architecture: {
+        type: String,
+        default: "",
+    },
     roadmap: [{
         phase: String,
         tasks: [String]

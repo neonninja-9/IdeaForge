@@ -22,7 +22,8 @@ import type { Category, Tag, Attachment } from "../../types/idea.types";
 import PageSkeleton from "../../components/PageSkeleton/PageSkeleton";
 import AttachmentUploader from "../../components/AttachmentUploader/AttachmentUploader";
 import { cleanAiDescription } from "../../utils/textCleaner";
-import IdeaSimulationModal from "../../components/IdeaSimulation/IdeaSimulationModal";
+import AiLaunchpadModal from "../../components/AiLaunchpad/AiLaunchpadModal";
+import type { IdeaPromptContext } from "../../utils/aiPromptBuilder";
 
 /* ─── Constants ─────────────────────────────────────────────────── */
 const DRAFT_STORAGE_KEY = "ideaforge:draft";
@@ -220,16 +221,10 @@ export default function SubmitIdeaPage() {
   const draftTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasHydratedRef = useRef(false);
 
-  // Success & Simulation modal state
+  // Success & AI Launchpad modal state
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [createdIdeaId, setCreatedIdeaId] = useState<string | null>(null);
-  const [submittedIdeaData, setSubmittedIdeaData] = useState<{
-    title: string;
-    problem: string;
-    solution: string;
-    tags?: string[];
-    category?: string;
-  } | null>(null);
+  const [submittedIdeaData, setSubmittedIdeaData] = useState<IdeaPromptContext | null>(null);
 
   /* ─── Auth guard & reference data ──────────────────────────────── */
   useEffect(() => { if (!authLoading && !user) navigate("/login"); }, [user, authLoading, navigate]);
@@ -475,6 +470,9 @@ export default function SubmitIdeaPage() {
           title: cleanTitle,
           problem: cleanProb,
           solution: cleanSol,
+          impact: cleanImp,
+          difficulty: difficulty || "Beginner",
+          suggestedTechStack: techStack || undefined,
           tags: selectedTagNames,
           category: activeCategory,
         });
@@ -498,11 +496,11 @@ export default function SubmitIdeaPage() {
   /* ─── Loading ──────────────────────────────────────────────────── */
   if (authLoading || referenceLoading) return <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent transition-colors duration-500"><PageSkeleton variant="form" /></div>;
 
-  /* ─── Success & Similarity Simulation Modal ────────────────────── */
+  /* ─── Success & AI Launchpad Modal ─────────────────────────────── */
   if (showSuccessModal && submittedIdeaData && createdIdeaId) {
     return (
       <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent transition-colors duration-500">
-        <IdeaSimulationModal
+        <AiLaunchpadModal
           isOpen={showSuccessModal}
           onClose={() => {
             setShowSuccessModal(false);

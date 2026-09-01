@@ -28,6 +28,7 @@ import favoriteService from "../../services/favoriteService";
 import ideaService from "../../services/ideaService";
 import voteService from "../../services/voteService";
 import type { Comment, Idea } from "../../types/idea.types";
+import AiLaunchpadSection from "../../components/AiLaunchpad/AiLaunchpadSection";
 
 function date(dateString?: string) {
   if (!dateString) return "Recently";
@@ -297,6 +298,8 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
                 <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-600 dark:text-slate-300">{idea.solution || "No initial solution outline recorded."}</p>
               </article>
             </section>
+            {/* AI Architecture & Code Launchpad */}
+            <AiLaunchpadSection idea={idea} />
 
             {/* Impact */}
             {idea.impact && (

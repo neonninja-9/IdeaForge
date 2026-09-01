@@ -73,7 +73,7 @@ CRITICAL INSTRUCTION: When asked to refine, rewrite, or expand a problem stateme
         }
 
         // Fast, intelligent fallback if all models are exhausted
-        const inputMatch = promptText.match(/(?:Problem|Solution|Description):\s*["“]?([^"”]+)["”]?/i);
+        const inputMatch = promptText.match(/(?:Problem|Solution|Description):\s*["“]?([\s\S]*?)["”]?\s*$/i);
         const fallbackText = inputMatch ? inputMatch[1].trim() : promptText;
         return cleanAiDescription(fallbackText);
     },
@@ -390,6 +390,46 @@ Respond in JSON with exactly:
             console.log(`[AI Engine] Successfully enriched Idea ${ideaId} with full roadmap and embeddings.`);
         } catch (err) {
             console.error("[AI Engine] Background process failed:", err);
+        }
+    },
+    /**
+     * Generates Workflow and Architecture using WORKFLOW_GEMINI_API_KEY
+     */
+    async generateWorkflowAndArchitecture(title, problem, solution) {
+        const WORKFLOW_GEMINI_API_KEY = process.env.WORKFLOW_GEMINI_API_KEY;
+        if (!WORKFLOW_GEMINI_API_KEY) {
+            console.error("[AI Engine] WORKFLOW_GEMINI_API_KEY missing.");
+            return { workflow: "Configuration missing. Could not generate workflow.", architecture: "Configuration missing. Could not generate architecture." };
+        }
+
+        const systemInstruction = `You are a Principal Software Architect. Given the user's idea, propose a workflow and an architecture design.
+Respond in JSON with exactly:
+{
+  "workflow": "A markdown string describing the step-by-step user workflow",
+  "architecture": "A markdown string describing the system architecture and components"
+}`;
+        const promptText = `Title: ${title}\nProblem: ${problem}\nSolution: ${solution}`;
+
+        try {
+            const payload = {
+                system_instruction: { parts: { text: systemInstruction } },
+                contents: [{ parts: [{ text: promptText }] }],
+                generationConfig: { responseMimeType: "application/json", temperature: 0.3, maxOutputTokens: 1000 }
+            };
+
+            const responseData = await callGeminiCascade(payload, WORKFLOW_GEMINI_API_KEY);
+            if (!responseData) throw new Error("Gemini cascade failed");
+
+            const rawText = responseData.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+            const data = JSON.parse(rawText);
+
+            return {
+                workflow: data.workflow || "Could not generate workflow.",
+                architecture: data.architecture || "Could not generate architecture."
+            };
+        } catch (e) {
+            console.error("Workflow & Architecture generation failed:", e.message || e);
+            return { workflow: "Failed to generate workflow.", architecture: "Failed to generate architecture." };
         }
     }
 };
