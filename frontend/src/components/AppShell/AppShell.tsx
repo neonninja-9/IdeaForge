@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState, useCallback } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import PageTransition from "../PageTransition/PageTransition";
+import SunsetStripe from "../SunsetStripe/SunsetStripe";
 import {
   Bell,
   Bot,
@@ -336,7 +337,7 @@ export default function AppShell() {
                             onClick={() => handleNotificationClick(n)}
                             className={`py-2.5 first:pt-0 last:pb-0 flex items-start gap-3 cursor-pointer rounded-xl px-2 -mx-2 transition hover:bg-slate-50 dark:hover:bg-white/5 ${!n.read ? "bg-vivid/5 dark:bg-vivid/10" : ""}`}
                           >
-                            <span className={`mt-1.5 size-2 rounded-full shrink-0 ${n.type === "vote" ? "bg-indigo-500" : n.type === "comment" ? "bg-emerald-500" : "bg-vivid"}`} />
+                            <span className={`mt-1.5 size-2 rounded-full shrink-0 ${n.type === "vote" ? "bg-[#fa520f]" : n.type === "comment" ? "bg-emerald-500" : "bg-vivid"}`} />
                             <div className="flex-1 min-w-0">
                               <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
                                 {n.actor?.username || "Someone"}{" "}
@@ -371,9 +372,10 @@ export default function AppShell() {
           </div>
         </header>
 
-        {mobileSearchOpen && <div className="fixed inset-x-0 top-0 z-[70] border-b border-slate-100 bg-white p-4 shadow-xl sm:hidden"><form onSubmit={submitMobileSearch} className="flex items-center gap-2"><Search size={19} className="ml-2 text-slate-400" /><input ref={searchInputRef} value={mobileSearchQuery} onChange={(event) => setMobileSearchQuery(event.target.value)} className="min-h-11 min-w-0 flex-1 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400" placeholder="Search community ideas" aria-label="Search community ideas" /><button type="button" onClick={() => setMobileSearchOpen(false)} className="min-h-11 rounded-xl px-3 text-sm font-semibold text-slate-500 hover:bg-slate-50">Cancel</button><button type="submit" className="grid size-11 place-items-center rounded-xl bg-indigo-600 text-white" aria-label="Submit search"><Search size={18} /></button></form></div>}
+        {mobileSearchOpen && <div className="fixed inset-x-0 top-0 z-[70] border-b border-slate-100 bg-white p-4 shadow-xl sm:hidden"><form onSubmit={submitMobileSearch} className="flex items-center gap-2"><Search size={19} className="ml-2 text-slate-400" /><input ref={searchInputRef} value={mobileSearchQuery} onChange={(event) => setMobileSearchQuery(event.target.value)} className="min-h-11 min-w-0 flex-1 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400" placeholder="Search community ideas" aria-label="Search community ideas" /><button type="button" onClick={() => setMobileSearchOpen(false)} className="min-h-11 rounded-xl px-3 text-sm font-semibold text-slate-500 hover:bg-slate-50">Cancel</button><button type="submit" className="grid size-11 place-items-center rounded-xl bg-[#fa520f] text-white" aria-label="Submit search"><Search size={18} /></button></form></div>}
 
         <main className="pb-24 lg:pb-8"><PageTransition><Outlet /></PageTransition></main>
+        {!darkMode && <SunsetStripe />}
       </div>
 
       <div className={`fixed inset-0 z-[60] bg-slate-950/25 backdrop-blur-sm transition lg:hidden ${mobileOpen ? "opacity-100" : "pointer-events-none opacity-0"}`} onClick={() => setMobileOpen(false)}>

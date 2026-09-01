@@ -136,7 +136,7 @@ export default function EditIdeaPage() {
           )}
         </div>
         <div className="mb-8 max-w-3xl">
-          <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">EDIT IDEA</p>
+          <p className="text-sm font-semibold text-[#fa520f] dark:text-[#fa520f]">EDIT IDEA</p>
           <h1 className="font-heading mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">Refine your thought.</h1>
         </div>
 
@@ -146,7 +146,7 @@ export default function EditIdeaPage() {
             <div className="mt-7 space-y-6">
               <label className="block">
                 <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Name your idea</span>
-                <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Give this thought a working title" className={`w-full rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-3.5 text-base text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.title ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />
+                <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Give this thought a working title" className={`w-full rounded-2xl border bg-white dark:bg-[#1a1625] px-4 py-3.5 text-base text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-[#fa520f] dark:focus:border-[#fa520f]/50 focus:ring-4 focus:ring-[#fff8e0] dark:focus:ring-[#fff8e0]0/10 ${errors.title ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />
                 {errors.title && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.title}</span>}
               </label>
 
@@ -154,7 +154,7 @@ export default function EditIdeaPage() {
                 <span className="mb-2 flex items-center justify-between text-sm font-semibold text-slate-700 dark:text-slate-300">
                   Describe your idea <span className="font-normal text-slate-400 dark:text-slate-500">{problem.length} characters</span>
                 </span>
-                <textarea value={problem} onChange={(event) => setProblem(event.target.value)} rows={7} placeholder="Describe the problem..." className={`w-full resize-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-4 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.problem ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />
+                <textarea value={problem} onChange={(event) => setProblem(event.target.value)} rows={7} placeholder="Describe the problem..." className={`w-full resize-none rounded-2xl border bg-white dark:bg-[#1a1625] px-4 py-4 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-[#fa520f] dark:focus:border-[#fa520f]/50 focus:ring-4 focus:ring-[#fff8e0] dark:focus:ring-[#fff8e0]0/10 ${errors.problem ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />
                 {errors.problem && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.problem}</span>}
               </label>
 
@@ -167,7 +167,7 @@ export default function EditIdeaPage() {
 
               <label className="block">
                 <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">A possible first solution</span>
-                <textarea value={solution} onChange={(event) => setSolution(event.target.value)} rows={4} placeholder="How could this become useful?" className={`w-full resize-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-4 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.solution ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />
+                <textarea value={solution} onChange={(event) => setSolution(event.target.value)} rows={4} placeholder="How could this become useful?" className={`w-full resize-none rounded-2xl border bg-white dark:bg-[#1a1625] px-4 py-4 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-[#fa520f] dark:focus:border-[#fa520f]/50 focus:ring-4 focus:ring-[#fff8e0] dark:focus:ring-[#fff8e0]0/10 ${errors.solution ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />
                 {errors.solution && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.solution}</span>}
               </label>
 
@@ -175,7 +175,7 @@ export default function EditIdeaPage() {
                 <label className="block">
                   <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Category</span>
                   <span className="relative block">
-                    <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)} className={`w-full appearance-none rounded-2xl border bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-3.5 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10 ${errors.category ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`}>
+                    <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)} className={`w-full appearance-none rounded-2xl border bg-white dark:bg-[#1a1625] px-4 py-3.5 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-[#fa520f] dark:focus:border-[#fa520f]/50 focus:ring-4 focus:ring-[#fff8e0] dark:focus:ring-[#fff8e0]0/10 ${errors.category ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`}>
                       <option value="">Choose a category</option>
                       {categories.map((category) => <option key={category.id || category._id} value={category.id || category._id}>{category.icon} {category.name}</option>)}
                     </select>
@@ -187,7 +187,7 @@ export default function EditIdeaPage() {
                   <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">Starting point</span>
                   <div className="grid grid-cols-3 gap-2">
                     {["Beginner", "Intermediate", "Advanced"].map((level) => (
-                      <button key={level} type="button" onClick={() => setDifficulty(level)} className={`min-h-[50px] rounded-xl border px-2 text-xs font-semibold transition ${difficulty === level ? "border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" : "border-slate-200 dark:border-white/10 bg-[#fcfcfd] dark:bg-[#1a1625] text-slate-500 dark:text-slate-400 hover:border-indigo-200 dark:hover:border-indigo-500/30"}`}>{level}</button>
+                      <button key={level} type="button" onClick={() => setDifficulty(level)} className={`min-h-[50px] rounded-xl border px-2 text-xs font-semibold transition ${difficulty === level ? "border-[#e6d5a8] dark:border-white/10 bg-[#fff8e0] dark:bg-white/5 text-[#fa520f] dark:text-[#fa520f]" : "border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] text-slate-500 dark:text-slate-400 hover:border-[#e6d5a8] dark:hover:border-white/15"}`}>{level}</button>
                     ))}
                   </div>
                   {errors.difficulty && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.difficulty}</span>}
@@ -203,7 +203,7 @@ export default function EditIdeaPage() {
                   {allTags.map((tag) => {
                     const id = tag.id || tag._id;
                     const selected = selectedTags.includes(id);
-                    return <button key={id} type="button" onClick={() => toggleTag(id)} className={`rounded-full border px-3 py-2 text-xs font-medium transition ${selected ? "border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" : "border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] text-slate-500 dark:text-slate-400 hover:border-indigo-200 dark:hover:border-indigo-500/30"}`}>{selected && <Check size={13} className="mr-1 inline" />}{tag.name}</button>;
+                    return <button key={id} type="button" onClick={() => toggleTag(id)} className={`rounded-full border px-3 py-2 text-xs font-medium transition ${selected ? "border-[#e6d5a8] dark:border-white/10 bg-[#fff8e0] dark:bg-white/5 text-[#fa520f] dark:text-[#fa520f]" : "border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] text-slate-500 dark:text-slate-400 hover:border-[#e6d5a8] dark:hover:border-white/15"}`}>{selected && <Check size={13} className="mr-1 inline" />}{tag.name}</button>;
                   })}
                 </div>
                 {errors.tags && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.tags}</span>}
@@ -211,7 +211,7 @@ export default function EditIdeaPage() {
 
               <label className="block">
                 <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">The impact you hope for <span className="font-normal text-slate-400 dark:text-slate-500">optional</span></span>
-                <textarea value={impact} onChange={(event) => setImpact(event.target.value)} rows={2} placeholder="What would a better future look like?" className="w-full resize-none rounded-2xl border border-slate-200 dark:border-white/10 bg-[#fcfcfd] dark:bg-[#1a1625] px-4 py-3 text-sm leading-6 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-400 dark:focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-500/10" />
+                <textarea value={impact} onChange={(event) => setImpact(event.target.value)} rows={2} placeholder="What would a better future look like?" className="w-full resize-none rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] px-4 py-3 text-sm leading-6 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-[#fa520f] dark:focus:border-[#fa520f]/50 focus:ring-4 focus:ring-[#fff8e0] dark:focus:ring-[#fff8e0]0/10" />
               </label>
             </div>
 
@@ -219,7 +219,7 @@ export default function EditIdeaPage() {
               {ideaStatus === "draft" && (
                 <button type="button" onClick={handlePublishDraft} disabled={isSubmitting} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-emerald-200 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10 px-5 text-sm font-semibold text-emerald-700 dark:text-emerald-400 transition hover:bg-emerald-100 dark:hover:bg-emerald-500/20 disabled:opacity-60">Publish now</button>
               )}
-              <button type="submit" disabled={isSubmitting} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg shadow-indigo-200 dark:shadow-none transition hover:-translate-y-0.5 hover:bg-indigo-700 disabled:opacity-60">{isSubmitting && <LoaderCircle size={17} className="animate-spin" />}{isSubmitting ? "Updating idea..." : "Save changes"}</button>
+              <button type="submit" disabled={isSubmitting} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#fa520f] px-5 text-sm font-semibold text-white shadow-lg shadow-[#fa520f1a] dark:shadow-none transition hover:-translate-y-0.5 hover:bg-[#cc3a05] disabled:opacity-60">{isSubmitting && <LoaderCircle size={17} className="animate-spin" />}{isSubmitting ? "Updating idea..." : "Save changes"}</button>
             </div>
           </form>
         </div>

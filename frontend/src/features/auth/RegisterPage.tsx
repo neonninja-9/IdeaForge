@@ -48,7 +48,7 @@ export default function RegisterPage() {
         <AuthDoodles />
 
         {/* Ambient glow blobs */}
-        <div className="absolute top-1/3 left-1/3 h-72 w-72 rounded-full bg-vivid/8 dark:bg-indigo-500/15 blur-[100px] pointer-events-none animate-doodle-float" />
+        <div className="absolute top-1/3 left-1/3 h-72 w-72 rounded-full bg-vivid/8 dark:bg-[#fa520f]/15 blur-[100px] pointer-events-none animate-doodle-float" />
         <div className="absolute bottom-1/3 right-1/4 h-56 w-56 rounded-full bg-vivid-light/10 dark:bg-purple-500/15 blur-[80px] pointer-events-none animate-doodle-float" style={{ animationDelay: "2s" }} />
 
         {/* Branding */}

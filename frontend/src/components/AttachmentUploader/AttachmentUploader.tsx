@@ -109,13 +109,13 @@ export default function AttachmentUploader({
         onClick={() => !isUploading && fileInputRef.current?.click()}
         className={`group relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-5 text-center cursor-pointer transition-all ${
           isDragging
-            ? "border-indigo-500 bg-indigo-50/50 dark:bg-indigo-500/10"
-            : "border-slate-200 dark:border-white/10 bg-[#fcfcfd] dark:bg-[#1a1625]/60 hover:border-indigo-300 dark:hover:border-indigo-500/40"
+            ? "border-indigo-500 bg-[#fff8e0]/50 dark:bg-white/5"
+            : "border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625]/60 hover:border-[#e6d5a8] dark:hover:border-indigo-500/40"
         }`}
       >
-        <div className="grid size-10 place-items-center rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 group-hover:scale-105 transition-transform">
+        <div className="grid size-10 place-items-center rounded-xl bg-[#fff8e0] dark:bg-white/5 text-[#fa520f] dark:text-[#fa520f] group-hover:scale-105 transition-transform">
           {isUploading ? (
-            <LoaderCircle size={20} className="animate-spin text-indigo-600" />
+            <LoaderCircle size={20} className="animate-spin text-[#fa520f]" />
           ) : (
             <UploadCloud size={20} />
           )}
@@ -149,7 +149,7 @@ export default function AttachmentUploader({
                     className="size-10 rounded-lg object-cover bg-slate-200 dark:bg-black/40 shrink-0"
                   />
                 ) : (
-                  <div className="grid size-10 place-items-center rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 shrink-0">
+                  <div className="grid size-10 place-items-center rounded-lg bg-[#fff8e0] dark:bg-white/5 text-[#fa520f] dark:text-[#fa520f] shrink-0">
                     <FileText size={18} />
                   </div>
                 )}

@@ -138,17 +138,17 @@ export default function AIStudioPage() {
     <div className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent px-5 py-7 sm:px-8 sm:py-10 xl:px-12 transition-colors duration-500">
       <div className="mx-auto max-w-[1180px]">
         {/* Top Notice: Coming Soon */}
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-indigo-100 dark:border-indigo-500/20 bg-indigo-50/70 dark:bg-indigo-500/10 p-4 text-indigo-900 dark:text-indigo-200">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-[#ededed] dark:border-white/10 bg-[#fff8e0]/70 dark:bg-white/5 p-4 text-indigo-900 dark:text-indigo-200">
           <div className="flex items-center gap-3">
-            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-indigo-600 text-white shadow-sm">
+            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#fa520f] text-white shadow-sm">
               <Sparkles size={18} />
             </span>
             <div>
               <p className="text-sm font-semibold">AI Studio is in Early Preview · Coming Soon</p>
-              <p className="text-xs text-indigo-700/80 dark:text-indigo-300/80">IdeaForge is currently focusing on capturing raw ideas and presenting them to the community.</p>
+              <p className="text-xs text-[#cc3a05]/80 dark:text-indigo-300/80">IdeaForge is currently focusing on capturing raw ideas and presenting them to the community.</p>
             </div>
           </div>
-          <Link to="/submit" className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-indigo-600 px-4 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700 whitespace-nowrap">
+          <Link to="/submit" className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-xl bg-[#fa520f] px-4 text-xs font-semibold text-white shadow-sm transition hover:bg-[#cc3a05] whitespace-nowrap">
             Capture raw idea &rarr;
           </Link>
         </div>
@@ -157,21 +157,21 @@ export default function AIStudioPage() {
           <aside className="rounded-[28px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-6 shadow-sm dark:shadow-none flex flex-col justify-between transition-colors">
             <div>
               <div className="flex items-center justify-between">
-                <span className="grid size-11 place-items-center rounded-2xl bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400">
+                <span className="grid size-11 place-items-center rounded-2xl bg-[#fffaeb] dark:bg-white/5 text-[#fa520f] dark:text-[#ff8105]">
                   <Sparkles size={21} />
                 </span>
                 {user && (
                   <button
                     onClick={startNewConversation}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 px-3 py-2 rounded-xl transition"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-[#fa520f] dark:text-[#fa520f] hover:text-[#cc3a05] dark:hover:text-indigo-300 bg-[#fff8e0] dark:bg-white/5 hover:bg-[#fff0c2] dark:hover:bg-[#fa520f]/20 px-3 py-2 rounded-xl transition"
                   >
                     <Plus size={14} /> New Chat
                   </button>
                 )}
               </div>
               <div className="flex items-center gap-2 mt-6">
-                <p className="text-sm font-semibold text-violet-600 dark:text-violet-400">AI STUDIO</p>
-                <span className="rounded-full bg-violet-100 dark:bg-violet-500/20 px-2 py-0.5 text-[10px] font-semibold text-violet-700 dark:text-violet-400">Preview</span>
+                <p className="text-sm font-semibold text-[#fa520f] dark:text-[#ff8105]">AI STUDIO</p>
+                <span className="rounded-full bg-[#fff0c2] dark:bg-[#fa520f]/20 px-2 py-0.5 text-[10px] font-semibold text-[#cc3a05] dark:text-[#ff8105]">Preview</span>
               </div>
               <h1 className="font-heading mt-1 text-2xl font-bold text-slate-900 dark:text-white">Your creative cofounder.</h1>
               <p className="mt-3 text-sm leading-6 text-slate-500 dark:text-slate-400">Explore your thoughts interactively.</p>
@@ -188,7 +188,7 @@ export default function AIStudioPage() {
                           key={id}
                           onClick={() => selectConversation(id)}
                           className={`flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-xs font-medium transition truncate ${
-                            active ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5"
+                            active ? "bg-[#fff8e0] dark:bg-white/5 text-[#fa520f] dark:text-[#fa520f]" : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5"
                           }`}
                         >
                           <MessageSquare size={14} className="shrink-0" />
@@ -206,7 +206,7 @@ export default function AIStudioPage() {
                   <button
                     key={prompt}
                     onClick={() => send(prompt)}
-                    className="flex min-h-10 w-full items-center justify-between rounded-xl bg-slate-50 dark:bg-white/5 px-3 text-left text-xs font-medium text-slate-600 dark:text-slate-300 transition hover:bg-violet-50 dark:hover:bg-violet-500/10 hover:text-violet-700 dark:hover:text-violet-400"
+                    className="flex min-h-10 w-full items-center justify-between rounded-xl bg-slate-50 dark:bg-white/5 px-3 text-left text-xs font-medium text-slate-600 dark:text-slate-300 transition hover:bg-[#fffaeb] dark:hover:bg-[#fa520f]/10 hover:text-[#cc3a05] dark:hover:text-[#ff8105]"
                   >
                     <span>{prompt}</span>
                     <ArrowUp size={14} />
@@ -220,9 +220,9 @@ export default function AIStudioPage() {
             </p>
           </aside>
 
-          <section className="flex min-h-[620px] flex-col overflow-hidden rounded-[28px] border border-indigo-100 dark:border-indigo-500/20 bg-white dark:bg-[#120F17] shadow-[0_18px_50px_-32px_rgba(79,70,229,.4)] dark:shadow-none transition-colors">
-            <header className="flex items-center gap-3 border-b border-slate-100 dark:border-white/5 bg-gradient-to-r from-indigo-50 to-violet-50 dark:from-indigo-950/20 dark:to-violet-950/20 px-6 py-5">
-              <span className="grid size-10 place-items-center rounded-2xl bg-white dark:bg-[#120F17] text-indigo-600 dark:text-indigo-400 shadow-sm dark:shadow-none">
+          <section className="flex min-h-[620px] flex-col overflow-hidden rounded-[28px] border border-[#ededed] dark:border-white/10 bg-white dark:bg-[#120F17] shadow-[0_18px_50px_-32px_rgba(79,70,229,.4)] dark:shadow-none transition-colors">
+            <header className="flex items-center gap-3 border-b border-slate-100 dark:border-white/5 bg-gradient-to-r from-[#fffaeb] to-[#fff8e0] dark:from-indigo-950/20 dark:to-violet-950/20 px-6 py-5">
+              <span className="grid size-10 place-items-center rounded-2xl bg-white dark:bg-[#120F17] text-[#fa520f] dark:text-[#fa520f] shadow-sm dark:shadow-none">
                 <Bot size={20} />
               </span>
               <div>
@@ -247,10 +247,10 @@ export default function AIStudioPage() {
                   <div key={item._id || item.id} className={`flex ${item.role === "user" ? "justify-end" : "justify-start"}`}>
                     <div
                       className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-6 ${
-                        item.role === "user" ? "bg-indigo-600 text-white" : "bg-slate-50 dark:bg-white/5 text-slate-700 dark:text-slate-200"
+                        item.role === "user" ? "bg-[#fa520f] text-white" : "bg-slate-50 dark:bg-white/5 text-slate-700 dark:text-slate-200"
                       }`}
                     >
-                      {item.role === "assistant" && <Lightbulb size={15} className="mb-2 text-violet-500 dark:text-violet-400" />}
+                      {item.role === "assistant" && <Lightbulb size={15} className="mb-2 text-[#ff8105] dark:text-[#ff8105]" />}
                       {item.text}
                     </div>
                   </div>
@@ -259,7 +259,7 @@ export default function AIStudioPage() {
               {thinking && (
                 <div className="flex">
                   <div className="flex items-center gap-2 rounded-2xl bg-slate-50 dark:bg-white/5 px-4 py-3 text-sm text-slate-500 dark:text-slate-400">
-                    <LoaderCircle size={16} className="animate-spin text-indigo-500" /> Thinking with you...
+                    <LoaderCircle size={16} className="animate-spin text-[#fa520f]" /> Thinking with you...
                   </div>
                 </div>
               )}
@@ -272,7 +272,7 @@ export default function AIStudioPage() {
               }}
               className="border-t border-slate-100 dark:border-white/5 p-4 sm:p-5"
             >
-              <div className="flex items-end gap-3 rounded-2xl border border-slate-200 dark:border-white/10 bg-[#fcfcfd] dark:bg-[#1a1625] p-2 focus-within:border-indigo-300 dark:focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-50 dark:focus-within:ring-indigo-500/10">
+              <div className="flex items-end gap-3 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#1a1625] p-2 focus-within:border-[#e6d5a8] dark:focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-[#fff8e0] dark:focus-within:ring-[#fff8e0]0/10">
                 <textarea
                   value={message}
                   onChange={(event) => setMessage(event.target.value)}
@@ -283,7 +283,7 @@ export default function AIStudioPage() {
                 <button
                   type="submit"
                   disabled={!message.trim() || thinking}
-                  className="grid size-10 place-items-center rounded-xl bg-indigo-600 text-white transition hover:bg-indigo-700 disabled:opacity-50"
+                  className="grid size-10 place-items-center rounded-xl bg-[#fa520f] text-white transition hover:bg-[#cc3a05] disabled:opacity-50"
                   aria-label="Send message"
                 >
                   <Send size={17} />

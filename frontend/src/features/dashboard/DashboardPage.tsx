@@ -44,7 +44,7 @@ export default function DashboardPage() {
     title: index === 0 ? "Idea created" : index === 1 ? "Idea gaining momentum" : "Idea added to your workspace",
     detail: idea.title,
     date: relativeDate(idea.createdAt),
-    color: index === 0 ? "bg-indigo-500" : index === 1 ? "bg-violet-500" : "bg-emerald-500",
+    color: index === 0 ? "bg-[#fa520f]" : index === 1 ? "bg-[#fa520f]" : "bg-emerald-500",
   })), [ideas]);
 
   function openCapture(prompt = capture) {
@@ -105,11 +105,9 @@ export default function DashboardPage() {
         <section className="relative overflow-hidden rounded-[28px] bento-section" ref={heroRef}>
           <GlobalSpotlight gridRef={heroRef} enabled={true} spotlightRadius={400} glowColor="132, 0, 255" />
           <ParticleCard
-            className="card card--border-glow rounded-[32px] px-5 py-8 text-white shadow-[0_32px_80px_-24px_rgba(0,0,0,0.6)] sm:px-12 sm:py-14"
+            className="card card--border-glow rounded-[32px] px-5 py-8 bg-white border border-slate-200 dark:bg-[#120F17] dark:border-white/[0.06] shadow-[0_4px_32px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_32px_80px_-24px_rgba(0,0,0,0.6)] sm:px-12 sm:py-14"
             style={{
-              backgroundColor: "#120F17",
               borderRadius: "28px",
-              border: "1px solid rgba(255,255,255,0.06)",
             }}
             particleCount={12}
             glowColor="132, 0, 255"
@@ -117,12 +115,11 @@ export default function DashboardPage() {
             clickEffect
             enableMagnetism={false}
           >
-            <div className="pointer-events-none absolute -right-20 -top-28 size-80 rounded-full bg-purple-500/10 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-36 left-1/3 size-72 rounded-full bg-violet-400/10 blur-3xl" />
+            <div className="pointer-events-none absolute -right-20 -top-28 size-80 rounded-full bg-purple-500/5 dark:bg-purple-500/10 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-36 left-1/3 size-72 rounded-full bg-[#fa520f]/5 dark:bg-[#fa520f]/10 blur-3xl" />
             <div className="relative max-w-3xl">
-              <p className="mb-4 flex items-center gap-3 text-xs font-semibold tracking-widest text-slate-400 uppercase"><span className="size-2 rounded-full bg-vivid animate-pulse" /> Your creative workspace</p>
-              <h1 className="font-heading text-2xl font-bold leading-[1.15] tracking-tight text-white sm:text-4xl md:text-5xl">{greeting()},<br /><span className="text-slate-400 font-normal">{user?.username}.</span></h1>
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-400 sm:text-lg">Every breakthrough starts as a raw thought. Capture and shape it for the community.</p>
+              <h1 className="font-heading text-2xl font-bold leading-[1.15] tracking-tight text-slate-900 dark:text-white sm:text-4xl md:text-5xl">{greeting()},<br /><span className="text-slate-400 dark:text-slate-400 font-normal">{user?.username}.</span></h1>
+              <div className="mt-6" />
               <QuickCapture capture={capture} setCapture={setCapture} onManualEntry={() => openCapture()} />
             </div>
           </ParticleCard>

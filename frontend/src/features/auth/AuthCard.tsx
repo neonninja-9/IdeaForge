@@ -225,7 +225,7 @@ export function AuthCard({ initialMode = "login", onModeChange }: AuthCardProps)
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     autoComplete="username"
-                    className="w-full bg-slate-50/80 dark:bg-[#100c1e] border border-slate-200/90 dark:border-white/[0.08] focus:border-indigo-500 dark:focus:border-indigo-400 focus:outline-none focus:ring-0 !outline-none text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm h-11 rounded-xl px-3.5 transition-colors duration-200"
+                    className="w-full bg-slate-50/80 dark:bg-[#100c1e] border border-slate-200/90 dark:border-white/[0.08] focus:border-[#fa520f] dark:focus:border-[#fa520f] focus:outline-none focus:ring-0 !outline-none text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm h-11 rounded-xl px-3.5 transition-colors duration-200"
                   />
                   {fieldErrors.identifier && (
                     <p className="text-xs text-red-500 dark:text-red-400 mt-1">{fieldErrors.identifier}</p>
@@ -263,7 +263,7 @@ export function AuthCard({ initialMode = "login", onModeChange }: AuthCardProps)
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     autoComplete="username"
-                    className="w-full bg-slate-50/80 dark:bg-[#100c1e] border border-slate-200/90 dark:border-white/[0.08] focus:border-indigo-500 dark:focus:border-indigo-400 focus:outline-none focus:ring-0 !outline-none text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm h-11 rounded-xl px-3.5 transition-colors duration-200"
+                    className="w-full bg-slate-50/80 dark:bg-[#100c1e] border border-slate-200/90 dark:border-white/[0.08] focus:border-[#fa520f] dark:focus:border-[#fa520f] focus:outline-none focus:ring-0 !outline-none text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm h-11 rounded-xl px-3.5 transition-colors duration-200"
                   />
                   {fieldErrors.username && (
                     <p className="text-xs text-red-500 dark:text-red-400 mt-1">{fieldErrors.username}</p>
@@ -301,7 +301,7 @@ export function AuthCard({ initialMode = "login", onModeChange }: AuthCardProps)
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     autoComplete="email"
-                    className="w-full bg-slate-50/80 dark:bg-[#100c1e] border border-slate-200/90 dark:border-white/[0.08] focus:border-indigo-500 dark:focus:border-indigo-400 focus:outline-none focus:ring-0 !outline-none text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm h-11 rounded-xl px-3.5 transition-colors duration-200"
+                    className="w-full bg-slate-50/80 dark:bg-[#100c1e] border border-slate-200/90 dark:border-white/[0.08] focus:border-[#fa520f] dark:focus:border-[#fa520f] focus:outline-none focus:ring-0 !outline-none text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm h-11 rounded-xl px-3.5 transition-colors duration-200"
                   />
                   {fieldErrors.email && (
                     <p className="text-xs text-red-500 dark:text-red-400 mt-1">{fieldErrors.email}</p>
@@ -328,7 +328,7 @@ export function AuthCard({ initialMode = "login", onModeChange }: AuthCardProps)
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete={mode === "register" ? "new-password" : "current-password"}
-                  className="w-full bg-slate-50/80 dark:bg-[#100c1e] border border-slate-200/90 dark:border-white/[0.08] focus:border-indigo-500 dark:focus:border-indigo-400 focus:outline-none focus:ring-0 !outline-none text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm h-11 rounded-xl px-3.5 pr-11 transition-colors duration-200"
+                  className="w-full bg-slate-50/80 dark:bg-[#100c1e] border border-slate-200/90 dark:border-white/[0.08] focus:border-[#fa520f] dark:focus:border-[#fa520f] focus:outline-none focus:ring-0 !outline-none text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm h-11 rounded-xl px-3.5 pr-11 transition-colors duration-200"
                 />
                 <button
                   type="button"
@@ -383,7 +383,7 @@ export function AuthCard({ initialMode = "login", onModeChange }: AuthCardProps)
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full overflow-hidden h-12 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 hover:from-indigo-500 hover:via-violet-500 hover:to-purple-500 text-white text-sm font-semibold transition-all duration-300 shadow-[0_4px_20px_rgba(99,102,241,0.35)] hover:shadow-[0_6px_25px_rgba(99,102,241,0.5)] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+              className="group relative w-full overflow-hidden h-12 rounded-xl bg-gradient-to-r from-[#fa520f] via-[#ff8105] to-[#ffa110] hover:from-[#fa520f] hover:via-[#ffa110] hover:to-[#ffb83e] text-white text-sm font-semibold transition-all duration-300 shadow-[0_4px_20px_rgba(250,82,15,0.35)] hover:shadow-[0_6px_25px_rgba(250,82,15,0.5)] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
                 <AnimatePresence mode="wait" initial={false}>

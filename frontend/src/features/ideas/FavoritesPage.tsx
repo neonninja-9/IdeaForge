@@ -44,7 +44,7 @@ export default function FavoritesPage() {
                 className="rounded-[28px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-6 shadow-sm dark:shadow-none transition hover:-translate-y-0.5 hover:border-rose-200 dark:hover:border-rose-500/30 hover:shadow-md"
               >
                 <div className="flex items-center justify-between">
-                  <span className="rounded-full bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                  <span className="rounded-full bg-[#fff8e0] dark:bg-white/5 px-3 py-1 text-xs font-semibold text-[#fa520f] dark:text-[#fa520f]">
                     {idea.category?.name || "Uncategorized"}
                   </span>
                   <Heart size={18} className="fill-rose-500 text-rose-500" />
@@ -62,7 +62,7 @@ export default function FavoritesPage() {
             </span>
             <h2 className="font-heading mt-5 text-xl font-bold text-slate-900 dark:text-white">No favorites yet.</h2>
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500 dark:text-slate-400">Open an idea and use the heart button to save it here.</p>
-            <Link to="/explore" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white hover:bg-indigo-700">
+            <Link to="/explore" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#fa520f] px-4 text-sm font-semibold text-white hover:bg-[#cc3a05]">
               <Lightbulb size={17} /> Explore ideas
             </Link>
           </section>

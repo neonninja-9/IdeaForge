@@ -36,21 +36,21 @@ export default function UserProfilePage() {
     <main className="min-h-[calc(100vh-76px)] bg-[var(--background)] dark:bg-transparent py-7 sm:py-10 transition-colors duration-500">
       <div className="mx-auto max-w-5xl px-5 sm:px-8 xl:px-12">
         <section className="relative overflow-hidden rounded-[30px] border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-6 shadow-sm dark:shadow-none sm:p-9 transition-colors">
-          <div className="absolute -right-20 -top-24 size-64 rounded-full bg-indigo-100/70 dark:bg-indigo-500/10 blur-3xl" />
+          <div className="absolute -right-20 -top-24 size-64 rounded-full bg-indigo-100/70 dark:bg-white/5 blur-3xl" />
           <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4 sm:gap-5">
-              <div className="grid size-16 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 text-2xl font-black text-white shadow-lg shadow-indigo-200 dark:shadow-none">{initial}</div>
+              <div className="grid size-16 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-[#fa520f] to-[#ffa110] text-2xl font-black text-white shadow-lg shadow-[#fa520f1a] dark:shadow-none">{initial}</div>
               <div>
-                <p className="mb-1 text-sm font-semibold text-indigo-600 dark:text-indigo-400">YOUR PROFILE</p>
+                <p className="mb-1 text-sm font-semibold text-[#fa520f] dark:text-[#fa520f]">YOUR PROFILE</p>
                 <h1 className="font-heading text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">{user.username}</h1>
                 <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{user.email}</p>
               </div>
             </div>
             <div className="flex gap-2">
-              <Link to="/settings" className="grid min-h-11 min-w-11 place-items-center rounded-xl border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 transition hover:border-indigo-200 dark:hover:border-indigo-500/30 hover:text-indigo-600 dark:hover:text-white" aria-label="Open settings">
+              <Link to="/settings" className="grid min-h-11 min-w-11 place-items-center rounded-xl border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 transition hover:border-[#e6d5a8] dark:hover:border-white/15 hover:text-[#fa520f] dark:hover:text-white" aria-label="Open settings">
                 <Settings size={18} />
               </Link>
-              <Link to="/submit" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-md shadow-indigo-200 dark:shadow-none transition-colors hover:bg-indigo-700">
+              <Link to="/submit" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[#fa520f] px-5 text-sm font-semibold text-white shadow-md shadow-[#fa520f1a] dark:shadow-none transition-colors hover:bg-[#cc3a05]">
                 Submit an idea
               </Link>
             </div>
@@ -77,7 +77,7 @@ export default function UserProfilePage() {
               <h2 className="font-heading text-xl font-bold tracking-tight text-slate-900 dark:text-white">Your ideas</h2>
               <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Everything you have shared with the community.</p>
             </div>
-            <Link to="/dashboard" className="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">Dashboard &rarr;</Link>
+            <Link to="/dashboard" className="text-sm font-semibold text-[#fa520f] dark:text-[#fa520f] hover:text-[#cc3a05] dark:hover:text-indigo-300">Dashboard &rarr;</Link>
           </div>
           {loadingIdeas ? (
             <div className="grid gap-4 sm:grid-cols-2">
@@ -85,10 +85,10 @@ export default function UserProfilePage() {
               <div className="h-44 animate-pulse rounded-3xl bg-slate-200 dark:bg-white/5" />
             </div>
           ) : ideas.length === 0 ? (
-            <div className="rounded-[26px] border border-dashed border-indigo-200 dark:border-indigo-500/20 bg-white dark:bg-[#120F17] p-10 text-center">
+            <div className="rounded-[26px] border border-dashed border-[#e6d5a8] dark:border-white/10 bg-white dark:bg-[#120F17] p-10 text-center">
               <p className="font-heading text-lg font-bold text-slate-900 dark:text-white">Your first idea starts here.</p>
               <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Share a problem you care about and turn it into a project.</p>
-              <Link to="/submit" className="mt-5 inline-block text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">Create an idea &rarr;</Link>
+              <Link to="/submit" className="mt-5 inline-block text-sm font-semibold text-[#fa520f] dark:text-[#fa520f] hover:text-[#cc3a05] dark:hover:text-indigo-300">Create an idea &rarr;</Link>
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
@@ -96,10 +96,10 @@ export default function UserProfilePage() {
                 <Link
                   key={idea.id || idea._id}
                   to={`/idea/${idea.id || idea._id}`}
-                  className="group rounded-3xl border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-5 shadow-sm dark:shadow-none transition-all hover:-translate-y-0.5 hover:border-indigo-200 dark:hover:border-indigo-500/30 hover:shadow-md"
+                  className="group rounded-3xl border border-slate-100 dark:border-white/5 bg-white dark:bg-[#120F17] p-5 shadow-sm dark:shadow-none transition-all hover:-translate-y-0.5 hover:border-[#e6d5a8] dark:hover:border-white/15 hover:shadow-md"
                 >
-                  <p className="text-[10px] font-bold tracking-[0.16em] text-indigo-600 dark:text-indigo-400">{idea.category?.name || "Uncategorized"}</p>
-                  <h3 className="mt-2 font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400">{idea.title}</h3>
+                  <p className="text-[10px] font-bold tracking-[0.16em] text-[#fa520f] dark:text-[#fa520f]">{idea.category?.name || "Uncategorized"}</p>
+                  <h3 className="mt-2 font-bold text-slate-900 dark:text-white group-hover:text-[#fa520f] dark:group-hover:text-[#fa520f]">{idea.title}</h3>
                   <div className="mt-4 flex gap-4 text-xs text-slate-400 dark:text-slate-500">
                     <span>↑ {idea.voteCount || 0} votes</span>
                     <span>{idea.commentCount || 0} comments</span>

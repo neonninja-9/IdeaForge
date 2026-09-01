@@ -1,43 +1,58 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
+@import "@fontsource-variable/inter";
 
 @custom-variant dark (&:is(.dark *));
 
 @font-face { font-family: "Editorialnew-Regular"; src: url("/fonts/EditorialNew-Regular.woff2") format("woff2"); font-display: swap; }
 
 @theme {
-  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-heading: "Geist Sans", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
 
-  /* Surface colors — use as bg-surface-* */
-  --color-surface: #fafafa;
-  --color-surface-alt: #f5f5f5;
-  --color-surface-cream: #fafaf8;
-  --color-surface-idea: #ece9e1; /* Exclusively for idea page */
+  /* ── Mistral Surface colors ── */
+  --color-surface: #ffffff;
+  --color-surface-alt: #fafafa;
+  --color-surface-cream: #fff8e0;
+  --color-surface-cream-soft: #fffaeb;
+  --color-surface-idea: #fff0c2;
   --color-surface-dark: #0a0a0a;
   --color-surface-dark-card: #141414;
 
-  /* Foreground — use as text-fg-* */
-  --color-fg: #111111;
+  /* ── Mistral Foreground ── */
+  --color-fg: #1f1f1f;
   --color-fg-strong: #000000;
-  --color-fg-mid: #555555;
-  --color-fg-light: #888888;
-  --color-fg-muted: #aaaaaa;
+  --color-fg-mid: #4a4a4a;
+  --color-fg-light: #6a6a6a;
+  --color-fg-muted: #a8a8a8;
   --color-fg-on-dark: #f5f5f0;
 
-  /* Border */
-  --color-edge: #e5e5e0;
+  /* ── Mistral Border ── */
+  --color-edge: #ededed;
   --color-edge-dark: #2a2a2a;
 
-  /* Accent */
-  --color-vivid: #e53935;
-  --color-vivid-light: #ef5350;
-  --color-vivid-hover: #d32f2f;
+  /* ── Mistral Accent (saturated orange) ── */
+  --color-vivid: #fa520f;
+  --color-vivid-light: #ff8105;
+  --color-vivid-hover: #cc3a05;
 
-  /* Dot grid */
-  --color-dot: #d0d0c8;
+  /* ── Mistral Cream palette ── */
+  --color-cream: #fff8e0;
+  --color-cream-light: #fffaeb;
+  --color-cream-deeper: #fff0c2;
+  --color-beige-deep: #e6d5a8;
+
+  /* ── Mistral Sunshine gradient stops ── */
+  --color-sunshine-300: #ffd06a;
+  --color-sunshine-500: #ffb83e;
+  --color-sunshine-700: #ffa110;
+  --color-sunshine-800: #ff8105;
+  --color-sunshine-900: #ff8a00;
+  --color-yellow-saturated: #ffd900;
+
+  /* ── Dot grid ── */
+  --color-dot: #e6d5a8;
 }
 
 html {
@@ -61,20 +76,20 @@ body {
 :root {
   /* Exact Custom Fonts */
   --fsize: 1.04166666667vw;
-  --f-regular: "Fraunces", "Editorialnew-Regular", Georgia, serif;
-  --f-medium: "Fraunces", "Editorialnew-Regular", Georgia, serif;
-  --f-light: "Fraunces", "Editorialnew-Regular", Georgia, serif;
+  --f-regular: "Editorialnew-Regular", Georgia, serif;
+  --f-medium: "Editorialnew-Regular", Georgia, serif;
+  --f-light: "Editorialnew-Regular", Georgia, serif;
   --f-edit: "Editorialnew-Regular", Georgia, serif;
   --f-edit-regular: "Editorialnew-Regular", serif;
-  --f-edit-italic: "Fraunces", "Editorialnew-Regular", Georgia, serif;
-  --f-izmir: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --f-edit-italic: "Editorialnew-Regular", Georgia, serif;
+  --f-izmir: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   
   /* Luxury Dark Mode Palette */
   --color-caviar: #030206;
-  --color-rein-rgb: 10, 7, 20;        /* Deep obsidian #0A0714 */
-  --color-shadow-rgb: 18, 14, 34;     /* Luxury elevated card surface #120E22 */
-  --color-saddle-rgb: 26, 20, 48;     /* Tertiary dark surface / inputs #1A1430 */
-  --color-mustang: #94a3b8;           /* Platinum slate text */
+  --color-rein-rgb: 10, 7, 20;
+  --color-shadow-rgb: 18, 14, 34;
+  --color-saddle-rgb: 26, 20, 48;
+  --color-mustang: #94a3b8;
   
   --color-dark-text-primary: #f8fafc;
 }
@@ -94,8 +109,6 @@ html.dark,
   background-color: transparent;
 }
 
-/* Attribute matching also covers Tailwind's arbitrary-value classes when the
-   generated utility order differs between page bundles. */
 .dark [class*="bg-[#fafaf8]"] {
   background-color: transparent !important;
 }
@@ -208,8 +221,6 @@ html.dark,
 
 
 
-/* Applied briefly when the theme changes, avoiding permanent transitions on
-   motion-heavy components while making the light/dark switch feel cohesive. */
 html.theme-transition,
 html.theme-transition *,
 html.theme-transition *::before,
@@ -225,9 +236,8 @@ input {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Keep keyboard navigation deliberate for interactive elements */
 :where(a, button, select, summary):focus-visible {
-  outline: 2px solid color-mix(in srgb, #6366f1 60%, transparent);
+  outline: 2px solid color-mix(in srgb, #fa520f 60%, transparent);
   outline-offset: 2px;
 }
 
@@ -252,22 +262,19 @@ textarea:focus-visible {
   .click-effects { display: none; }
 }
 
-/* ── Global Scrollbar Removal ──────────────────────────────────────────────
-   Removes all visible scrollbars across the entire application while preserving
-   native smooth scrolling mechanics on all platforms and browsers. */
 * {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 *::-webkit-scrollbar {
-  display: none !important; /* Chrome, Safari, Edge, Opera */
+  display: none !important;
   width: 0 !important;
   height: 0 !important;
   background: transparent !important;
 }
 
-/* Dot grid background pattern (icomat style) */
+/* Dot grid background pattern */
 .dot-grid {
   background-image: radial-gradient(circle, var(--color-dot) 1px, transparent 1px);
   background-size: 40px 40px;
@@ -340,11 +347,27 @@ textarea:focus-visible {
   animation: marquee 30s linear infinite;
 }
 
+/* ── Mistral Sunset Stripe Band ──────────────────────────────────────────
+   The brand's most recognizable signature element. Multi-stop gradient
+   from orange → sunshine → yellow → cream. */
+.sunset-stripe {
+  background: linear-gradient(
+    90deg,
+    #fa520f 0%,
+    #ff8a00 20%,
+    #ffa110 40%,
+    #ffb83e 60%,
+    #ffd900 80%,
+    #fff8e0 100%
+  );
+  height: 6px;
+  width: 100%;
+}
 
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: 'Geist Variable', sans-serif;
+  --font-heading: "Editorialnew-Regular", "Times New Roman", Georgia, serif;
+  --font-sans: 'Inter Variable', sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -386,38 +409,38 @@ textarea:focus-visible {
 }
 
 :root {
-  --background: oklch(0.985 0 0); /* #fafafa */
-  --foreground: oklch(0.145 0 0); /* #111111 */
-  --card: oklch(0.985 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(0.985 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.55 0.17 25); /* #e53935 red */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --background: #ffffff;
+  --foreground: #1f1f1f;
+  --card: #ffffff;
+  --card-foreground: #1f1f1f;
+  --popover: #ffffff;
+  --popover-foreground: #1f1f1f;
+  --primary: #fa520f;
+  --primary-foreground: #ffffff;
+  --secondary: #fffaeb;
+  --secondary-foreground: #1f1f1f;
+  --muted: #fff8e0;
+  --muted-foreground: #6a6a6a;
+  --accent: #fffaeb;
+  --accent-foreground: #1f1f1f;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --border: #ededed;
+  --input: #c7c7c7;
+  --ring: #fa520f;
+  --chart-1: #fa520f;
+  --chart-2: #ffa110;
+  --chart-3: #ffb83e;
+  --chart-4: #ffd06a;
+  --chart-5: #fff8e0;
+  --radius: 0.5rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1f1f1f;
+  --sidebar-primary: #1f1f1f;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #fffaeb;
+  --sidebar-accent-foreground: #1f1f1f;
+  --sidebar-border: #ededed;
+  --sidebar-ring: #fa520f;
 }
 
 .dark {
@@ -466,7 +489,7 @@ textarea:focus-visible {
   }
 }
 
-/* Keep these after shadcn's base layer: its background token is emitted last. */
+/* Keep these after shadcn's base layer */
 html.dark,
 html.dark body,
 html.dark #root {

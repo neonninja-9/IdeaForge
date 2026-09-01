@@ -57,7 +57,7 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <div className="font-sans antialiased bg-surface flex flex-col min-h-screen">
-          <Suspense fallback={<div className="grid min-h-screen place-items-center bg-[#fafaf8]" aria-busy="true" aria-label="Loading page"><div className="flex items-center gap-3 rounded-2xl bg-white px-5 py-4 text-sm font-medium text-slate-500 shadow-sm"><span className="size-2 animate-pulse rounded-full bg-indigo-500" /> Loading your workspace…</div></div>}>
+          <Suspense fallback={<div className="grid min-h-screen place-items-center bg-[#fffaeb]" aria-busy="true" aria-label="Loading page"><div className="flex items-center gap-3 rounded-2xl bg-white px-5 py-4 text-sm font-medium text-slate-500 shadow-sm"><span className="size-2 animate-pulse rounded-full bg-[#fa520f]" /> Loading your workspace…</div></div>}>
             <Routes>
               {/* Auth pages — full-page immersion, no Navbar/Footer */}
               <Route path="/login" element={<LoginPage />} />
