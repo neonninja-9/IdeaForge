@@ -499,19 +499,25 @@ export default function LandingPage() {
       <VelocityBand />
 
       {/* Section 3: ScrollExpand Cinematic Reveal (with dark masked dashboard) */}
-      <CinematicReveal />
+      <div id="product">
+        <CinematicReveal />
+      </div>
 
       {/* Section 4: FlowingMenu Feature Explorer */}
       <FeatureExplorer />
 
       {/* Section 5: AccordionGallery Features */}
-      <FeaturesShowcase />
+      <div id="workflow">
+        <FeaturesShowcase />
+      </div>
 
       {/* Section 6: Stats CountUp */}
       <StatsSection />
 
       {/* Section 7: AnimatedList Activity Feed */}
-      <ActivityFeed />
+      <div id="metabrain">
+        <ActivityFeed />
+      </div>
 
       {/* Section 8: DriftWall Showcase */}
       <ShowcaseWall />

@@ -58,7 +58,7 @@ uniform vec3 uGlowColor;
 
 out vec4 fragColor;
 
-#define MAX_LAYERS 10
+#define MAX_LAYERS 4
 
 mat2 rotate2d(float angle) {
   float sine = sin(angle);
@@ -74,14 +74,7 @@ float grainHash(vec2 point) {
 
 float layeredGrain(vec2 fragmentPixel) {
   vec2 point = mod(fragmentPixel + vec2(uTime * 30.0, -uTime * 21.0), 1024.0);
-  vec2 rotated = mat2(0.8, -0.5, 0.5, 0.8) * point;
-  float grain = 0.0;
-  grain += 0.40 * grainHash(rotated);
-  grain += 0.25 * grainHash(rotated * 2.0 + 17.0);
-  grain += 0.20 * grainHash(rotated * 4.0 + 47.0);
-  grain += 0.10 * grainHash(rotated * 8.0 + 113.0);
-  grain += 0.05 * grainHash(rotated * 16.0 + 191.0);
-  return grain;
+  return grainHash(point);
 }
 
 void main() {
@@ -108,12 +101,12 @@ void main() {
     polarAngle += sin(radius * uTwistFrequency - time * uTwistSpeed + fi) * uTwist;
     p = vec2(cos(polarAngle), sin(polarAngle)) * radius;
 
-    float lines = abs(sin(p.x * (uLineFrequency + fi * uLineSpacing) + sin(p.y * 3.0 + time)));
+    float lines = abs(sin(p.x * (uLineFrequency + fi * uLineSpacing) + sin(p.y * 3.0 + time) - time * 2.5));
     lines = pow(max(0.0, 1.0 - lines), uLineSharpness);
     fiberField += lines / fi;
     color += uLineColor * lines / fi;
 
-    float glow = exp(-uGlowFalloff * abs(sin(p.x * 3.0 + time + fi)));
+    float glow = exp(-uGlowFalloff * abs(sin(p.x * 3.0 - time * 2.5 + fi)));
     color += uGlowColor * glow * uGlowIntensity / (fi * 2.0);
   }
 
@@ -288,13 +281,13 @@ const GhostFibers: FC<GhostFibersProps> = ({
       if (frameId !== 0) cancelAnimationFrame(frameId);
       frameId = 0;
     };
-    const canAnimate = () => isVisible && isPageVisible && !isPaused && !reducedMotion.matches;
+    const canAnimate = () => !reducedMotion.matches;
 
     const loop = (now: number) => {
       frameId = 0;
       if (!canAnimate()) return;
 
-      const delta = Math.min((now - previousTime) / 1000, 0.1);
+      const delta = Math.max(0, Math.min((now - previousTime) / 1000, 0.1));
       previousTime = now;
       elapsed += delta;
 
@@ -313,6 +306,12 @@ const GhostFibers: FC<GhostFibersProps> = ({
     const setSize = () => {
       const rect = container.getBoundingClientRect();
       renderer.setSize(Math.max(1, Math.floor(rect.width)), Math.max(1, Math.floor(rect.height)));
+      
+      // Ensure CSS size remains 100% so it stretches
+      const canvas = gl.canvas as HTMLCanvasElement;
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+
       program.uniforms.uResolution.value[0] = gl.drawingBufferWidth;
       program.uniforms.uResolution.value[1] = gl.drawingBufferHeight;
       render();
@@ -339,7 +338,7 @@ const GhostFibers: FC<GhostFibersProps> = ({
         if (canAnimate()) start();
         else stop();
       },
-      { threshold: 0 }
+      { threshold: 0, rootMargin: '200px' }
     );
     intersectionObserver.observe(container);
     document.addEventListener('visibilitychange', handleVisibility);

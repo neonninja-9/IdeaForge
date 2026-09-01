@@ -79,7 +79,9 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-3 md:flex">
           <a
-            href="https://github.com"
+            href="https://github.com/neonninja-9/IdeaForge.git"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm font-medium text-[#d1d1d1] transition hover:text-white"
           >
             <Star className="size-4" />
@@ -155,6 +157,7 @@ export default function Navbar() {
           >
             Explore
           </Link>
+
           {!isLoading && user ? (
             <RadialRevealButton
               onClick={handleLogout}

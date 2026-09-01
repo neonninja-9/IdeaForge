@@ -57,8 +57,8 @@ export default function Hero() {
       {/* GhostFibers Background */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <GhostFibers
-          lineColor="#2d3748"
-          glowColor="#1a202c"
+          lineColor="#140E35"
+          glowColor="#3437A0"
           speed={0.2}
           scale={2}
           rotation={0}
