@@ -6,6 +6,7 @@
 
 import Vote from "../../models/vote.js";
 import AppError from "../utils/AppError.js";
+import creditService from "../services/credit.service.js";
 
 const voteController = {
     /**
@@ -48,6 +49,13 @@ const voteController = {
                     actor: req.user.id,
                     type: "vote",
                     idea: idea._id
+                });
+            }
+
+            // Check ForgeCoin vote milestones (fire-and-forget)
+            if (idea) {
+                creditService.checkVoteMilestones(ideaId, idea.author.toString()).catch(err => {
+                    console.error("[VoteController] ForgeCoin milestone check failed:", err);
                 });
             }
 

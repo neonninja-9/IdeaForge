@@ -242,18 +242,18 @@ function StatsSection() {
    ═══════════════════════════════════════════════════════════════════════════ */
 function ActivityFeed() {
   const feedItems = [
-    "🧠 AI Engine generated a 9-phase roadmap for \"Smart Irrigation\"",
-    "📌 Gourav submitted \"AI Crop Disease Detection\" in Agriculture",
-    "✅ Community upvoted \"Traffic Prediction System\" to trending",
-    "💡 3 new ideas submitted in Healthcare this hour",
-    "🔗 System matched \"Smart Farming\" with 4 similar projects",
-    "📊 AI suggested React, TensorFlow, MongoDB for new idea",
-    "🎯 \"Student Mental Health Chatbot\" received full roadmap",
-    "🤖 Auto-categorized 12 ideas into correct domains",
-    "⭐ \"Open-Source Package Manager\" favorited by 28 builders",
-    "📝 New tags created: Edge Computing, Federated Learning",
-    "🚀 \"Smart City Parking\" moved from draft to published",
-    "💬 5 new comments on \"Blockchain Voting System\" idea",
+    "AI Engine generated a 9-phase roadmap for \"Smart Irrigation\"",
+    "Gourav submitted \"AI Crop Disease Detection\" in Agriculture",
+    "Community upvoted \"Traffic Prediction System\" to trending",
+    "3 new ideas submitted in Healthcare this hour",
+    "System matched \"Smart Farming\" with 4 similar projects",
+    "AI suggested React, TensorFlow, MongoDB for new idea",
+    "\"Student Mental Health Chatbot\" received full roadmap",
+    "Auto-categorized 12 ideas into correct domains",
+    "\"Open-Source Package Manager\" favorited by 28 builders",
+    "New tags created: Edge Computing, Federated Learning",
+    "\"Smart City Parking\" moved from draft to published",
+    "5 new comments on \"Blockchain Voting System\" idea",
   ];
 
   return (

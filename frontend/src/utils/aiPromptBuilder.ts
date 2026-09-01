@@ -41,13 +41,13 @@ export function generateContextualAiPrompt(idea: IdeaPromptContext): string {
   const techStack = idea.suggestedTechStack?.trim() || "Modern Full-Stack (React / Node.js / PostgreSQL / TypeScript)";
   const tags = idea.tags && idea.tags.length > 0 ? idea.tags.join(", ") : "Web Development, Full-Stack, Architecture";
 
-  return `# 🚀 Project Blueprint & System Architecture: ${title}
+  return `# Project Blueprint & System Architecture: ${title}
 
 You are an elite Principal Software Architect and Full-Stack Tech Lead. I am starting development on a new project titled "${title}" and need your help to build a production-grade architecture, database schema, API design, and initial boilerplate code foundation.
 
 ---
 
-### 📋 1. Project Overview & Meta Context
+### 1. Project Overview & Meta Context
 - **Project Title:** ${title}
 - **Domain / Category:** ${category}
 - **Complexity Level:** ${difficulty}
@@ -56,17 +56,17 @@ You are an elite Principal Software Architect and Full-Stack Tech Lead. I am sta
 
 ---
 
-### 🚨 2. Problem Statement
+### 2. Problem Statement
 ${problem}
 
 ---
 
-### 💡 3. Proposed Solution & Core Innovation
+### 3. Proposed Solution & Core Innovation
 ${solution}
-${impact ? `\n---\n\n### 🎯 4. Target Impact & Expected Outcome\n${impact}\n` : ""}
+${impact ? `\n---\n\n### 4. Target Impact & Expected Outcome\n${impact}\n` : ""}
 ---
 
-### 🛠️ 5. Implementation Requirements & Goals for You
+### 5. Implementation Requirements & Goals for You
 
 Please walk me through the complete engineering specification and write the initial starter code:
 

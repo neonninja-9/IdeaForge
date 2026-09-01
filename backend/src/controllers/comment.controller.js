@@ -6,6 +6,7 @@
 
 import Comment from "../../models/comment.js";
 import AppError from "../utils/AppError.js";
+import creditService from "../services/credit.service.js";
 
 const commentController = {
     /**
@@ -65,6 +66,11 @@ const commentController = {
                     actor: req.user.id,
                     type: "comment",
                     idea: ideaObj._id
+                });
+
+                // Award ForgeCoins to idea author (fire-and-forget)
+                creditService.creditForComment(ideaObj.author.toString(), ideaObj._id).catch(err => {
+                    console.error("[CommentController] ForgeCoin credit failed:", err);
                 });
             }
 

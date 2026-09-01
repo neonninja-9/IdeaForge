@@ -39,13 +39,13 @@ const primaryNavigation: NavigationItem[] = [
   { label: "Projects", to: "/projects", icon: FolderKanban },
   { label: "Templates", to: "/templates", icon: Sparkles },
   { label: "Favorites", to: "/favorites", icon: Heart },
-  { label: "AI Studio (Soon)", to: "/ai-studio", icon: Bot, match: (path) => path === "/ai-studio" },
+  { label: "AI Studio", to: "/ai-studio", icon: Bot, match: (path) => path === "/ai-studio" },
 ];
 
 const bottomNavigation: NavigationItem[] = [
   { label: "Home", to: "/dashboard", icon: Home },
   { label: "Ideas", to: "/explore", icon: Lightbulb, match: (path) => path === "/explore" || path.startsWith("/idea/") },
-  { label: "AI Studio (Soon)", to: "/ai-studio", icon: Sparkles },
+  { label: "AI Studio", to: "/ai-studio", icon: Sparkles },
   { label: "Projects", to: "/projects", icon: FolderKanban },
   { label: "Profile", to: "/profile", icon: UserRound },
 ];

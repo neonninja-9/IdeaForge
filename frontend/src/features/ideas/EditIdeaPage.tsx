@@ -177,7 +177,7 @@ export default function EditIdeaPage() {
                   <span className="relative block">
                     <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)} className={`w-full appearance-none rounded-2xl border bg-white dark:bg-[#1a1625] px-4 py-3.5 text-sm text-slate-700 dark:text-slate-200 outline-none focus:border-[#fa520f] dark:focus:border-[#fa520f]/50 focus:ring-4 focus:ring-[#fff8e0] dark:focus:ring-[#fff8e0]0/10 ${errors.category ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`}>
                       <option value="">Choose a category</option>
-                      {categories.map((category) => <option key={category.id || category._id} value={category.id || category._id}>{category.icon} {category.name}</option>)}
+                      {categories.map((category) => <option key={category.id || category._id} value={category.id || category._id}>{category.name}</option>)}
                     </select>
                     <ChevronDown size={17} className="pointer-events-none absolute right-4 top-3.5 text-slate-400 dark:text-slate-500" />
                   </span>

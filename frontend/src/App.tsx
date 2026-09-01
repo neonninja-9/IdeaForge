@@ -77,9 +77,9 @@ function App() {
                 <Route path="/submit" element={<SubmitIdeaPage />} />
                 <Route path="/edit-idea/:id" element={<EditIdeaPage />} />
                 <Route path="/projects" element={<ProjectsPage />} />
+                <Route path="/ai-studio" element={<AIStudioPage />} />
                 <Route path="/templates" element={<TemplatesPage />} />
                 <Route path="/favorites" element={<FavoritesPage />} />
-                <Route path="/ai-studio" element={<AIStudioPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
               </Route>
 

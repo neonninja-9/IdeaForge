@@ -32,7 +32,7 @@ export default function TemplatesPage() {
           ))}
         </section>
 
-        {/* AI Studio teaser - Coming Soon */}
+        {/* AI Studio productivity teaser */}
         <section className="mt-8 flex flex-col gap-4 rounded-[28px] border border-[#ededed] dark:border-[#ff8105]/20 bg-gradient-to-r from-[#fffaeb] to-[#fff8e0] dark:from-[#1a0800/20] dark:to-[#1a0800/20] p-6 sm:flex-row sm:items-center sm:justify-between transition-colors">
           <div className="flex items-center gap-4">
             <span className="grid size-11 place-items-center rounded-2xl bg-white dark:bg-[#120F17] text-[#fa520f] dark:text-[#ff8105] shadow-sm dark:shadow-none">
@@ -41,13 +41,13 @@ export default function TemplatesPage() {
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="font-heading font-bold text-slate-900 dark:text-white">AI Studio Co-pilot</h2>
-                <span className="rounded-full bg-[#fff0c2] dark:bg-[#fa520f]/20 px-2 py-0.5 text-[10px] font-semibold text-[#cc3a05] dark:text-[#ff8105]">Coming Soon</span>
+                <span className="rounded-full bg-[#fff0c2] dark:bg-[#fa520f]/20 px-2 py-0.5 text-[10px] font-semibold text-[#cc3a05] dark:text-[#ff8105]">Live demo</span>
               </div>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Interactive AI brainstorm sessions for open-ended exploration are in development.</p>
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Turn templates and saved ideas into PRDs, MVP plans, validation kits, and launch checklists.</p>
             </div>
           </div>
           <Link to="/ai-studio" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-slate-200 dark:bg-white/10 px-4 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-white/20 transition">
-            Preview Studio
+            Open Studio
           </Link>
         </section>
 

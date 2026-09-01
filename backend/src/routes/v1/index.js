@@ -20,6 +20,7 @@ import notificationRoutes from "./notification.routes.js";
 import templateRoutes from "./template.routes.js";
 import uploadRoutes from "./upload.routes.js";
 import solutionRoutes from "./solution.routes.js";
+import walletRoutes from "./wallet.routes.js";
 const router = Router();
 
 router.use("/", solutionRoutes); // Mount before /ideas to catch /ideas/:ideaId/solutions
@@ -36,4 +37,5 @@ router.use("/favorites", favoriteRoutes);
 router.use("/notifications", notificationRoutes);
 router.use("/templates", templateRoutes);
 router.use("/upload", uploadRoutes);
+router.use("/wallet", walletRoutes);
 export default router;
