@@ -25,12 +25,13 @@ app.use(cookieParser());
 app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads")));
 
 // ─── Database Connection ───────────────────────────────────────
-try {
-    await connectDB();
-    logger.info("Database Connected");
-} catch (error) {
-    logger.error("Database connection failed:", error);
-}
+connectDB()
+    .then(() => {
+        logger.info("Database Connected");
+    })
+    .catch((error) => {
+        logger.error(`Database connection failed: ${error.message}`);
+    });
 
 // ─── Health Check ──────────────────────────────────────────────
 app.get("/", (req, res) => {

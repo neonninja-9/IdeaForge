@@ -1,17 +1,9 @@
-"use client";
-
-import { ArrowRight, Bot, CircleDot, GitBranch, Lightbulb, MessageSquare, Sparkles } from "lucide-react";
+import { ArrowRight, Bot, GitBranch, Lightbulb, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 import LaserFlow from "../../components/LaserFlow";
 import BlurText from "./effects/blurText";
 import Shuffle from "./effects/suffle-text";
 import SpecularButton from "./effects/specularButton";
-
-const issues = [
-  { title: "Cluster onboarding notes", tag: "Research", tone: "iris", progress: "72%" },
-  { title: "Draft investor narrative", tag: "Pitch", tone: "ember", progress: "58%" },
-  { title: "Map competitor signals", tag: "Strategy", tone: "ash", progress: "34%" },
-];
 
 function ProductFrame() {
   return (
@@ -21,125 +13,32 @@ function ProductFrame() {
       <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 sm:w-64 h-6 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,1)_0%,rgba(155,180,255,0.7)_45%,transparent_80%)] blur-sm z-30" />
       <div className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 w-[380px] h-20 bg-[radial-gradient(ellipse_at_center,rgba(155,180,255,0.35)_0%,rgba(86,131,218,0.12)_50%,transparent_75%)] blur-2xl z-20" />
 
-      {/* Subtle card dot grid */}
-      <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none opacity-60" />
+      {/* Window Title Bar */}
+      <div className="flex items-center justify-between border-b border-white/10 bg-[#0c0d12]/90 px-5 py-3.5 backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          <span className="size-3 rounded-full bg-[#ff5f56]/90 inline-block shadow-[0_0_8px_rgba(255,95,86,0.5)]" />
+          <span className="size-3 rounded-full bg-[#ffbd2e]/90 inline-block shadow-[0_0_8px_rgba(255,189,46,0.5)]" />
+          <span className="size-3 rounded-full bg-[#27c93f]/90 inline-block shadow-[0_0_8px_rgba(39,201,63,0.5)]" />
+        </div>
+        <div className="flex items-center gap-2 text-xs font-medium text-[#95979e]">
+          <span className="size-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
+          <span className="text-white/80 font-semibold tracking-wide">app.ideaforge.dev / dashboard</span>
+        </div>
+        <div className="w-12 text-right">
+          <span className="text-[10px] uppercase font-bold text-[#9bb4ff] bg-[#9bb4ff]/10 px-2 py-0.5 rounded-full border border-[#9bb4ff]/20">Live</span>
+        </div>
+      </div>
 
-      {/* Product Content */}
-      <div className="relative z-10 flex h-[440px] text-white">
-        {/* Left Sidebar */}
-        <aside className="hidden w-48 shrink-0 border-r border-white/10 bg-[#08090c]/90 p-4 md:flex md:flex-col justify-between backdrop-blur-sm">
-          <div>
-            <div className="mb-6 flex items-center gap-2.5">
-              <span className="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-[#5683da] to-[#7b5fea] shadow-sm">
-                <Sparkles className="size-4 text-white" />
-              </span>
-              <span className="text-sm font-bold tracking-tight">IdeaForge</span>
-            </div>
-            {["Capture", "Forge", "Projects", "Knowledge"].map((item, index) => (
-              <div
-                key={item}
-                className={`mb-1.5 flex items-center gap-3 rounded-xl px-3 py-2 text-xs font-medium transition-colors ${
-                  index === 1
-                    ? "bg-white/10 text-white shadow-sm"
-                    : "text-[#95979e] hover:text-white hover:bg-white/[0.04]"
-                }`}
-              >
-                <CircleDot className={`size-3 ${index === 1 ? "text-[#9bb4ff]" : "text-[#95979e]"}`} />
-                {item}
-              </div>
-            ))}
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-[#111216]/90 p-3.5">
-            <p className="text-[10px] uppercase font-semibold tracking-wider text-[#95979e]">Forge score</p>
-            <p className="mt-1 text-3xl font-black tracking-tight text-white">86</p>
-            <div className="mt-2.5 h-1.5 rounded-full bg-white/10 overflow-hidden">
-              <div className="h-full w-4/5 rounded-full bg-gradient-to-r from-[#ff8964] to-[#ffa585]" />
-            </div>
-          </div>
-        </aside>
-
-        {/* Main Content Area */}
-        <main className="min-w-0 flex-1 p-4 sm:p-5 flex flex-col justify-between">
-          <div>
-            <div className="mb-4 flex items-center justify-between gap-4">
-              <div>
-                <p className="text-xs text-[#95979e] font-medium">Workspace / Launch narrative</p>
-                <h3 className="mt-0.5 text-xl font-bold tracking-tight text-white">Issues</h3>
-              </div>
-              <div className="flex -space-x-2">
-                {["AN", "GK", "PR"].map((avatar) => (
-                  <span
-                    key={avatar}
-                    className="grid size-8 place-items-center rounded-full border-2 border-[#0c0d12] bg-[#2a2c33] text-[10px] font-bold text-slate-200 shadow-sm"
-                  >
-                    {avatar}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Kanban Columns */}
-            <div className="grid gap-3 md:grid-cols-[1fr_1fr_1fr_220px]">
-              {["Backlog", "To do", "In progress"].map((column, columnIndex) => (
-                <section key={column} className="rounded-xl border border-white/10 bg-black/40 p-3 backdrop-blur-xs">
-                  <div className="mb-3 flex items-center justify-between text-[11px] font-semibold text-[#95979e]">
-                    <span>{column}</span>
-                    <span className="rounded-md bg-white/10 px-1.5 py-0.5 text-[10px] text-slate-300">
-                      {columnIndex + 2}
-                    </span>
-                  </div>
-                  <div className="space-y-2.5">
-                    {issues.map((issue, index) => (
-                      <article
-                        key={`${column}-${issue.title}`}
-                        className={`rounded-xl border border-white/10 bg-[#14151a] p-3 transition-all ${
-                          index === columnIndex
-                            ? "opacity-100 ring-1 ring-[#9bb4ff]/30 shadow-md"
-                            : "opacity-60"
-                        }`}
-                      >
-                        <p className="text-xs font-semibold leading-snug text-slate-100">{issue.title}</p>
-                        <div className="mt-2.5 flex items-center justify-between gap-2">
-                          <span
-                            className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
-                              issue.tone === "iris"
-                                ? "bg-[#5683da]/20 text-[#9bb4ff]"
-                                : issue.tone === "ember"
-                                ? "bg-[#ff8964]/20 text-[#ffb197]"
-                                : "bg-white/10 text-[#a9a9aa]"
-                            }`}
-                          >
-                            {issue.tag}
-                          </span>
-                          <span className="text-[10px] font-medium text-[#95979e]">{issue.progress}</span>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                </section>
-              ))}
-
-              {/* Inbox Panel */}
-              <aside className="hidden rounded-xl border border-white/10 bg-[#08090c]/80 p-3 lg:block backdrop-blur-xs">
-                <div className="mb-3 flex items-center justify-between">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300">Inbox</h4>
-                  <MessageSquare className="size-3.5 text-[#95979e]" />
-                </div>
-                {[
-                  ["Maya", "mentioned you in launch notes"],
-                  ["Ravi", "approved the story arc"],
-                  ["Alex", "added a new insight tag"],
-                ].map(([name, text]) => (
-                  <div key={name} className="mb-2.5 rounded-xl bg-white/[0.04] p-2.5 border border-white/5">
-                    <p className="text-xs font-semibold text-slate-200">{name}</p>
-                    <p className="mt-0.5 text-[11px] leading-snug text-[#a9a9aa]">{text}</p>
-                  </div>
-                ))}
-              </aside>
-            </div>
-          </div>
-        </main>
+      {/* Real Dashboard Screenshot */}
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#0a0b0e]">
+        <img
+          src="/images/screenshots/dashboard.jpg"
+          alt="IdeaForge Real Project Dashboard"
+          className="h-full w-full object-cover object-top transition-transform duration-700 hover:scale-[1.01]"
+          loading="eager"
+        />
+        {/* Subtle gradient overlay at the bottom */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0c0d12] to-transparent opacity-60" />
       </div>
     </div>
   );
@@ -156,12 +55,12 @@ export default function Hero() {
         <div className="relative z-30 max-w-3xl mx-auto text-center pt-6 sm:pt-12 pb-6 sm:pb-8">
           <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-xs font-medium text-[#d1d1d1] backdrop-blur-md">
             <span className="size-2 rounded-full bg-[#ff8964] shadow-[0_0_18px_rgba(255,137,100,0.9)] animate-pulse" />
-            Idea workspace for fast-moving teams
+            AI-powered project idea platform
           </p>
 
           {/* BlurText animated headline */}
           <BlurText
-            text="Everything App for your ideas"
+            text="Forge Raw Problems into Polished Projects"
             delay={80}
             animateBy="words"
             direction="top"
@@ -171,7 +70,7 @@ export default function Hero() {
           {/* Shuffle animated subtitle */}
           <div className="mt-5 max-w-xl mx-auto">
             <Shuffle
-              text="Capture notes, shape them with AI, and move every promising thought through a calm, intelligent project workspace."
+              text="Submit real-world problems, get AI-generated roadmaps and tech stack suggestions, and discover similar projects — all in one platform built for builders."
               className="!text-base !sm:text-lg !leading-relaxed !text-[#a5a7b0] !normal-case !tracking-normal"
               tag="p"
               textAlign="center"
@@ -204,7 +103,7 @@ export default function Hero() {
                 className="font-bold"
               >
                 <span className="flex items-center gap-2">
-                  See in action
+                  Submit an Idea
                   <ArrowRight className="size-4" />
                 </span>
               </SpecularButton>
@@ -227,7 +126,7 @@ export default function Hero() {
                 followMouse
                 className="font-semibold"
               >
-                Explore ideas
+                Explore Projects
               </SpecularButton>
             </Link>
           </div>
@@ -261,10 +160,10 @@ export default function Hero() {
           {/* Bottom Feature Tags */}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-[#d1d1d1]">
             {[
-              ["Team planner", GitBranch],
-              ["AI forge", Bot],
-              ["Idea graph", Lightbulb],
-              ["Documents", MessageSquare],
+              ["AI Roadmaps", GitBranch],
+              ["Tech Stack Suggestions", Bot],
+              ["Idea Matching", Lightbulb],
+              ["Community Voting", MessageSquare],
             ].map(([label, Icon]) => (
               <span key={label as string} className="inline-flex items-center gap-2 font-medium text-slate-300">
                 <Icon className="size-4 text-[#9bb4ff]" />

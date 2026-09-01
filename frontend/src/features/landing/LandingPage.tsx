@@ -43,12 +43,12 @@ function VelocityBand() {
     <section className="relative bg-[#090a0c] py-8 overflow-hidden border-t border-white/5">
       <ScrollVelocity
         texts={[
-          "Capture Ideas",
-          "AI Forge",
-          "Projects",
-          "Knowledge Base",
-          "Collaborate",
-          "Ship Faster",
+          "Submit Ideas",
+          "AI Roadmaps",
+          "Tech Stacks",
+          "Idea Matching",
+          "Community Voting",
+          "Ship Projects",
         ]}
         velocity={60}
         className="text-white/10 font-black uppercase"
@@ -65,10 +65,10 @@ function CinematicReveal() {
   return (
     <section className="relative bg-[#090a0c] w-full">
       <ScrollExpand
-        src="https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=1920&q=80"
+        src="/images/screenshots/explore.jpg"
         mediaType="image"
         alt="IdeaForge workspace"
-        title="Where Ideas Become Reality"
+        title="From Problem to Project in Minutes"
         scrollHint="Scroll to explore"
         startWidth={42}
         startHeight={58}
@@ -83,7 +83,7 @@ function CinematicReveal() {
       >
         <div className="flex flex-col items-center gap-6">
           <p className="text-white/80 text-lg sm:text-xl max-w-lg font-medium">
-            A unified workspace that transforms scattered thoughts into structured, actionable projects.
+            A platform that transforms scattered real-world problems into structured, AI-enriched project ideas with roadmaps and tech stack recommendations.
           </p>
           <Link to="/register">
             <SpecularButton
@@ -99,7 +99,7 @@ function CinematicReveal() {
               autoAnimate
             >
               <span className="flex items-center gap-2">
-                Get Started Free
+                Start Building
                 <ArrowRight className="size-4" />
               </span>
             </SpecularButton>
@@ -115,11 +115,11 @@ function CinematicReveal() {
    ═══════════════════════════════════════════════════════════════════════════ */
 function FeatureExplorer() {
   const menuItems = [
-    { link: "#capture", text: "Capture", image: "https://images.unsplash.com/photo-1517842645767-c639042777db?w=600&q=80" },
-    { link: "#forge", text: "AI Forge", image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&q=80" },
-    { link: "#projects", text: "Projects", image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=600&q=80" },
-    { link: "#knowledge", text: "Knowledge", image: "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=600&q=80" },
-    { link: "#collaborate", text: "Collaborate", image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80" },
+    { link: "#explore", text: "Explore Ideas", image: "/images/screenshots/explore.jpg" },
+    { link: "#ai-studio", text: "AI Studio", image: "/images/screenshots/ai-studio.jpg" },
+    { link: "#roadmaps", text: "Roadmap Generator", image: "/images/screenshots/submit.jpg" },
+    { link: "#matching", text: "Idea Matching", image: "/images/screenshots/landing.jpg" },
+    { link: "#community", text: "Community", image: "/images/screenshots/login.jpg" },
   ];
 
   return (
@@ -129,7 +129,7 @@ function FeatureExplorer() {
           containerClassName="!my-0"
           textClassName="!text-white font-black tracking-tight"
         >
-          Explore every feature
+          Explore the platform
         </ScrollFloat>
       </div>
       <div className="h-[500px] sm:h-[600px]">
@@ -153,24 +153,24 @@ function FeatureExplorer() {
 function FeaturesShowcase() {
   const galleryItems = [
     {
-      image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=900&q=80",
-      label: "Quick Capture",
+      image: "/images/screenshots/dashboard.jpg",
+      label: "Workspace Dashboard",
     },
     {
-      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=900&q=80",
-      label: "AI Forge",
+      image: "/images/screenshots/explore.jpg",
+      label: "Community Ideas Feed",
     },
     {
-      image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=900&q=80",
-      label: "Projects",
+      image: "/images/screenshots/ai-studio.jpg",
+      label: "AI Studio & Roadmap",
     },
     {
-      image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=900&q=80",
-      label: "Collaborate",
+      image: "/images/screenshots/submit.jpg",
+      label: "Submit & Enforce Ideas",
     },
     {
-      image: "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=900&q=80",
-      label: "Knowledge Base",
+      image: "/images/screenshots/landing.jpg",
+      label: "Projects & Templates",
     },
   ];
 
@@ -181,12 +181,12 @@ function FeaturesShowcase() {
           containerClassName="!my-0 !mb-10"
           textClassName="!text-white font-black tracking-tight"
         >
-          Built for every stage of thinking
+          From problem to project, every step covered
         </ScrollFloat>
 
         <AccordionGallery
           items={galleryItems}
-          defaultIndex={2}
+          defaultIndex={0}
           accentColor="#9bb4ff"
           overlayColor="#090a0c"
           textColor="#ffffff"
@@ -212,12 +212,12 @@ function FeaturesShowcase() {
    ═══════════════════════════════════════════════════════════════════════════ */
 function ProductCarousel() {
   const carouselItems = [
-    { image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80", alt: "Dashboard" },
-    { image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80", alt: "Analytics" },
-    { image: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=800&q=80", alt: "Kanban Board" },
-    { image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&q=80", alt: "Team View" },
-    { image: "https://images.unsplash.com/photo-1600267175161-cfaa711b4a81?w=800&q=80", alt: "AI Studio" },
-    { image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&q=80", alt: "Workspace" },
+    { image: "/images/screenshots/dashboard.jpg", alt: "IdeaForge Dashboard" },
+    { image: "/images/screenshots/explore.jpg", alt: "Idea Feed" },
+    { image: "/images/screenshots/ai-studio.jpg", alt: "AI Roadmap Studio" },
+    { image: "/images/screenshots/submit.jpg", alt: "Submit Project Idea" },
+    { image: "/images/screenshots/landing.jpg", alt: "Project Board" },
+    { image: "/images/screenshots/login.jpg", alt: "Authentication" },
   ];
 
   return (
@@ -267,10 +267,10 @@ function ProductCarousel() {
    ═══════════════════════════════════════════════════════════════════════════ */
 function StatsSection() {
   const stats = [
-    { value: 50000, suffix: "+", label: "Ideas Captured", icon: Lightbulb },
-    { value: 12000, suffix: "+", label: "Projects Shipped", icon: TrendingUp },
-    { value: 8500, suffix: "+", label: "Teams Active", icon: Users },
-    { value: 99.9, suffix: "%", label: "Uptime", icon: Shield },
+    { value: 25000, suffix: "+", label: "Ideas Submitted", icon: Lightbulb },
+    { value: 8500, suffix: "+", label: "Roadmaps Generated", icon: TrendingUp },
+    { value: 4200, suffix: "+", label: "Active Contributors", icon: Users },
+    { value: 10, suffix: "+", label: "Real-World Domains", icon: Shield },
   ];
 
   return (
@@ -300,18 +300,18 @@ function StatsSection() {
    ═══════════════════════════════════════════════════════════════════════════ */
 function ActivityFeed() {
   const feedItems = [
-    "🧠 Maya refined \"Growth Flywheel\" with AI Forge",
-    "📌 Ravi pinned \"Q3 OKR Draft\" to Projects board",
-    "✅ Alex approved \"Launch Copy v2\" in review",
-    "💡 Sarah captured 3 new ideas from brainstorm",
-    "🔗 Dev linked research notes to investor deck",
-    "📊 Team velocity increased 34% this sprint",
-    "🎯 \"Product Hunt Launch\" moved to In Progress",
-    "🤖 AI generated 5 action items from meeting notes",
-    "⭐ \"Customer Interview Insights\" favorited by 4 members",
-    "📝 Knowledge base updated with 12 new entries",
-    "🚀 Sprint 14 completed — 23/25 items shipped",
-    "💬 3 new comments on \"Pricing Strategy\" idea",
+    "🧠 AI Engine generated a 9-phase roadmap for \"Smart Irrigation\"",
+    "📌 Gourav submitted \"AI Crop Disease Detection\" in Agriculture",
+    "✅ Community upvoted \"Traffic Prediction System\" to trending",
+    "💡 3 new ideas submitted in Healthcare this hour",
+    "🔗 System matched \"Smart Farming\" with 4 similar projects",
+    "📊 AI suggested React, TensorFlow, MongoDB for new idea",
+    "🎯 \"Student Mental Health Chatbot\" received full roadmap",
+    "🤖 Auto-categorized 12 ideas into correct domains",
+    "⭐ \"Open-Source Package Manager\" favorited by 28 builders",
+    "📝 New tags created: Edge Computing, Federated Learning",
+    "🚀 \"Smart City Parking\" moved from draft to published",
+    "💬 5 new comments on \"Blockchain Voting System\" idea",
   ];
 
   return (
@@ -324,18 +324,18 @@ function ActivityFeed() {
               containerClassName="!my-0 !mb-6"
               textClassName="!text-white font-black tracking-tight !text-left"
             >
-              Your ideas, always in motion
+              The forge never stops
             </ScrollFloat>
             <p className="text-[#a5a7b0] text-base sm:text-lg leading-relaxed max-w-lg">
-              A living activity feed keeps your entire team in sync. Every capture, refinement, approval, and milestone flows through one calm, intelligent stream.
+              A living activity feed tracks every submission, AI enrichment, community vote, and milestone across the entire platform — keeping builders informed and inspired.
             </p>
 
             <div className="mt-8 grid grid-cols-2 gap-4">
               {[
-                { icon: Zap, label: "Real-time sync", desc: "Instant updates across all devices" },
-                { icon: Brain, label: "AI-powered", desc: "Smart summaries and insights" },
-                { icon: Clock, label: "Timeline view", desc: "Full history at a glance" },
-                { icon: Star, label: "Smart alerts", desc: "Only what matters to you" },
+                { icon: Zap, label: "Real-time feed", desc: "Instant updates on new ideas" },
+                { icon: Brain, label: "AI enrichment", desc: "Auto roadmaps & tech stacks" },
+                { icon: Clock, label: "Idea timeline", desc: "Full history at a glance" },
+                { icon: Star, label: "Smart matching", desc: "Find similar projects" },
               ].map((feature) => (
                 <div key={feature.label} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
                   <feature.icon className="size-5 text-[#9bb4ff] mb-2" />
@@ -370,21 +370,21 @@ function ActivityFeed() {
    ═══════════════════════════════════════════════════════════════════════════ */
 function ShowcaseWall() {
   const wallItems = [
-    { image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80", title: "Dashboard" },
-    { image: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=400&q=80", title: "Workflow" },
-    { image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&q=80", title: "Team Space" },
-    { image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&q=80", title: "Analytics" },
-    { image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=400&q=80", title: "Notes" },
-    { image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&q=80", title: "Workspace" },
-    { image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&q=80", title: "Collaborate" },
-    { image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&q=80", title: "Planning" },
-    { image: "https://images.unsplash.com/photo-1600267175161-cfaa711b4a81?w=400&q=80", title: "AI Studio" },
-    { image: "https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=400&q=80", title: "Research" },
-    { image: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=400&q=80", title: "Tech" },
-    { image: "https://images.unsplash.com/photo-1517842645767-c639042777db?w=400&q=80", title: "Ideas" },
-    { image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&q=80", title: "Boards" },
-    { image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&q=80", title: "AI" },
-    { image: "https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=400&q=80", title: "Creative" },
+    { image: "/images/screenshots/explore.jpg", title: "Idea Feed" },
+    { image: "/images/screenshots/submit.jpg", title: "Project Board" },
+    { image: "/images/screenshots/login.jpg", title: "Community" },
+    { image: "/images/screenshots/ai-studio.jpg", title: "AI Roadmap" },
+    { image: "/images/screenshots/explore.jpg", title: "Idea Detail" },
+    { image: "/images/screenshots/submit.jpg", title: "Submit Flow" },
+    { image: "/images/screenshots/login.jpg", title: "Contributors" },
+    { image: "/images/screenshots/landing.jpg", title: "Domain Categories" },
+    { image: "/images/screenshots/ai-studio.jpg", title: "AI Studio" },
+    { image: "/images/screenshots/explore.jpg", title: "Idea Matching" },
+    { image: "/images/screenshots/submit.jpg", title: "Tech Stacks" },
+    { image: "/images/screenshots/ai-studio.jpg", title: "Brainstorm" },
+    { image: "/images/screenshots/explore.jpg", title: "Roadmaps" },
+    { image: "/images/screenshots/ai-studio.jpg", title: "AI Engine" },
+    { image: "/images/screenshots/landing.jpg", title: "Innovation" },
   ];
 
   return (
@@ -394,7 +394,7 @@ function ShowcaseWall() {
           containerClassName="!my-0"
           textClassName="!text-white font-black tracking-tight"
         >
-          Trusted by thinkers worldwide
+          Built by innovators, for innovators
         </ScrollFloat>
       </div>
 
@@ -442,9 +442,9 @@ function CTASection() {
           {/* Left TiltedCard */}
           <div className="hidden lg:flex justify-center">
             <TiltedCard
-              imageSrc="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80"
-              altText="IdeaForge Dashboard"
-              captionText="Dashboard"
+              imageSrc="/images/screenshots/explore.jpg"
+              altText="IdeaForge Idea Feed"
+              captionText="Idea Feed"
               containerHeight="320px"
               containerWidth="280px"
               imageHeight="280px"
@@ -459,7 +459,7 @@ function CTASection() {
           {/* Center CTA */}
           <div className="text-center max-w-lg mx-auto">
             <BlurText
-              text="Start forging your ideas today"
+              text="Start forging your next big idea"
               delay={60}
               animateBy="words"
               direction="top"
@@ -467,7 +467,7 @@ function CTASection() {
             />
 
             <p className="mt-5 text-[#a5a7b0] text-base sm:text-lg leading-relaxed">
-              Join thousands of teams turning scattered thoughts into shipped products.
+              Join thousands of developers, students, and researchers turning real-world problems into actionable projects with AI-powered roadmaps.
             </p>
 
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -486,7 +486,7 @@ function CTASection() {
                   className="font-bold"
                 >
                   <span className="flex items-center gap-2">
-                    Get Started Free
+                    Submit an Idea
                     <ArrowRight className="size-4" />
                   </span>
                 </SpecularButton>
@@ -505,7 +505,7 @@ function CTASection() {
                   followMouse
                   className="font-semibold"
                 >
-                  See a demo
+                  Explore Projects
                 </SpecularButton>
               </Link>
             </div>
@@ -514,9 +514,9 @@ function CTASection() {
           {/* Right TiltedCard */}
           <div className="hidden lg:flex justify-center">
             <TiltedCard
-              imageSrc="https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=400&q=80"
-              altText="IdeaForge Kanban"
-              captionText="Project Board"
+              imageSrc="/images/screenshots/ai-studio.jpg"
+              altText="IdeaForge AI Roadmap"
+              captionText="AI Roadmap"
               containerHeight="320px"
               containerWidth="280px"
               imageHeight="280px"

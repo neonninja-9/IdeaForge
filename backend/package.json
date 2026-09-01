@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "dev": "node --watch --env-file=.env server.js",
     "init-db": "node --env-file=.env init.js",
     "seed": "node --env-file=.env seed.js",
     "start": "node --env-file=.env server.js",
