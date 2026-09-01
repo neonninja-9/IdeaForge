@@ -281,7 +281,7 @@ const GhostFibers: FC<GhostFibersProps> = ({
       if (frameId !== 0) cancelAnimationFrame(frameId);
       frameId = 0;
     };
-    const canAnimate = () => !reducedMotion.matches;
+    const canAnimate = () => isVisible && isPageVisible && !isPaused && !reducedMotion.matches;
 
     const loop = (now: number) => {
       frameId = 0;
