@@ -7,6 +7,7 @@ import walletService from "../../services/walletService";
 import PageSkeleton from "../../components/PageSkeleton/PageSkeleton";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
+import RadialRevealButton from "../../components/RadialRevealButton";
 
 function formatDate(dateString: string) {
   return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(dateString));
@@ -112,9 +113,18 @@ export default function UserProfilePage() {
               <Link to="/settings" className="grid min-h-11 min-w-11 place-items-center rounded-xl border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 transition hover:border-[#FDE047] dark:hover:border-white/15 hover:text-[#A16207] dark:hover:text-white" aria-label="Open settings">
                 <Settings size={18} />
               </Link>
-              <Link to="/submit" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[#A16207] px-5 text-sm font-semibold text-white shadow-md shadow-[#A162071a] dark:shadow-none transition-colors hover:bg-[#854D0E]">
+              <RadialRevealButton
+                to="/submit"
+                padding="0 20px"
+                style={{ minHeight: '44px', fontWeight: 600, fontSize: '0.875rem' }}
+                className="shadow-md shadow-[#A162071a] dark:shadow-none"
+                fill="transparent"
+                colors={{ textColor: "#A16207", hoverFill: "#A16207", hoverTextColor: "#ffffff" }}
+                border={{ borderWidth: 1, borderColor: "rgba(161, 98, 7, 0.3)" }}
+                rounded={25}
+              >
                 Submit an idea
-              </Link>
+              </RadialRevealButton>
             </div>
           </div>
           <dl className="relative mt-8 grid grid-cols-2 sm:grid-cols-4 gap-y-4 border-t border-slate-100 dark:border-white/5 pt-6">

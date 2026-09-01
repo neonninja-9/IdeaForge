@@ -3,6 +3,7 @@ import { BellRing, ChevronRight, LogOut, ShieldCheck, SlidersHorizontal } from "
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import userService, { type Preferences } from "../../services/userService";
+import RadialRevealButton from "../../components/RadialRevealButton";
 
 const defaultPreferences: Preferences = { productUpdates: true, weeklyReflection: false };
 
@@ -199,12 +200,20 @@ export default function SettingsPage() {
               <h2 className="font-heading font-bold text-slate-900 dark:text-white">Sign out</h2>
               <p className="mt-1 text-sm leading-6 text-slate-500 dark:text-slate-400">End this session on the current browser.</p>
             </div>
-            <button
+            <RadialRevealButton
               onClick={handleLogout}
-              className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-rose-200 dark:border-rose-500/30 px-4 text-sm font-semibold text-rose-700 dark:text-rose-400 transition hover:bg-rose-50 dark:hover:bg-rose-500/10"
+              padding="0 16px"
+              style={{ minHeight: '44px', fontWeight: 600, fontSize: '0.875rem' }}
+              className="shrink-0 shadow-sm dark:shadow-none"
+              fill="transparent"
+              colors={{ textColor: "#be123c", hoverFill: "#e11d48", hoverTextColor: "#ffffff" }}
+              border={{ borderWidth: 1, borderColor: "rgba(244, 63, 94, 0.3)" }}
+              rounded={25}
             >
-              <LogOut size={16} /> Sign out
-            </button>
+              <span className="flex items-center gap-2">
+                <LogOut size={16} /> Sign out
+              </span>
+            </RadialRevealButton>
           </div>
         </section>
       </main>

@@ -5,7 +5,9 @@
  * Leverages 15 effect components for a premium interactive experience.
  */
 
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
+import Lenis from "lenis";
+import "lenis/dist/lenis.css";
 import { Link } from "react-router-dom";
 import {
   Zap, Brain, Users, Lightbulb,
@@ -466,6 +468,15 @@ function CTASection() {
    Main Landing Page Assembly
    ═══════════════════════════════════════════════════════════════════════════ */
 export default function LandingPage() {
+  useEffect(() => {
+    const lenis = new Lenis({
+      autoRaf: true,
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    });
+    return () => lenis.destroy();
+  }, []);
+
   return (
     <main className="bg-[#0C0A09] text-white">
       {/* Section 1: Hero with LaserFlow + BlurText + Shuffle + SpecularButton */}

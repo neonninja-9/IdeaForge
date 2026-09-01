@@ -278,8 +278,6 @@ const GhostFibers: FC<GhostFibersProps> = ({
     let frameId = 0;
     let elapsed = 0;
     let previousTime = performance.now();
-    let lastRenderTime = 0;
-    let frameRate = 60;
     let isPaused = false;
     let isVisible = true;
     let isPageVisible = !document.hidden;
@@ -300,11 +298,8 @@ const GhostFibers: FC<GhostFibersProps> = ({
       previousTime = now;
       elapsed += delta;
 
-      if (now - lastRenderTime >= 1000 / frameRate - 0.5) {
-        program.uniforms.uTime.value = elapsed;
-        render();
-        lastRenderTime = now;
-      }
+      program.uniforms.uTime.value = elapsed;
+      render();
 
       frameId = requestAnimationFrame(loop);
     };
@@ -363,8 +358,8 @@ const GhostFibers: FC<GhostFibersProps> = ({
           render();
         }
       },
-      setFps(value) {
-        frameRate = Math.min(Math.max(value, 1), 120);
+      setFps(_value) {
+        // no-op, relying on requestAnimationFrame
       }
     });
 

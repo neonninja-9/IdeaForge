@@ -14,6 +14,7 @@ const queryClient = new QueryClient({
 });
 
 const Navbar = lazy(() => import("./components/Navbar/Navbar"));
+import OrbGyro from "./components/OrbGyro";
 const AppShell = lazy(() => import("./components/AppShell/AppShell"));
 const Footer = lazy(() => import("./components/Footer/Footer"));
 const ClickEffects = lazy(() => import("./components/ClickEffects/ClickEffects"));
@@ -68,7 +69,13 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <div className="font-sans antialiased bg-surface flex flex-col min-h-screen">
-            <Suspense fallback={<div className="grid min-h-screen place-items-center bg-[#FFFBEB]" aria-busy="true" aria-label="Loading page"><div className="flex items-center gap-3 rounded-2xl bg-white px-5 py-4 text-sm font-medium text-slate-500 shadow-sm"><span className="size-2 animate-pulse rounded-full bg-[#A16207]" /> Loading your workspace…</div></div>}>
+            <Suspense fallback={
+              <div className="grid min-h-screen place-items-center bg-[#0C0A09]" aria-busy="true" aria-label="Loading page">
+                <div className="flex flex-col items-center gap-6">
+                  <OrbGyro width={160} height={160} dotColor="#6f98ee" accentColor="#ffffff" />
+                </div>
+              </div>
+            }>
             <Routes>
               {/* Auth pages — full-page immersion, no Navbar/Footer */}
               <Route path="/login" element={<LoginPage />} />

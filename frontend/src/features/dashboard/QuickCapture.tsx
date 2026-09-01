@@ -8,6 +8,7 @@ import {
   WandSparkles,
 } from "lucide-react";
 import aiService from "../../services/aiService";
+import RadialRevealButton from "../../components/RadialRevealButton";
 
 interface QuickCaptureProps {
   capture: string;
@@ -59,15 +60,22 @@ export default function QuickCapture({ capture, setCapture, onManualEntry }: Qui
           >
             Manual Entry
           </button>
-          <button
-            type="button"
+          <RadialRevealButton
             onClick={handleMagicStructure}
             disabled={isStructuring || !capture.trim()}
-            className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-vivid px-4 text-sm font-semibold text-white shadow-sm shadow-vivid/20 transition hover:bg-vivid-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A16207] disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+            padding="0 16px"
+            style={{ minHeight: '44px', fontWeight: 600, fontSize: '0.875rem' }}
+            className="flex-1 sm:flex-none shadow-sm shadow-vivid/20 disabled:cursor-not-allowed disabled:opacity-50"
+            fill="transparent"
+            colors={{ textColor: "#A16207", hoverFill: "#A16207", hoverTextColor: "#ffffff" }}
+            border={{ borderWidth: 1, borderColor: "rgba(161, 98, 7, 0.3)" }}
+            rounded={20}
           >
-            {isStructuring ? <LoaderCircle className="animate-spin" size={17} /> : <WandSparkles size={17} />}
-            {isStructuring ? "Forging..." : "Magic Structure"}
-          </button>
+            <span className="flex items-center justify-center gap-2">
+              {isStructuring ? <LoaderCircle className="animate-spin" size={17} /> : <WandSparkles size={17} />}
+              {isStructuring ? "Forging..." : "Magic Structure"}
+            </span>
+          </RadialRevealButton>
         </div>
       </div>
     </div>

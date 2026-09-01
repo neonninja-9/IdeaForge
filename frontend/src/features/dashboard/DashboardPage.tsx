@@ -12,6 +12,7 @@ import StatsGrid from "./StatsGrid";
 import IdeaCard from "./IdeaCard";
 import InspirationPanel from "./InspirationPanel";
 import { MagicBentoContainer, ParticleCard } from "../../components/MagicBento";
+import RadialRevealButton from "../../components/RadialRevealButton";
 
 export default function DashboardPage() {
   const { user, isLoading: authLoading } = useAuth();
@@ -119,13 +120,21 @@ export default function DashboardPage() {
                     Shape new ideas, review momentum, and keep drafts moving toward a publishable concept.
                   </p>
                 </div>
-                <Link
+                <RadialRevealButton
                   to="/submit"
-                  className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg bg-vivid px-4 text-sm font-semibold text-white shadow-sm shadow-vivid/20 transition hover:bg-vivid-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A16207]"
+                  padding="0 16px"
+                  style={{ minHeight: '44px', fontWeight: 600, fontSize: '0.875rem' }}
+                  className="shrink-0 shadow-sm shadow-vivid/20"
+                  fill="transparent"
+                  colors={{ textColor: "#A16207", hoverFill: "#A16207", hoverTextColor: "#ffffff" }}
+                  border={{ borderWidth: 1, borderColor: "rgba(161, 98, 7, 0.3)" }}
+                  rounded={20}
                 >
-                  <Plus size={17} />
-                  New idea
-                </Link>
+                  <span className="flex items-center gap-2">
+                    <Plus size={17} />
+                    New idea
+                  </span>
+                </RadialRevealButton>
               </div>
 
               <div className="relative z-10 mt-6">

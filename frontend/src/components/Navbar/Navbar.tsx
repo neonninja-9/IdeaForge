@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../hooks/useAuth";
+import RadialRevealButton from "../RadialRevealButton";
 
 const navLinks = [
   { label: "Product", to: "/#product" },
@@ -92,12 +93,14 @@ export default function Navbar() {
               >
                 {user.username}
               </Link>
-              <button
+              <RadialRevealButton
                 onClick={handleLogout}
-                className="rounded-full bg-[#5683da] px-5 py-2 text-sm font-medium text-white transition hover:bg-[#6f98ee]"
+                padding="8px 20px"
+                fill="#5683da"
+                hover={{ fill: "#6f98ee" }}
               >
                 Logout
-              </button>
+              </RadialRevealButton>
             </>
           ) : (
             <>
@@ -107,12 +110,15 @@ export default function Navbar() {
               >
                 Sign In
               </Link>
-              <Link
+              <RadialRevealButton
                 to="/register"
-                className="rounded-full bg-[#5683da] px-5 py-2 text-sm font-medium text-white transition hover:bg-[#6f98ee]"
+                padding="8px 20px"
+                fill="transparent"
+                hover={{ fill: "#6f98ee" }}
+                border={{ borderWidth: 1, borderColor: "rgba(255,255,255,0.15)" }}
               >
                 Sign Up
-              </Link>
+              </RadialRevealButton>
             </>
           )}
         </div>
@@ -150,20 +156,26 @@ export default function Navbar() {
             Explore
           </Link>
           {!isLoading && user ? (
-            <button
+            <RadialRevealButton
               onClick={handleLogout}
-              className="mt-3 min-h-11 w-full rounded-full bg-[#5683da] px-5 text-sm font-medium text-white"
+              className="mt-3 w-full"
+              padding="10px 20px"
+              fill="#5683da"
+              hover={{ fill: "#6f98ee" }}
             >
               Logout
-            </button>
+            </RadialRevealButton>
           ) : (
-            <Link
+            <RadialRevealButton
               to="/register"
-              className="mt-3 block min-h-11 rounded-full bg-[#5683da] px-5 py-3 text-center text-sm font-medium text-white"
+              className="mt-3 w-full"
+              padding="10px 20px"
+              fill="#5683da"
+              hover={{ fill: "#6f98ee" }}
               onClick={() => setMobileOpen(false)}
             >
               Sign Up
-            </Link>
+            </RadialRevealButton>
           )}
         </div>
       </div>
