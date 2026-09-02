@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 
-const ATLAS_URI = "mongodb+srv://gourav6002_db_user:World098@ideaforge.8onlqfz.mongodb.net/";
+const ATLAS_URI = process.env.MONGODB_ATLAS_URI || "";
 const LOCAL_URI = "mongodb://root:secretpassword@127.0.0.1:27017/?authSource=admin";
 
 async function sync() {
