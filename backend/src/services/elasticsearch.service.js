@@ -2,9 +2,21 @@ import { Client } from "@elastic/elasticsearch";
 import logger from "../config/logger.js";
 import aiService from "./ai.service.js"; // Import AI service to generate query embeddings
 
-const esClient = new Client({
-  node: process.env.ELASTICSEARCH_NODE || "http://localhost:9200",
-});
+let clientOptions = {};
+
+if (process.env.ELASTICSEARCH_NODE && process.env.ELASTICSEARCH_NODE.startsWith("http")) {
+  clientOptions.node = process.env.ELASTICSEARCH_NODE;
+} else if (process.env.ELASTICSEARCH_CLOUD_ID) {
+  clientOptions.cloud = { id: process.env.ELASTICSEARCH_CLOUD_ID };
+  clientOptions.auth = {
+    username: process.env.ELASTICSEARCH_USERNAME || "elastic",
+    password: process.env.ELASTICSEARCH_PASSWORD
+  };
+} else {
+  clientOptions.node = "http://localhost:9200";
+}
+
+const esClient = new Client(clientOptions);
 
 const INDEX_NAME = "ideas";
 
