@@ -134,6 +134,15 @@ const ideaController = {
                 author: req.user.id,
             });
 
+            // Fetch the fully populated idea to index in Elasticsearch
+            const populatedIdea = await ideaService.getById(idea._id);
+            if (populatedIdea) {
+                // Fire and forget ES indexing
+                elasticsearchService.indexIdea(populatedIdea).catch(err => {
+                    console.error("Failed to index new idea to ES:", err.message);
+                });
+            }
+
             return res.status(201).json({
                 status: "success",
                 data: { idea },
@@ -170,6 +179,15 @@ const ideaController = {
 
             const idea = await ideaService.update(req.params.id, req.user.id, data);
 
+            // Fetch the fully populated idea to update in Elasticsearch
+            const populatedIdea = await ideaService.getById(idea._id);
+            if (populatedIdea) {
+                // Fire and forget ES indexing
+                elasticsearchService.indexIdea(populatedIdea).catch(err => {
+                    console.error("Failed to update idea in ES:", err.message);
+                });
+            }
+
             return res.status(200).json({
                 status: "success",
                 data: { idea },
@@ -185,6 +203,11 @@ const ideaController = {
     async delete(req, res, next) {
         try {
             await ideaService.delete(req.params.id, req.user.id);
+
+            // Fire and forget ES deletion
+            elasticsearchService.deleteIdea(req.params.id).catch(err => {
+                console.error("Failed to delete idea from ES:", err.message);
+            });
 
             return res.status(200).json({
                 status: "success",
