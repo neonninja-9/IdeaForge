@@ -8,10 +8,13 @@ import { Link } from 'react-router-dom';
 
 const MotionLink = motion.create(Link);
 
+import ideaService from '@/services/ideaService';
+
 interface SearchResult {
   label: string;
   description: string;
   href: string;
+  isNoResult?: boolean;
 }
 
 export interface AppleSpotlightProps {
@@ -25,7 +28,13 @@ export interface AppleSpotlightProps {
 export function AppleSpotlight({ onSubmitSearch, focusSignal = 0, className }: AppleSpotlightProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
-  const [resultHovered, setResultHovered] = useState(false);
+  const [results, setResults] = useState<SearchResult[]>([
+    {
+      label: 'Search community ideas',
+      description: 'Find ideas by title, problem, or tag',
+      href: '/explore',
+    }
+  ]);
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   
@@ -34,18 +43,62 @@ export function AppleSpotlight({ onSubmitSearch, focusSignal = 0, className }: A
   useEffect(() => {
     if (focusSignal > 0) {
       setIsFocused(true);
-      inputRef.current?.focus();
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
     }
   }, [focusSignal]);
 
+  useEffect(() => {
+    const defaultFallback = [
+      {
+        label: 'Search community ideas',
+        description: 'Find ideas by title, problem, or tag',
+        href: '/explore',
+      }
+    ];
+
+    if (!query.trim()) {
+      setResults(defaultFallback);
+      return;
+    }
+
+    const abortController = new AbortController();
+    const timeoutId = setTimeout(async () => {
+      try {
+        const response = await ideaService.searchIdeas(query, { signal: abortController.signal });
+        if (response.data && response.data.length > 0) {
+          setResults(response.data.map(item => ({
+            label: item.title,
+            description: item.problem || item.category || 'Idea Forge',
+            href: `/idea/${item.id}`,
+          })));
+        } else {
+          setResults([
+            {
+              label: 'No results found',
+              description: `We couldn't find any ideas for "${query}"`,
+              href: `/explore?q=${encodeURIComponent(query)}`,
+              isNoResult: true,
+            }
+          ]);
+        }
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          console.error('Spotlight search error:', err);
+          setResults(defaultFallback);
+        }
+      }
+    }, 250);
+
+    return () => {
+      clearTimeout(timeoutId);
+      abortController.abort();
+    };
+  }, [query]);
+
   const search = () => {
     onSubmitSearch?.(query);
-  };
-
-  const result: SearchResult = {
-    label: 'Search community ideas',
-    description: query ? `Search for “${query}”` : 'Find ideas by title, problem, or tag',
-    href: `/explore?q=${encodeURIComponent(query)}`,
   };
 
   const shortcuts = [
@@ -69,8 +122,8 @@ export function AppleSpotlight({ onSubmitSearch, focusSignal = 0, className }: A
           animate={{ width: isActive ? 320 : 44 }}
           transition={{ layout: { duration: 0.35, type: 'spring', bounce: 0.15 }, width: { duration: 0.35, type: 'spring', bounce: 0.15 } }}
           className={cn(
-            "rounded-full border border-slate-200/80 bg-white text-slate-950 shadow-sm transition-colors focus-within:border-[#A16207] focus-within:ring-4 focus-within:ring-[#FEF3C7]",
-            !isActive && "cursor-pointer hover:bg-slate-50"
+            "rounded-full border border-slate-200/80 bg-white text-slate-950 shadow-sm transition-colors focus-within:border-[#A16207] focus-within:ring-4 focus-within:ring-[#FEF3C7] dark:border-white/10 dark:bg-white/5 dark:text-white dark:focus-within:border-[#A16207] dark:focus-within:ring-[#A16207]/30",
+            !isActive && "cursor-pointer hover:bg-slate-50 dark:hover:bg-white/10"
           )}
           onClick={() => {
             if (!isActive) {
@@ -79,7 +132,7 @@ export function AppleSpotlight({ onSubmitSearch, focusSignal = 0, className }: A
           }}
         >
           <div className="flex h-11 items-center px-3">
-            <Search className="size-5 shrink-0 text-slate-500" strokeWidth={1.8} aria-hidden="true" />
+            <Search className="size-5 shrink-0 text-slate-500 dark:text-slate-400" strokeWidth={1.8} aria-hidden="true" />
             <AnimatePresence initial={false}>
               {isActive && (
                 <motion.div
@@ -105,9 +158,9 @@ export function AppleSpotlight({ onSubmitSearch, focusSignal = 0, className }: A
                     }}
                     placeholder="Search community ideas..."
                     aria-label="Search community ideas"
-                    className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
+                    className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500"
                   />
-                  <kbd className="hidden rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[10px] font-medium text-slate-400 lg:inline-flex">⌘K</kbd>
+                  <kbd className="hidden rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[10px] font-medium text-slate-400 dark:border-white/10 dark:bg-white/10 dark:text-slate-400 lg:inline-flex">⌘K</kbd>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -116,25 +169,32 @@ export function AppleSpotlight({ onSubmitSearch, focusSignal = 0, className }: A
 
           <AnimatePresence initial={false}>
             {isActive && query && (
-              <MotionLink
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto', y: 0 }}
-                exit={{ opacity: 0, height: 0, y: -4 }}
-                to={result.href}
-                onMouseEnter={() => setResultHovered(true)}
-                onMouseLeave={() => setResultHovered(false)}
-                onClick={search}
-                className="absolute left-0 top-[calc(100%+8px)] z-50 flex w-full items-center gap-3 overflow-hidden rounded-2xl border border-slate-200/80 bg-white px-4 py-2.5 shadow-xl shadow-slate-200/50 hover:bg-slate-50"
-              >
-                <span className="grid size-8 place-items-center rounded-lg bg-white text-slate-600 shadow-sm">
-                  <Search className="size-4" aria-hidden="true" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-medium">{result.label}</span>
-                  <span className="block truncate text-xs text-slate-500">{result.description}</span>
-                </span>
-                <ChevronRight className={cn('size-5 text-slate-500 transition-opacity', resultHovered ? 'opacity-100' : 'opacity-0')} aria-hidden="true" />
-              </MotionLink>
+              <div className="absolute left-0 top-full pt-2 z-50 w-full">
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="flex w-full flex-col gap-1 overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-2 shadow-xl shadow-slate-200/50 dark:border-white/10 dark:bg-[#1a1721]/80 dark:backdrop-blur-xl dark:shadow-black/50"
+                >
+                  {results.map((res, index) => (
+                    <Link
+                      key={res.href || index}
+                      to={res.href}
+                      onClick={search}
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2 transition hover:bg-slate-50 dark:hover:bg-white/10 group"
+                    >
+                      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-slate-50 text-slate-600 shadow-sm border border-slate-100 group-hover:bg-white transition-colors dark:bg-white/5 dark:text-slate-300 dark:border-white/5 dark:group-hover:bg-white/10">
+                        <Search className="size-4" aria-hidden="true" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-medium text-slate-900 dark:text-white truncate">{res.label}</span>
+                        <span className="block truncate text-xs text-slate-500 dark:text-slate-400">{res.description}</span>
+                      </span>
+                      <ChevronRight className="size-5 shrink-0 text-slate-400 dark:text-slate-500 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
+                    </Link>
+                  ))}
+                </motion.div>
+              </div>
             )}
           </AnimatePresence>
         </div>
@@ -157,7 +217,7 @@ export function AppleSpotlight({ onSubmitSearch, focusSignal = 0, className }: A
                   marginLeft: isActive && index > 0 ? 8 : 0
                 }}
                 transition={{ type: 'spring', stiffness: 480, damping: 28, delay: isActive ? index * 0.045 : 0 }}
-                className="grid h-11 shrink-0 place-items-center rounded-full bg-white text-slate-500 shadow-sm ring-1 ring-slate-200/80 transition hover:-translate-y-0.5 hover:bg-[#A16207] hover:text-white hover:shadow-md"
+                className="grid h-11 shrink-0 place-items-center rounded-full bg-white text-slate-500 shadow-sm ring-1 ring-slate-200/80 transition hover:-translate-y-0.5 hover:bg-[#A16207] hover:text-white hover:shadow-md dark:bg-white/5 dark:text-slate-400 dark:ring-white/10 dark:hover:bg-[#A16207] dark:hover:text-white"
                 style={{ pointerEvents: isActive ? 'auto' : 'none' }}
               >
                 <Icon className="size-5 shrink-0" strokeWidth={1.8} aria-hidden="true" />

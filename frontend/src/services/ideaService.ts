@@ -38,6 +38,12 @@ const ideaService = {
     });
   },
 
+  async searchIdeas(query: string, options: { signal?: AbortSignal } = {}): Promise<{ status: string; data: any[] }> {
+    return apiFetch<{ status: string; data: any[] }>(`/ideas/search?q=${encodeURIComponent(query)}`, {
+      signal: options.signal,
+    });
+  },
+
   async getIdeaById(id: string): Promise<IdeaDetailResponse> {
     return apiFetch<IdeaDetailResponse>(`/ideas/${id}`);
   },

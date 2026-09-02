@@ -5,8 +5,28 @@
  */
 
 import ideaService from "../services/idea.service.js";
+import elasticsearchService from "../services/elasticsearch.service.js";
 
 const ideaController = {
+    /**
+     * GET /api/v1/ideas/search?q=...
+     */
+    async search(req, res, next) {
+        try {
+            const { q } = req.query;
+            if (!q) {
+                return res.status(200).json({ status: "success", data: [] });
+            }
+            const results = await elasticsearchService.searchIdeas(q);
+            return res.status(200).json({
+                status: "success",
+                data: results,
+            });
+        } catch (err) {
+            next(err);
+        }
+    },
+
     /**
      * GET /api/v1/ideas
      * Query params: q, category, tag, difficulty, sort, page, limit

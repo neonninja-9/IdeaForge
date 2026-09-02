@@ -90,6 +90,37 @@ const ideaSchema = new mongoose.Schema({
 // Text index for search
 ideaSchema.index({ title: "text", problem: "text", solution: "text" });
 
+// --- Elasticsearch Hooks ---
+import elasticsearchService from "../src/services/elasticsearch.service.js";
+
+ideaSchema.post("save", async function(doc) {
+    try {
+        await doc.populate("tags category");
+        await elasticsearchService.indexIdea(doc);
+    } catch (err) {
+        console.error("Error syncing idea to ES on save:", err);
+    }
+});
+
+ideaSchema.post("findOneAndUpdate", async function(doc) {
+    if (!doc) return;
+    try {
+        await doc.populate("tags category");
+        await elasticsearchService.indexIdea(doc);
+    } catch (err) {
+        console.error("Error syncing idea to ES on update:", err);
+    }
+});
+
+ideaSchema.post("findOneAndDelete", async function(doc) {
+    if (!doc) return;
+    try {
+        await elasticsearchService.deleteIdea(doc._id);
+    } catch (err) {
+        console.error("Error deleting idea from ES:", err);
+    }
+});
+
 const Idea = mongoose.model("Idea", ideaSchema);
 
 export default Idea;
