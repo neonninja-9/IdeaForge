@@ -8,6 +8,8 @@
     "init-db": "node --env-file=.env init.js",
     "seed": "node --env-file=.env seed.js",
     "start": "node --env-file=.env server.js",
+    "local-db": "node scripts/start-local-db.js",
+    "migrate-db": "node scripts/migrate-db.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -27,5 +29,8 @@
     "openai": "^7.8.0",
     "winston": "^3.19.0",
     "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^11.2.0"
   }
 }

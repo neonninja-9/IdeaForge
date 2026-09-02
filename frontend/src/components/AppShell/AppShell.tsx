@@ -55,8 +55,6 @@ const wheelNavigation: NavigationItem[] = [
   { label: "Settings", to: "/settings", icon: Settings },
 ];
 
-const wheelNavigationLabels = wheelNavigation.map((item) => item.label);
-
 function isCurrent(item: NavigationItem, pathname: string) {
   return item.match ? item.match(pathname) : pathname === item.to;
 }
@@ -87,7 +85,13 @@ export default function AppShell() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const activeWheelIndex = Math.max(0, wheelNavigation.findIndex((item) => isCurrent(item, pathname)));
+
+  const currentPrimaryNav = user ? primaryNavigation : primaryNavigation.filter(n => n.to === "/explore");
+  const currentBottomNav = user ? bottomNavigation : bottomNavigation.filter(n => n.to === "/explore");
+  const currentWheelNav = user ? wheelNavigation : wheelNavigation.filter(n => n.to === "/explore");
+  const currentWheelLabels = currentWheelNav.map((item) => item.label);
+
+  const activeWheelIndex = Math.max(0, currentWheelNav.findIndex((item) => isCurrent(item, pathname)));
 
   const fetchNotifications = useCallback(async () => {
     if (!user) {
@@ -200,7 +204,7 @@ export default function AppShell() {
   }
 
   function navigateFromWheel(_index: number, item: string) {
-    const target = wheelNavigation.find((nav) => nav.label === item);
+    const target = currentWheelNav.find((nav) => nav.label === item);
     if (!target) return;
     navigate(target.to);
   }
@@ -214,12 +218,12 @@ export default function AppShell() {
         <div className="absolute inset-y-0 right-0 w-8 cursor-pointer" aria-hidden="true" />
         <div className="relative z-10 px-8 pt-7 pb-2">
           <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400 dark:text-[#7d7d7d]">Current Page</span>
-          <h2 className="mt-1 font-heading text-lg font-bold text-slate-900 dark:text-white">{wheelNavigation[activeWheelIndex]?.label ?? "Home"}</h2>
+          <h2 className="mt-1 font-heading text-lg font-bold text-slate-900 dark:text-white">{currentWheelNav[activeWheelIndex]?.label ?? "Home"}</h2>
         </div>
         <div className="relative h-[calc(100vh-120px)] mt-4">
           <OptionWheel
             key={activeWheelIndex}
-            items={wheelNavigationLabels}
+            items={currentWheelLabels}
             defaultSelected={activeWheelIndex}
             textColor={darkMode ? "#5c5c5c" : "#8b8a98"}
             activeColor={darkMode ? "#ffffff" : "#1e1b4b"}
@@ -366,9 +370,15 @@ export default function AppShell() {
               )}
             </div>
 
-            <Link to="/profile" className="grid size-11 place-items-center rounded-full bg-slate-100 dark:bg-white/10 text-sm font-bold text-slate-900 dark:text-white transition hover:bg-vivid hover:text-white" aria-label="Open profile">
-              {user?.username?.slice(0, 1).toUpperCase() || "U"}
-            </Link>
+            {user ? (
+              <Link to="/profile" className="grid size-11 place-items-center rounded-full bg-slate-100 dark:bg-white/10 text-sm font-bold text-slate-900 dark:text-white transition hover:bg-vivid hover:text-white" aria-label="Open profile">
+                {user.username?.slice(0, 1).toUpperCase() || "U"}
+              </Link>
+            ) : (
+              <Link to="/login" className="flex h-10 items-center justify-center rounded-full bg-vivid px-4 text-sm font-bold text-white transition hover:bg-vivid-hover" aria-label="Sign In">
+                Sign In
+              </Link>
+            )}
           </div>
         </header>
 
@@ -385,7 +395,7 @@ export default function AppShell() {
             <button onClick={() => setMobileOpen(false)} className="grid size-11 place-items-center rounded-xl text-slate-500 hover:bg-slate-100" aria-label="Close navigation"><X size={20} /></button>
           </div>
           <nav aria-label="Mobile navigation" className="space-y-1">
-            {primaryNavigation.map((item) => {
+            {currentPrimaryNav.map((item) => {
               const Icon = item.icon;
               const active = isCurrent(item, pathname);
               return <NavLink key={item.label} to={item.to} onClick={() => setMobileOpen(false)} className={`flex h-12 items-center gap-4 rounded-xl px-4 text-sm font-medium ${active ? "bg-vivid/10 text-vivid" : "text-slate-600"}`}><Icon size={19} />{item.label}</NavLink>;
@@ -394,11 +404,11 @@ export default function AppShell() {
         </aside>
       </div>
 
-      <nav aria-label="Mobile quick navigation" className="fixed inset-x-0 bottom-0 z-40 grid h-[72px] grid-cols-5 border-t border-slate-200/80 bg-white/95 px-1 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden">
-        {bottomNavigation.map((item) => {
+      <nav aria-label="Mobile quick navigation" className="fixed inset-x-0 bottom-0 z-40 flex h-[72px] items-center justify-around border-t border-slate-200/80 bg-white/95 px-1 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden">
+        {currentBottomNav.map((item) => {
           const Icon = item.icon;
           const active = isCurrent(item, pathname);
-          return <NavLink key={item.label} to={item.to} className={`flex flex-col items-center justify-center gap-1 text-[10px] font-medium ${active ? "text-vivid" : "text-slate-400"}`} aria-current={active ? "page" : undefined}><Icon size={20} strokeWidth={active ? 2.4 : 1.8} /><span>{item.label}</span></NavLink>;
+          return <NavLink key={item.label} to={item.to} className={`flex flex-1 flex-col items-center justify-center gap-1 text-[10px] font-medium ${active ? "text-vivid" : "text-slate-400"}`} aria-current={active ? "page" : undefined}><Icon size={20} strokeWidth={active ? 2.4 : 1.8} /><span>{item.label}</span></NavLink>;
         })}
       </nav>
     </div>

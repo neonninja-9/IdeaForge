@@ -655,7 +655,21 @@ export default function SubmitIdeaPage() {
                     <span className="mb-2 flex items-center justify-between text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Describe your idea <span className="font-normal text-slate-400 dark:text-slate-500">{problem.length} characters</span>
                     </span>
-                    <textarea value={problem} onChange={(event) => { setProblem(event.target.value); setProblemSuggestion(null); }} rows={6} placeholder="Describe the problem, the moment you noticed it, or the possibility you can't stop thinking about..." className={`w-full resize-none rounded-2xl border bg-white dark:bg-[#292524] px-4 py-4 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-[#A16207] dark:focus:border-[#A16207]/50 focus:ring-4 focus:ring-[#FEF3C7] dark:focus:ring-[#FEF3C7]0/10 ${errors.problem ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />
+                    <div className={`relative w-full rounded-2xl border bg-white dark:bg-[#292524] transition focus-within:border-[#A16207] dark:focus-within:border-[#A16207]/50 focus-within:ring-4 focus-within:ring-[#FEF3C7] dark:focus-within:ring-[#FEF3C7]0/10 ${errors.problem ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`}>
+                      <textarea value={problem} onChange={(event) => { setProblem(event.target.value); setProblemSuggestion(null); }} rows={6} placeholder="Describe the problem, the moment you noticed it, or the possibility you can't stop thinking about..." className="w-full resize-none bg-transparent px-4 py-4 pb-12 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500" />
+                      <div className="absolute bottom-2 left-2 flex flex-wrap items-center gap-1">
+                        <ComingSoonButton icon={Mic} label="Voice recording" />
+                        <button
+                          type="button"
+                          onClick={() => handleRefine("problem")}
+                          disabled={isRefiningProblem || problem.trim().length < 10}
+                          className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-[#A16207] dark:text-[#CA8A04] transition hover:bg-[#FFFBEB] dark:hover:bg-[#A16207]/10 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+                        >
+                          {isRefiningProblem ? <LoaderCircle size={15} className="animate-spin" /> : <WandSparkles size={15} />}
+                          {isRefiningProblem ? "Refining…" : "Refine with AI"}
+                        </button>
+                      </div>
+                    </div>
                     {errors.problem && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.problem}</span>}
                   </label>
 
@@ -667,19 +681,6 @@ export default function SubmitIdeaPage() {
                     onDismiss={() => dismissSuggestion("problem")}
                     label="problem description"
                   />
-
-                  <div className="-mt-3 flex flex-wrap items-center gap-1">
-                    <ComingSoonButton icon={Mic} label="Voice recording" />
-                    <button
-                      type="button"
-                      onClick={() => handleRefine("problem")}
-                      disabled={isRefiningProblem || problem.trim().length < 10}
-                      className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-[#A16207] dark:text-[#CA8A04] transition hover:bg-[#FFFBEB] dark:hover:bg-[#A16207]/10 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
-                    >
-                      {isRefiningProblem ? <LoaderCircle size={15} className="animate-spin" /> : <WandSparkles size={15} />}
-                      {isRefiningProblem ? "Refining…" : "Refine with AI"}
-                    </button>
-                  </div>
 
                   <AttachmentUploader
                     attachments={attachments}
@@ -693,7 +694,20 @@ export default function SubmitIdeaPage() {
                 <>
                   <label className="block">
                     <span className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-300">A possible first solution</span>
-                    <textarea value={solution} onChange={(event) => { setSolution(event.target.value); setSolutionSuggestion(null); }} rows={4} placeholder="How could this become useful? Don't worry about getting it right yet." className={`w-full resize-none rounded-2xl border bg-white dark:bg-[#292524] px-4 py-4 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none transition placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-[#A16207] dark:focus:border-[#A16207]/50 focus:ring-4 focus:ring-[#FEF3C7] dark:focus:ring-[#FEF3C7]0/10 ${errors.solution ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`} />
+                    <div className={`relative w-full rounded-2xl border bg-white dark:bg-[#292524] transition focus-within:border-[#A16207] dark:focus-within:border-[#A16207]/50 focus-within:ring-4 focus-within:ring-[#FEF3C7] dark:focus-within:ring-[#FEF3C7]0/10 ${errors.solution ? "border-rose-300 dark:border-rose-500/50" : "border-slate-200 dark:border-white/10"}`}>
+                      <textarea value={solution} onChange={(event) => { setSolution(event.target.value); setSolutionSuggestion(null); }} rows={4} placeholder="How could this become useful? Don't worry about getting it right yet." className="w-full resize-none bg-transparent px-4 py-4 pb-12 text-base leading-7 text-slate-800 dark:text-slate-200 outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500" />
+                      <div className="absolute bottom-2 left-2">
+                        <button
+                          type="button"
+                          onClick={() => handleRefine("solution")}
+                          disabled={isRefiningSolution || solution.trim().length < 10}
+                          className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-[#A16207] dark:text-[#CA8A04] transition hover:bg-[#FFFBEB] dark:hover:bg-[#A16207]/10 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
+                        >
+                          {isRefiningSolution ? <LoaderCircle size={15} className="animate-spin" /> : <WandSparkles size={15} />}
+                          {isRefiningSolution ? "Refining…" : "Refine with AI"}
+                        </button>
+                      </div>
+                    </div>
                     {errors.solution && <span className="mt-1.5 block text-xs text-rose-600 dark:text-rose-400">{errors.solution}</span>}
                   </label>
 
@@ -705,19 +719,6 @@ export default function SubmitIdeaPage() {
                     onDismiss={() => dismissSuggestion("solution")}
                     label="solution"
                   />
-
-                  {/* ─── Refine button for solution ─── */}
-                  <div className="-mt-3">
-                    <button
-                      type="button"
-                      onClick={() => handleRefine("solution")}
-                      disabled={isRefiningSolution || solution.trim().length < 10}
-                      className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-medium text-[#A16207] dark:text-[#CA8A04] transition hover:bg-[#FFFBEB] dark:hover:bg-[#A16207]/10 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
-                    >
-                      {isRefiningSolution ? <LoaderCircle size={15} className="animate-spin" /> : <WandSparkles size={15} />}
-                      {isRefiningSolution ? "Refining…" : "Refine with AI"}
-                    </button>
-                  </div>
 
                   {/* ─── Contextual hint based on problem ─── */}
                   {problem.trim().length > 20 && !solution.trim() && (
