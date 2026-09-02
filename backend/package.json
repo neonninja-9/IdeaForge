@@ -31,8 +31,5 @@
     "openai": "^7.8.0",
     "winston": "^3.19.0",
     "winston-daily-rotate-file": "^5.0.0"
-  },
-  "devDependencies": {
-    "mongodb-memory-server": "^11.2.0"
   }
 }
