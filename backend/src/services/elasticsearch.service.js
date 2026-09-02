@@ -46,7 +46,7 @@ export const elasticsearchService = {
                 createdAt: { type: "date" },
                 embedding: {
                   type: "dense_vector",
-                  dims: 1536,
+                  dims: 3072,
                   index: true,
                   similarity: "cosine"
                 }
@@ -84,7 +84,7 @@ export const elasticsearchService = {
     try {
       // Prepare embedding
       let embedding = null;
-      if (idea.embedding && Array.isArray(idea.embedding) && idea.embedding.length === 1536) {
+      if (idea.embedding && Array.isArray(idea.embedding) && idea.embedding.length === 3072) {
         embedding = idea.embedding;
       }
 

@@ -434,21 +434,21 @@ Respond in JSON with exactly:
     },
 
     /**
-     * Generates a dense vector embedding for a given text query using OpenAI
+     * Generate an embedding vector for a given search query (or idea text) using Gemini
+     * @param {string} text 
+     * @returns {Promise<Array<number>|null>}
      */
     async generateQueryEmbedding(text) {
-        const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-        if (!OPENAI_API_KEY || !text) return null;
+        const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+        if (!GEMINI_API_KEY || !text) return null;
 
         try {
-            const { OpenAI } = await import("openai");
-            const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
-            const embResponse = await openai.embeddings.create({
-                model: "text-embedding-3-small",
-                input: text,
-                encoding_format: "float",
-            });
-            return embResponse.data[0].embedding;
+            const { GoogleGenerativeAI } = await import("@google/generative-ai");
+            const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+            const model = genAI.getGenerativeModel({ model: "gemini-embedding-2" });
+            
+            const result = await model.embedContent(text);
+            return result.embedding.values;
         } catch (error) {
             console.error("[AI Engine] Query embedding failed:", error.message);
             return null;

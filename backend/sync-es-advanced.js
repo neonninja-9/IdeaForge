@@ -25,7 +25,7 @@ async function syncAdvanced() {
       console.log(`Processing [${i + 1}/${ideas.length}] Idea: ${idea._id}`);
 
       // Generate embedding if missing or invalid
-      if (!idea.embedding || !Array.isArray(idea.embedding) || idea.embedding.length !== 1536) {
+      if (!idea.embedding || !Array.isArray(idea.embedding) || idea.embedding.length !== 3072) {
         console.log(`Generating embedding for Idea: ${idea._id}...`);
         const textToEmbed = `${idea.title}. ${idea.problem}`;
         const embedding = await aiService.generateQueryEmbedding(textToEmbed);
