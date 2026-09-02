@@ -44,6 +44,12 @@ const ideaService = {
     });
   },
 
+  async suggestTags(query: string, options: { signal?: AbortSignal } = {}): Promise<{ status: string; data: string[] }> {
+    return apiFetch<{ status: string; data: string[] }>(`/ideas/tags/suggest?q=${encodeURIComponent(query)}`, {
+      signal: options.signal,
+    });
+  },
+
   async getIdeaById(id: string): Promise<IdeaDetailResponse> {
     return apiFetch<IdeaDetailResponse>(`/ideas/${id}`);
   },

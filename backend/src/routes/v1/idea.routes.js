@@ -23,6 +23,7 @@ const router = Router();
 // ─── Public routes ─────────────────────────────────────────────
 
 router.get("/search", ideaController.search);
+router.get("/tags/suggest", ideaController.suggestTags);
 router.get("/", ideaController.list);
 
 // ─── Protected routes ──────────────────────────────────────────

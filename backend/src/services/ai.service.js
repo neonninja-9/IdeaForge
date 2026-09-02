@@ -431,6 +431,28 @@ Respond in JSON with exactly:
             console.error("Workflow & Architecture generation failed:", e.message || e);
             return { workflow: "Failed to generate workflow.", architecture: "Failed to generate architecture." };
         }
+    },
+
+    /**
+     * Generates a dense vector embedding for a given text query using OpenAI
+     */
+    async generateQueryEmbedding(text) {
+        const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+        if (!OPENAI_API_KEY || !text) return null;
+
+        try {
+            const { OpenAI } = await import("openai");
+            const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+            const embResponse = await openai.embeddings.create({
+                model: "text-embedding-3-small",
+                input: text,
+                encoding_format: "float",
+            });
+            return embResponse.data[0].embedding;
+        } catch (error) {
+            console.error("[AI Engine] Query embedding failed:", error.message);
+            return null;
+        }
     }
 };
 

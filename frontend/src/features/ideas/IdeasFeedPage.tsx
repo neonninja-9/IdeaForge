@@ -23,11 +23,31 @@ export default function IdeasFeedPage() {
   const [sort, setSort] = useState(searchParams.get("sort") || "newest");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  // Debounced search
+  // Debounced search & tag suggestions
   const [searchInput, setSearchInput] = useState(search);
+  const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
   useEffect(() => {
     const timer = setTimeout(() => setSearch(searchInput), 400);
     return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  useEffect(() => {
+    if (searchInput.length >= 2 && !searchInput.includes(":")) {
+      const fetchSuggestions = async () => {
+        try {
+          const res = await ideaService.suggestTags(searchInput);
+          setTagSuggestions(res.data || []);
+          if (res.data?.length) setShowSuggestions(true);
+        } catch (e) {}
+      };
+      const timer = setTimeout(fetchSuggestions, 200);
+      return () => clearTimeout(timer);
+    } else {
+      setTagSuggestions([]);
+      setShowSuggestions(false);
+    }
   }, [searchInput]);
 
   // Sync URL
@@ -101,11 +121,31 @@ export default function IdeasFeedPage() {
             </div>
             <input
               type="text"
-              placeholder="Search problems, technologies, or tags..."
+              placeholder="Search problems, technologies, or try 'category:AI'..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
+              onFocus={() => { if (tagSuggestions.length) setShowSuggestions(true); }}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
               className="w-full bg-white/5 border border-white/10 text-white placeholder-slate-400 pl-12 pr-4 py-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#A16207]/50 focus:border-[#A16207] transition-all"
             />
+            {showSuggestions && tagSuggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-[#1C1917] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 text-left">
+                {tagSuggestions.map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => {
+                      setSearchInput(tag);
+                      setSearch(tag);
+                      setShowSuggestions(false);
+                    }}
+                    className="w-full text-left px-4 py-3 text-slate-300 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2"
+                  >
+                    <FolderSearch className="w-4 h-4 text-slate-500" />
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

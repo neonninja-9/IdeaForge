@@ -28,25 +28,68 @@ const ideaController = {
     },
 
     /**
+     * GET /api/v1/ideas/tags/suggest?q=...
+     */
+    async suggestTags(req, res, next) {
+        try {
+            const { q } = req.query;
+            if (!q) {
+                return res.status(200).json({ status: "success", data: [] });
+            }
+            const results = await elasticsearchService.suggestTags(q);
+            return res.status(200).json({
+                status: "success",
+                data: results,
+            });
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    /**
      * GET /api/v1/ideas
      * Query params: q, category, tag, difficulty, sort, page, limit
      */
     async list(req, res, next) {
         try {
             const { q, category, tag, difficulty, sort, page, limit } = req.query;
-            const result = await ideaService.list({
-                q,
-                category,
-                tag,
-                difficulty,
-                sort,
+            
+            console.log("ES Search Params:", { q, category, difficulty, sort, page, limit });
+            
+            // Route through Elasticsearch for unified live grid features
+            const result = await elasticsearchService.searchIdeas({
+                q: q || "",
+                category: category || "",
+                difficulty: difficulty || "",
+                sort: sort || "newest",
                 page: parseInt(page) || 1,
                 limit: parseInt(limit) || 20,
             });
+            console.log(`ES Search returned ${result.total} results`);
+
+            // Map ES results to include necessary pseudo-populated fields for the frontend
+            const mappedIdeas = result.ideas.map(esIdea => ({
+                id: esIdea.id,
+                _id: esIdea.id,
+                title: esIdea.title,
+                problem: esIdea.problem,
+                difficulty: esIdea.difficulty,
+                upvotes: esIdea.upvotes,
+                commentCount: esIdea.commentCount,
+                createdAt: esIdea.createdAt,
+                category: { slug: esIdea.category, name: esIdea.category },
+                author: { username: esIdea.authorUsername },
+                tags: esIdea.tags?.map(t => ({ name: t })) || []
+            }));
 
             return res.status(200).json({
                 status: "success",
-                data: result,
+                data: {
+                    ideas: mappedIdeas,
+                    total: result.total,
+                    page: result.page,
+                    totalPages: result.totalPages
+                },
             });
         } catch (err) {
             next(err);
