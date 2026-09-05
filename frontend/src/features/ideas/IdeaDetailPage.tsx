@@ -115,6 +115,7 @@ export default function IdeaDetailPage() {
   }
 
   async function handleDeleteComment(commentId: string) {
+    if (!window.confirm("Are you sure you want to delete this comment?")) return;
     try {
       await commentService.deleteComment(commentId);
       setComments((current) => current.filter((comment) => (comment.id || comment._id) !== commentId));
@@ -265,22 +266,22 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
             <div className="flex items-center gap-1">
               {isAuthor && (
                 <>
-                  <Link to={`/edit-idea/${id}`} className="grid size-11 sm:size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-700 dark:hover:text-white" title="Edit">
-                    <Edit3 size={16} />
+                  <Link aria-label="Edit idea" to={`/edit-idea/${id}`} className="grid size-11 sm:size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-700 dark:hover:text-white focus-visible:ring-2" title="Edit">
+                    <Edit3 size={16} aria-hidden="true" />
                   </Link>
-                  <button onClick={handleDeleteIdea} className="grid size-11 sm:size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-500 dark:hover:text-rose-400" title="Delete">
-                    <Trash2 size={16} />
+                  <button aria-label="Delete idea" onClick={handleDeleteIdea} className="grid size-11 sm:size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-500 dark:hover:text-rose-400 focus-visible:ring-2" title="Delete">
+                    <Trash2 size={16} aria-hidden="true" />
                   </button>
                 </>
               )}
-              <button onClick={handleExportMarkdown} className="grid size-11 sm:size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-700 dark:hover:text-white" title="Export Markdown">
-                <Download size={16} />
+              <button aria-label="Export Markdown" onClick={handleExportMarkdown} className="grid size-11 sm:size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-700 dark:hover:text-white focus-visible:ring-2" title="Export Markdown">
+                <Download size={16} aria-hidden="true" />
               </button>
-              <button onClick={handleFavorite} className={`grid size-11 sm:size-9 place-items-center rounded-lg transition ${isFavorite ? "text-rose-500 bg-rose-50 dark:bg-rose-500/10" : "text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-rose-500"}`} title={isFavorite ? "Remove from favorites" : "Add to favorites"}>
-                <Heart size={16} className={isFavorite ? "fill-current" : ""} />
+              <button aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"} onClick={handleFavorite} className={`grid size-11 sm:size-9 place-items-center rounded-lg transition focus-visible:ring-2 ${isFavorite ? "text-rose-500 bg-rose-50 dark:bg-rose-500/10" : "text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-rose-500"}`} title={isFavorite ? "Remove from favorites" : "Add to favorites"}>
+                <Heart size={16} className={isFavorite ? "fill-current" : ""} aria-hidden="true" />
               </button>
-              <button onClick={handleShare} className="grid size-11 sm:size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-700 dark:hover:text-white" title="Share">
-                <Share2 size={16} />
+              <button aria-label="Share idea" onClick={handleShare} className="grid size-11 sm:size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-700 dark:hover:text-white focus-visible:ring-2" title="Share">
+                <Share2 size={16} aria-hidden="true" />
               </button>
               {linkCopied && <span className="text-xs font-medium text-emerald-500 ml-1">Copied!</span>}
             </div>
@@ -462,7 +463,7 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
                           <p className="text-[10px] text-slate-400 dark:text-slate-500">{formatDate(comment.createdAt)}</p>
                         </div>
                         {isMyComment && (
-                          <button onClick={() => handleDeleteComment(comment.id || comment._id)} className="min-h-[44px] sm:min-h-0 text-[10px] font-medium text-rose-400 hover:text-rose-600">Delete</button>
+                          <button aria-label="Delete comment" onClick={() => handleDeleteComment(comment.id || comment._id)} className="min-h-[44px] sm:min-h-0 text-[10px] font-medium text-rose-400 hover:text-rose-600 focus-visible:ring-2">Delete</button>
                         )}
                       </div>
                       <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{comment.text}</p>
