@@ -4,3 +4,6 @@
 
 **Learning:** Adding a visible clear button for search inputs significantly improves micro-UX and search usability.
 **Action:** When working with search inputs, add a clear (X) button conditionally if the user has entered text, and ensure the button is accessible via keyboard and screen readers.
+## 2024-09-07 - Action Buttons Focus & Destructive Action Dialog
+**Learning:** Found multiple icon-only action buttons (Edit, Delete, Export, Favorite, Share) in `IdeaDetailPage.tsx` lacking `aria-label`s and visible focus states, as well as a text "Delete comment" button. Adding `focus-visible:ring-2` ensures keyboard navigators can see their current position. Importantly, destructive actions like deleting a comment should always have a confirmation dialog (e.g., `window.confirm`) to prevent accidental data loss.
+**Action:** Always check for `aria-label` and `focus-visible` states on interactive icons/buttons, especially in detail views. When implementing destructive actions, ensure a confirmation step is present.
