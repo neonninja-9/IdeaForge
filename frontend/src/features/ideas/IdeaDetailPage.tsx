@@ -115,11 +115,13 @@ export default function IdeaDetailPage() {
   }
 
   async function handleDeleteComment(commentId: string) {
-    try {
-      await commentService.deleteComment(commentId);
-      setComments((current) => current.filter((comment) => (comment.id || comment._id) !== commentId));
-    } catch (deleteError) {
-      console.error(deleteError);
+    if (window.confirm("Are you sure you want to delete this comment? This action cannot be undone.")) {
+      try {
+        await commentService.deleteComment(commentId);
+        setComments((current) => current.filter((comment) => (comment.id || comment._id) !== commentId));
+      } catch (deleteError) {
+        console.error(deleteError);
+      }
     }
   }
 
@@ -268,7 +270,7 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
                   <Link to={`/edit-idea/${id}`} className="grid size-11 sm:size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-700 dark:hover:text-white" title="Edit">
                     <Edit3 size={16} />
                   </Link>
-                  <button onClick={handleDeleteIdea} className="grid size-11 sm:size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-500 dark:hover:text-rose-400" title="Delete">
+                  <button aria-label="Delete idea" onClick={handleDeleteIdea} className="grid size-11 sm:size-9 place-items-center rounded-lg text-slate-400 dark:text-slate-500 transition hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-500 dark:hover:text-rose-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500" title="Delete">
                     <Trash2 size={16} />
                   </button>
                 </>
@@ -462,7 +464,7 @@ ${idea.tags?.map((t) => `- ${t.name}`).join("\n") || "- None"}
                           <p className="text-[10px] text-slate-400 dark:text-slate-500">{formatDate(comment.createdAt)}</p>
                         </div>
                         {isMyComment && (
-                          <button onClick={() => handleDeleteComment(comment.id || comment._id)} className="min-h-[44px] sm:min-h-0 text-[10px] font-medium text-rose-400 hover:text-rose-600">Delete</button>
+                          <button aria-label="Delete comment" onClick={() => handleDeleteComment(comment.id || comment._id)} className="min-h-[44px] sm:min-h-0 text-[10px] font-medium text-rose-400 hover:text-rose-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 rounded px-1">Delete</button>
                         )}
                       </div>
                       <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{comment.text}</p>

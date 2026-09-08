@@ -4,3 +4,6 @@
 
 **Learning:** Adding a visible clear button for search inputs significantly improves micro-UX and search usability.
 **Action:** When working with search inputs, add a clear (X) button conditionally if the user has entered text, and ensure the button is accessible via keyboard and screen readers.
+## 2024-09-08 - Added destructive action confirmation and accessibility to delete buttons
+**Learning:** Destructive actions (like deleting ideas and comments) in the `IdeaDetailPage` were missing confirmation dialogs and proper accessibility attributes on their respective icon buttons. The lack of `aria-label`s on icon-only buttons severely degrades screen reader experience, and missing focus rings hurts keyboard navigation.
+**Action:** When adding destructive actions or icon-only buttons, always include a confirmation step (e.g., `window.confirm`), an `aria-label`, and `focus-visible` ring utility classes to ensure a safe and accessible user experience.
